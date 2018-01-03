@@ -29,7 +29,7 @@ export class AuthService {
             return Observable.of<StartupInfo>(
                 <StartupInfo>{
                     sessionId : null,
-                    token : "",
+                    token: "",
                     subscriptions : null,
                     resourceId: ""
                 }

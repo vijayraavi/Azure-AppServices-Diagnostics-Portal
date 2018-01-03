@@ -19,10 +19,19 @@
 [Rr]eleases/
 x64/
 x86/
+build/
 bld/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
 
 # Visual Studio 2015 cache/options directory
 .vs/
