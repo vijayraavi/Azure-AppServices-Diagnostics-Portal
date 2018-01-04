@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 namespace Diagnostics.Tests.ScriptsTests
 {
     public static class ScriptTestDataHelper
@@ -22,6 +21,23 @@ namespace Diagnostics.Tests.ScriptsTests
             return @"
                 public static int Run(int x) {
                     return x * x;
+                }";
+        }
+
+        public static string GetScriptUsingNewtonSoft()
+        {
+            return @"
+                using Newtonsoft;
+
+                public static string Run() {
+
+                    JArray array = new JArray();
+                    array.Add(""Some text"");
+                    JObject o = new JObject();
+                    o[""MyArray""] = array;
+
+                    string json = o.ToString();
+                    return json;
                 }";
         }
         

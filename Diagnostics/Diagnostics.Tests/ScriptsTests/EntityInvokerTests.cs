@@ -3,6 +3,7 @@ using Diagnostics.Scripts.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Text;
 using Xunit;
 
@@ -54,6 +55,25 @@ namespace Diagnostics.Tests.ScriptsTests
                     int result = (int)await invoker.Invoke(new object[] { 3 });
                     Assert.Equal(9, result);
                 });
+            }
+        }
+
+        [Fact]
+        public async void EntityInvoker_TestReferencesInjection()
+        {
+            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
+            metadata.scriptText = ScriptTestDataHelper.GetScriptUsingNewtonSoft();
+            string newtonSoftPath = Directory.GetCurrentDirectory() + "\\Newtonsoft.Json.dll";
+            using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>(newtonSoftPath)))
+            {
+                Exception ex = await Record.ExceptionAsync(async () =>
+                 {
+                     await invoker.InitializeEntryPointAsync();
+                     await invoker.Invoke(new object[] { });
+                 });
+
+                Assert.Null(ex);
+                Assert.True(invoker.IsCompilationSuccessful);
             }
         }
     }

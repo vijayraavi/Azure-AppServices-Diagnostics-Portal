@@ -86,7 +86,7 @@ namespace Diagnostics.Scripts.CompilationService
                 }
                 catch (Exception)
                 {
-                    // TODO : Need to throw Compilation Exception
+                    // TODO : Need to throw custom exception?
                     throw;
                 }
             });
