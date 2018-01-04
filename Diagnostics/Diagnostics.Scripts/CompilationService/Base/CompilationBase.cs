@@ -59,7 +59,7 @@ namespace Diagnostics.Scripts.CompilationService
 
             if (entryPointReference == default(IMethodSymbol))
             {
-                // TODO : Throw Compilation Exception
+                throw new EntryPointNotFoundException($"No Entry point found. Entry point resoultion type : {_resolutionType} , value : {_entryPointName}");
             }
 
             var methodParameters = entryPointReference.Parameters.Select(p => new EntityParameter(p.Name, GetFullTypeName(p.Type), p.IsOptional, p.RefKind));
@@ -106,7 +106,7 @@ namespace Diagnostics.Scripts.CompilationService
             // If we have multiple public methods matching the provided name, throw a compilation exception
             if (namedMethods.Count > 1)
             {
-                // TODO : Need to create Compilation Exception and throw the error.
+                throw new ScriptCompilationException($"Multiple Entry Point Methods with name {methodName} found.");
             }
 
             return default(IMethodSymbol);

@@ -1,22 +1,96 @@
-﻿using Diagnostics.Scripts.CompilationService;
+﻿using Diagnostics.Scripts;
+using Diagnostics.Scripts.CompilationService;
+using Diagnostics.Scripts.CompilationService.Interfaces;
 using Diagnostics.Scripts.Models;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.Immutable;
+using System.Linq;
 using Xunit;
 
 namespace Diagnostics.Tests.ScriptsTests
 {
     public class CompilationServiceTests
     {
+        #region Compilation Service Tests
+        
+        [Fact]
+        public async void CompilationService_TestScriptCompilation()
+        {
+            var serviceInstance = CompilationServiceFactory.CreateService(ScriptTestDataHelper.GetRandomMetadata(), ScriptOptions.Default);
+            ICompilation compilation = await serviceInstance.GetCompilationAsync();
+            
+            ImmutableArray<Diagnostic> diagnostics = await compilation.GetDiagnosticsAsync();
+            Assert.Empty(diagnostics.Select(d => d.Severity == DiagnosticSeverity.Error));
+        }
+
+        [Fact]
+        public async void CompilationService_TestScriptCompilationFailure()
+        {
+            EntityMetadata metaData = ScriptTestDataHelper.GetRandomMetadata(EntityType.Detector);
+            metaData.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.CompilationError);
+
+            var serviceInstance = CompilationServiceFactory.CreateService(metaData, ScriptOptions.Default);
+            ICompilation compilation = await serviceInstance.GetCompilationAsync();
+
+            ImmutableArray<Diagnostic> diagnostics = await compilation.GetDiagnosticsAsync();
+            Assert.NotEmpty(diagnostics.Select(d => d.Severity == DiagnosticSeverity.Error));
+        }
+
+        [Fact]
+        public async void CompilationService_TestVaildEntryPointResolution()
+        {
+            var serviceInstance = CompilationServiceFactory.CreateService(ScriptTestDataHelper.GetRandomMetadata(), ScriptOptions.Default);
+            ICompilation compilation = await serviceInstance.GetCompilationAsync();
+
+            Exception ex = Record.Exception(() =>
+            {
+                EntityMethodSignature methodSignature = compilation.GetEntryPointSignature();
+            });
+
+            Assert.Null(ex);
+        }
+
+        [Fact]
+        public async void CompilationService_TestNoEntryPoint()
+        {
+            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
+            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.MissingEntryPoint);
+
+            var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
+            ICompilation compilation = await serviceInstance.GetCompilationAsync();
+
+            Assert.Throws<EntryPointNotFoundException>(() =>
+            {
+                EntityMethodSignature methodSignature = compilation.GetEntryPointSignature();
+            });
+        }
+
+        [Fact]
+        public async void CompilationService_TestDuplicateEntryPoints()
+        {
+            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
+            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.DuplicateEntryPoint);
+
+            var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
+            ICompilation compilation = await serviceInstance.GetCompilationAsync();
+
+            Assert.Throws<ScriptCompilationException>(() =>
+            {
+                EntityMethodSignature methodSignature = compilation.GetEntryPointSignature();
+            });
+        }
+
+        #endregion
+
         #region Compilation Service Factory Tests
 
         [Theory]
         [InlineData(EntityType.Signal, typeof(SignalCompilationService))]
         [InlineData(EntityType.Detector, typeof(DetectorCompilationService))]
         [InlineData(EntityType.Analysis, typeof(AnalysisCompilationService))]
-        public void GetCompilationServiceBasedOnType(EntityType type, object value)
+        public void CompilationServiceFactory_GetServiceBasedOnType(EntityType type, object value)
         {
             EntityMetadata metaData = ScriptTestDataHelper.GetRandomMetadata(type);
             var compilationServiceInstance = CompilationServiceFactory.CreateService(metaData, ScriptOptions.Default);
@@ -24,7 +98,7 @@ namespace Diagnostics.Tests.ScriptsTests
         }
 
         [Fact]
-        public void TestFactoryForNullEntityMetadata()
+        public void CompilationServiceFactory_TestNullEntityMetadata()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -33,7 +107,7 @@ namespace Diagnostics.Tests.ScriptsTests
         }
 
         [Fact]
-        public void TestFactoryForNullScriptOptions()
+        public void CompilationServiceFactory_TestNullScriptOptions()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -42,7 +116,7 @@ namespace Diagnostics.Tests.ScriptsTests
         }
 
         [Fact]
-        public void TestFactoryForUnsupportedEntityType()
+        public void CompilationServiceFactory_TestForUnsupportedEntityType()
         {
             Assert.Throws<NotSupportedException>(() =>
             {

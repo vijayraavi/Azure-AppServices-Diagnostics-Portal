@@ -33,6 +33,15 @@ namespace Diagnostics.Tests.ScriptsTests
                     return @"
                         public static string SomeMethod() => ""test string"";
                     ";
+                case ScriptErrorType.DuplicateEntryPoint:
+                    return @"
+                        public static int Run(int x) {
+                            return x * x;
+                        }
+                        public static int Run(int x, int y) {
+                            return x + y;
+                        }
+                    ";
                 case ScriptErrorType.CompilationError:
                 default:
                     return @"
