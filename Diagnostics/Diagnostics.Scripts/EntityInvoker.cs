@@ -52,7 +52,7 @@ namespace Diagnostics.Scripts
         {
             if (!IsCompilationSuccessful)
             {
-                // TODO : throw Compilation Exception
+                throw new ScriptCompilationException();
             }
 
             int actualParameterCount = _entryPointMethodInfo.GetParameters().Length;

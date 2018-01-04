@@ -12,19 +12,19 @@ namespace Diagnostics.Tests.ScriptsTests
             return new EntityMetadata()
             {
                 Name = "RandomEntity",
-                scriptText = GetValidCsxScript(),
+                scriptText = GetNumSqaureScript(),
                 Type = type
             };
         }
-
-        public static string GetValidCsxScript()
+        
+        public static string GetNumSqaureScript()
         {
             return @"
                 public static int Run(int x) {
                     return x * x;
                 }";
         }
-
+        
         public static string GetInvalidCsxScript(ScriptErrorType errorType)
         {
             switch (errorType)
