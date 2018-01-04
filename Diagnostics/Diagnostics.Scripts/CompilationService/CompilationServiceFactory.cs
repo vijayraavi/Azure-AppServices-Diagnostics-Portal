@@ -9,6 +9,16 @@ namespace Diagnostics.Scripts.CompilationService
     {
         public static ICompilationService CreateService(EntityMetadata metaData, ScriptOptions scriptOptions)
         {
+            if(metaData == null)
+            {
+                throw new ArgumentNullException("Entity Metadata cannot be null.");
+            }
+
+            if(scriptOptions == null)
+            {
+                throw new ArgumentNullException("ScriptOptions cannot be null.");
+            }
+
             switch (metaData.Type)
             {
                 case EntityType.Signal:
@@ -18,7 +28,7 @@ namespace Diagnostics.Scripts.CompilationService
                 case EntityType.Analysis:
                     return new AnalysisCompilationService(metaData, scriptOptions);
                 default:
-                    throw new ArgumentException($"EntityMetaData with type {metaData.Type} is invalid.");
+                    throw new NotSupportedException($"EntityMetaData with type {metaData.Type} is invalid.");
             }
         }
     }
