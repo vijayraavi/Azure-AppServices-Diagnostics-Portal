@@ -1,8 +1,0 @@
-a.disabled {
-    color: #adadad;
-}
-
-a.disabled:hover {
-    text-decoration: none;
-    cursor: not-allowed;
-}
