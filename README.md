@@ -1,27 +1,17 @@
 
+[![Build Status](https://travis-ci.org/Azure/Azure-WebApps-Support-Center.svg?branch=diagnostics-master)](https://travis-ci.org/Azure/Azure-WebApps-Support-Center)
+
 # Azure Web Apps Support Center
 
 ## Prerequisites
-- [Node 6.*](https://nodejs.org/en/download/)
-- Node Package Manager (npm)
-- Typescript
-  `npm install -g typescript`
+- VS 2017
+- dot net core sdk
 
-## Getting Started
-- Clone repo `git clone https://github.com/Azure/Azure-WebApps-Support-Center.git`
-- Navigate to project root folder and run `npm install` (This will install all the required packages.)
 
 ## Local Development
-- **For local development** (i.e: https://localhost:3000) authentication is handled by the app itself.
-- You need to update `app/shared/services/auth.service.ts` with the Authorization Token. (only for local development)
-  - Replace `<token>` with the authorization token (note:- Do not put Bearer)
-  - To get the token, you can use <a href="https://github.com/projectkudu/ARMClient">ArmClient</a> `ARMClient.exe token [tenant|subscription]`. This will copy token to clipboard.
-  - Replace `<resourceId>` with /subscriptions/{subscriptionId}/resourcegroups/{resourcegroup}/providers/Microsoft.Web/sites/{site}
-- **Build** using `npm run build`. Output directory: `/dist`
-- **Run** using `npm start`. 
-
-## Production Build
-- **Build** using `npm run aot`. Output directory: `/aot`
+- dotnet restore src\Diagnostics.sln
+- dotnet build src\Diagnostics.sln
+- dotnet test src\Diagnostics.Tests
 
 # Contributing
 
