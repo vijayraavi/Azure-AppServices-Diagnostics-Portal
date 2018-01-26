@@ -58,7 +58,7 @@ namespace Diagnostics.Tests.ScriptsTests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Skipping this test until we have data sources project")]
         public async void EntityInvoker_TestReferencesInjection()
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
