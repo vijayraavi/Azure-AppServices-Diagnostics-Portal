@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Diagnostic.DataProviders
+namespace Diagnostics.DataProviders
 {
     public class OperationDataCache
     {

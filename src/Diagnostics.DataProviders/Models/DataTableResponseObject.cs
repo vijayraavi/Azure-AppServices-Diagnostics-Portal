@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Diagnostic.DataProviders
+namespace Diagnostics.DataProviders
 {
     public class DataTableResponseObjectCollection
     {
