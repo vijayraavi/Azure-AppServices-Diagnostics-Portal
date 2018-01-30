@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace Diagnostic.DataProviders
+namespace Diagnostics.DataProviders
 {
     internal static class DataTableUtility
     {

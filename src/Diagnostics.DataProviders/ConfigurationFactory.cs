@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Diagnostic.DataProviders
+namespace Diagnostics.DataProviders
 {
     public interface IConfigurationFactory
     {
@@ -49,9 +49,22 @@ namespace Diagnostic.DataProviders
 
         protected override string GetValue(string prefix, string name)
         {
-            string kustoRegistryPath = $@"{_registryPath}\{prefix}";
+            string kustoRegistryPath = $@"{_registryPath}\DiagnosticDataProviders\{prefix}";
 
             return (string)Registry.GetValue(kustoRegistryPath, name, string.Empty);
+        }
+    }
+
+    public class MockDataProviderConfigurationFactory : DataProviderConfigurationFactory
+    {
+        protected override string GetValue(string prefix, string name)
+        {
+            if(prefix == "Kusto" && name == "DBName")
+            {
+                return "Mock";
+            }
+
+            return string.Empty;
         }
     }
 

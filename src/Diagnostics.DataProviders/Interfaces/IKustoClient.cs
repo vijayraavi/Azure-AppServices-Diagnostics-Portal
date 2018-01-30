@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Diagnostics.DataProviders
 {
-    public class DataSourcesConfiguration
+    public interface IKustoClient
     {
-        public KustoDataProviderConfiguration KustoConfiguration { get; set; }
+        Task<DataTable> ExecuteQueryAsync(string query, string stampName, string requestId = null);
     }
 }

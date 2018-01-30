@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 
-namespace Diagnostic.DataProviders
+namespace Diagnostics.DataProviders
 {
     [DataSourceConfiguration("Kusto")]
     public class KustoDataProviderConfiguration : IDataProviderConfiguration
@@ -49,6 +49,11 @@ namespace Diagnostic.DataProviders
         public void PostInitialize()
         {
             RegionSpecificClusterNameCollection = new ConcurrentDictionary<string, string>();
+
+            if (string.IsNullOrWhiteSpace(KustoRegionGroupings) && string.IsNullOrWhiteSpace(KustoClusterNameGroupings))
+            {
+                return;
+            }
 
             var separator = new char[] { ',' };
             var regionGroupingParts = KustoRegionGroupings.Split(separator);
