@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Diagnostic.DataProviders
+namespace Diagnostics.DataProviders
 {
-    public class KustoClient
+    public class KustoClient: IKustoClient
     {
         private KustoDataProviderConfiguration _configuration;
 
