@@ -29,6 +29,7 @@ namespace Diagnostics.Scripts
         {
             _entityMetaData = entityMetadata;
             _frameworkReferences = frameworkReferences;
+            CompilationOutput = Enumerable.Empty<string>();
         }
 
         public async Task InitializeEntryPointAsync()
@@ -42,9 +43,28 @@ namespace Diagnostics.Scripts
 
             if (IsCompilationSuccessful)
             {
-                EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
-                Assembly assembly = await _compilation.EmitAsync();
-                _entryPointMethodInfo = methodSignature.GetMethod(assembly);
+                try
+                {
+                    EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
+                    Assembly assembly = await _compilation.EmitAsync();
+                    _entryPointMethodInfo = methodSignature.GetMethod(assembly);
+                }
+                catch(Exception ex)
+                {
+                    if(ex is ScriptCompilationException)
+                    {
+                        IsCompilationSuccessful = false;
+
+                        if (!string.IsNullOrWhiteSpace(ex.Message))
+                        {
+                            CompilationOutput.Concat(new[] { ex.Message });
+                        }
+
+                        return;
+                    }
+
+                    throw ex;
+                }
             }
         }
 

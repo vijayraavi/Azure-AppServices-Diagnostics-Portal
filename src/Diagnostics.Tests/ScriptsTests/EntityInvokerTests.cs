@@ -25,6 +25,7 @@ namespace Diagnostics.Tests.ScriptsTests
         [Theory]
         [InlineData(ScriptErrorType.CompilationError)]
         [InlineData(ScriptErrorType.DuplicateEntryPoint)]
+        [InlineData(ScriptErrorType.MissingEntryPoint)]
         public async void EntityInvoker_TestInvokeWithCompilationError(ScriptErrorType errorType)
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
@@ -33,23 +34,6 @@ namespace Diagnostics.Tests.ScriptsTests
             using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>()))
             {
                 await Assert.ThrowsAsync<ScriptCompilationException>(async () =>
-                {
-                    await invoker.InitializeEntryPointAsync();
-                    int result = (int)await invoker.Invoke(new object[] { 3 });
-                    Assert.Equal(9, result);
-                });
-            }
-        }
-
-        [Fact]
-        public async void EntityInvoker_TestInvokeWithNoEntryPoint()
-        {
-            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.MissingEntryPoint);
-
-            using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>()))
-            {
-                await Assert.ThrowsAsync<EntryPointNotFoundException>(async () =>
                 {
                     await invoker.InitializeEntryPointAsync();
                     int result = (int)await invoker.Invoke(new object[] { 3 });

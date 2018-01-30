@@ -51,27 +51,14 @@ namespace Diagnostics.Tests.ScriptsTests
 
             Assert.Null(ex);
         }
-
-        [Fact]
-        public async void CompilationService_TestNoEntryPoint()
+        
+        [Theory]
+        [InlineData(ScriptErrorType.DuplicateEntryPoint)]
+        [InlineData(ScriptErrorType.MissingEntryPoint)]
+        public async void CompilationService_TestDuplicateEntryPoints(ScriptErrorType errorType)
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.MissingEntryPoint);
-
-            var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
-            ICompilation compilation = await serviceInstance.GetCompilationAsync();
-
-            Assert.Throws<EntryPointNotFoundException>(() =>
-            {
-                EntityMethodSignature methodSignature = compilation.GetEntryPointSignature();
-            });
-        }
-
-        [Fact]
-        public async void CompilationService_TestDuplicateEntryPoints()
-        {
-            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.DuplicateEntryPoint);
+            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(errorType);
 
             var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
             ICompilation compilation = await serviceInstance.GetCompilationAsync();
