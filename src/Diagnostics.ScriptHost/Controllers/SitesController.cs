@@ -19,7 +19,6 @@ namespace Diagnostics.ScriptHost.Controllers
     [Route(UriElements.SitesResource + UriElements.Diagnostics)]
     public class SitesController : Controller
     {
-        //[Route(UriElements.Query)]
         [HttpPost(UriElements.Query)]
         public async Task<IActionResult> Post(string subscriptionId, string resourceGroupName, string siteName, [FromBody]JToken jsonBody)
         {
@@ -42,7 +41,7 @@ namespace Diagnostics.ScriptHost.Controllers
                 Type = EntityType.Signal
             };
 
-            using(var invoker = new EntityInvoker(metaData, ImmutableArray.Create<string>())) // TODO : Feed in framework references
+            using(var invoker = new EntityInvoker(metaData, ScriptHelper.GetFrameworkReferences())) // TODO : Feed in framework references
             {
                 DiagnosticEntityResponse<DataTable> response = new DiagnosticEntityResponse<DataTable>();
 
