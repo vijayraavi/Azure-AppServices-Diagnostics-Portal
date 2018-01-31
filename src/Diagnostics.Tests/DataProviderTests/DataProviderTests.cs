@@ -34,11 +34,9 @@ namespace Diagnostics.Tests.ScriptsTests
             using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>("Diagnostics.DataProviders")))
             {
                 await invoker.InitializeEntryPointAsync();
-                DataTable result = (DataTable)await invoker.Invoke(new object[] { dataProviders });
+                DataTableResponseObject result = (DataTableResponseObject)await invoker.Invoke(new object[] { dataProviders });
 
-                Assert.NotNull(result); 
-
-                PrintDataTable(result);
+                Assert.NotNull(result);
             }
 
 
@@ -77,7 +75,7 @@ namespace Diagnostics.Tests.ScriptsTests
                         using System.Data;
                         using System.Threading.Tasks;
                         using Diagnostics.DataProviders;
-                        public async static Task<DataTable> Run(DataProviders dataProviders) {
+                        public async static Task<DataTableResponseObject> Run(DataProviders dataProviders) {
 
                             var dt = await dataProviders.Kusto.ExecuteQuery(""TestA"", string.Empty);
                             return dt;

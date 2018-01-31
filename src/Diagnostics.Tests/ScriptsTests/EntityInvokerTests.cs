@@ -41,24 +41,5 @@ namespace Diagnostics.Tests.ScriptsTests
                 });
             }
         }
-
-        [Fact(Skip = "Skipping this test until we have data sources project")]
-        public async void EntityInvoker_TestReferencesInjection()
-        {
-            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetScriptUsingNewtonSoft();
-            string newtonSoftPath = Directory.GetCurrentDirectory() + "\\Newtonsoft.Json.dll";
-            using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>(newtonSoftPath)))
-            {
-                Exception ex = await Record.ExceptionAsync(async () =>
-                 {
-                     await invoker.InitializeEntryPointAsync();
-                     await invoker.Invoke(new object[] { });
-                 });
-
-                Assert.Null(ex);
-                Assert.True(invoker.IsCompilationSuccessful);
-            }
-        }
     }
 }
