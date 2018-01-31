@@ -5,12 +5,14 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Diagnostics.DataProviders;
 using Diagnostics.ScriptHost.Models;
 using Diagnostics.ScriptHost.Utilities;
 using Diagnostics.Scripts;
 using Diagnostics.Scripts.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Diagnostics.ScriptHost.Controllers
@@ -41,14 +43,19 @@ namespace Diagnostics.ScriptHost.Controllers
                 Type = EntityType.Signal
             };
 
-            using(var invoker = new EntityInvoker(metaData, ScriptHelper.GetFrameworkReferences())) // TODO : Feed in framework references
+            // TODO : We want to get DataProvider or config based on Environment (dev or prod)
+            var configFactory = new AppSettingsDataProviderConfigurationFactory();
+            var config = configFactory.LoadConfigurations();
+            var dataProviders = new DataProviders.DataProviders(config);
+
+            using (var invoker = new EntityInvoker(metaData, ScriptHelper.GetFrameworkReferences(), ScriptHelper.GetFrameworkImports()))
             {
-                DiagnosticEntityResponse<DataTable> response = new DiagnosticEntityResponse<DataTable>();
+                QueryResponse<DataTableResponseObject> response = new QueryResponse<DataTableResponseObject>();
 
                 try
                 {
                     await invoker.InitializeEntryPointAsync();
-                    DataTable scriptResponse = (DataTable)await invoker.Invoke(new object[] { 1 });
+                    DataTableResponseObject scriptResponse = (DataTableResponseObject)await invoker.Invoke(new object[] { dataProviders });
                     
                     response.CompilationSucceeded = invoker.IsCompilationSuccessful;
                     response.CompilationOutput = invoker.CompilationOutput;

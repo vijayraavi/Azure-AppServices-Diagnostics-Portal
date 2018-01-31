@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Diagnostics.ScriptHost.Models
 {
-    public class DiagnosticEntityResponse<T>
+    public class QueryResponse<T>
     {
         public bool CompilationSucceeded;
 

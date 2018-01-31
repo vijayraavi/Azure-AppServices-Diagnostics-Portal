@@ -8,7 +8,7 @@ namespace Diagnostics.DataProviders
 {
     class MockKustoClient: IKustoClient
     {
-        public async Task<DataTable> ExecuteQueryAsync(string query, string stampName, string requestId = null)
+        public async Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null)
         {
             switch(query)
             {
@@ -16,21 +16,20 @@ namespace Diagnostics.DataProviders
                     return await GetTestA();
             }
 
-            return new DataTable("Empty");
+            return new DataTableResponseObject();
         }
 
-        private Task<DataTable> GetTestA()
+        private Task<DataTableResponseObject> GetTestA()
         {
-            var d = new DataTable("TableTitle");
-
-            d.Columns.Add("TIMESTAMP", typeof(DateTime));
-            d.Columns.Add("Value", typeof(int));
-
-            d.Rows.Add(DateTime.UtcNow.AddMinutes(-10), 5);
-            d.Rows.Add(DateTime.UtcNow.AddMinutes(-5), 8);
-            d.Rows.Add(DateTime.UtcNow, 12);
-
-            return Task.FromResult(d);
+            var testColumn = new DataTableResponseColumn();
+            testColumn.ColumnName = "TestColumn";
+            testColumn.ColumnType = "System.string";
+            testColumn.DataType = "string";
+            
+            var res = new DataTableResponseObject();
+            res.Columns = new List<DataTableResponseColumn>(new[] { testColumn });
+            
+            return Task.FromResult(res);
         }
     }
 }

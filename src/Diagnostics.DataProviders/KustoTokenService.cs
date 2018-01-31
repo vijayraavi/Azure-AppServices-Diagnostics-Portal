@@ -21,8 +21,7 @@ namespace Diagnostics.DataProviders
         public string AuthorizationToken => _authorizationToken;
 
         private KustoTokenService() : base()
-        {
-            
+        {   
         }
 
         public void Initialize(KustoDataProviderConfiguration configuration)

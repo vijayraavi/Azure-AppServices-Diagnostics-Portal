@@ -17,6 +17,7 @@ namespace Diagnostics.Scripts
     {
         private EntityMetadata _entityMetaData;
         private ImmutableArray<string> _frameworkReferences;
+        private ImmutableArray<string> _frameworkImports;
         private ICompilation _compilation;
         private ImmutableArray<Diagnostic> _diagnostics;
         private MethodInfo _entryPointMethodInfo;
@@ -29,7 +30,17 @@ namespace Diagnostics.Scripts
         {
             _entityMetaData = entityMetadata;
             _frameworkReferences = frameworkReferences;
+            _frameworkImports = ImmutableArray.Create<string>();
             CompilationOutput = Enumerable.Empty<string>();
+        }
+
+        public EntityInvoker(EntityMetadata entityMetadata, ImmutableArray<string> frameworkReferences, ImmutableArray<string> frameworkImports)
+        {
+            _entityMetaData = entityMetadata;
+            _frameworkImports = frameworkImports;
+            _frameworkReferences = frameworkReferences;
+            CompilationOutput = Enumerable.Empty<string>();
+
         }
 
         public async Task InitializeEntryPointAsync()
@@ -96,6 +107,11 @@ namespace Diagnostics.Scripts
             {
                 scriptOptions = ScriptOptions.Default
                     .WithReferences(frameworkReferences);
+            }
+
+            if (!_frameworkImports.IsDefaultOrEmpty)
+            {
+                scriptOptions = scriptOptions.WithImports(_frameworkImports);
             }
 
             return scriptOptions;
