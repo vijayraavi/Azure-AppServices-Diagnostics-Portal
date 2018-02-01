@@ -20,7 +20,8 @@ namespace Diagnostics.Tests.ScriptsTests
         {
             return @"
                 public static int Run(int x) {
-                    return x * x;
+                    x = x * x;
+                    return x;
                 }";
         }
         

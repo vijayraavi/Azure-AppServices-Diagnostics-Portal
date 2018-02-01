@@ -10,13 +10,15 @@ namespace Diagnostics.ScriptHost.Utilities
     {
         public static ImmutableArray<string> GetFrameworkReferences() => ImmutableArray.Create(
                 "System.Data",
-                "Diagnostics.DataProviders"
+                "Diagnostics.DataProviders",
+                "Diagnostics.ScriptHost"
             );
 
         public static ImmutableArray<string> GetFrameworkImports() => ImmutableArray.Create(
                 "System.Data",
                 "System.Threading.Tasks",
-                "Diagnostics.DataProviders"
+                "Diagnostics.DataProviders",
+                "Diagnostics.ScriptHost.Models"
             );
     }
 }

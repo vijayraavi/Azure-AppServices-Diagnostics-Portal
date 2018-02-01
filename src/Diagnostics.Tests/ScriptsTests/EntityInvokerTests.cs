@@ -16,8 +16,10 @@ namespace Diagnostics.Tests.ScriptsTests
         {
             using (EntityInvoker invoker = new EntityInvoker(ScriptTestDataHelper.GetRandomMetadata(), ImmutableArray.Create<string>()))
             {
+                int par = 3;
                 await invoker.InitializeEntryPointAsync();
-                int result = (int)await invoker.Invoke(new object[] { 3 });
+                object[] args = new object[] { par };
+                int result = (int)await invoker.Invoke(args);
                 Assert.Equal(9, result);
             }
         }

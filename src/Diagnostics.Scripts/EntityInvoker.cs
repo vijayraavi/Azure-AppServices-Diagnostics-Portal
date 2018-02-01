@@ -40,7 +40,6 @@ namespace Diagnostics.Scripts
             _frameworkImports = frameworkImports;
             _frameworkReferences = frameworkReferences;
             CompilationOutput = Enumerable.Empty<string>();
-
         }
 
         public async Task InitializeEntryPointAsync()
@@ -88,7 +87,7 @@ namespace Diagnostics.Scripts
 
             int actualParameterCount = _entryPointMethodInfo.GetParameters().Length;
             parameters = parameters.Take(actualParameterCount).ToArray();
-
+            
             object result = _entryPointMethodInfo.Invoke(null, parameters);
 
             if (result is Task)

@@ -72,9 +72,7 @@ namespace Diagnostics.Tests.ScriptsTests
                 case "TestA":
                 default:
                     return @"
-                        using System.Data;
-                        using System.Threading.Tasks;
-                        using Diagnostics.DataProviders;
+                       
                         public async static Task<DataTableResponseObject> Run(DataProviders dataProviders) {
 
                             var dt = await dataProviders.Kusto.ExecuteQuery(""TestA"", string.Empty);

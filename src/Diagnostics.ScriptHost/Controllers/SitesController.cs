@@ -22,7 +22,7 @@ namespace Diagnostics.ScriptHost.Controllers
     public class SitesController : Controller
     {
         [HttpPost(UriElements.Query)]
-        public async Task<IActionResult> Post(string subscriptionId, string resourceGroupName, string siteName, [FromBody]JToken jsonBody)
+        public async Task<IActionResult> Post(string subscriptionId, string resourceGroupName, string siteName, string[] hostNames, string stampName, [FromBody]JToken jsonBody, string startTime = null, string endTime = null, string timeGrain = null)
         {
             if (jsonBody == null)
             {
@@ -36,6 +36,25 @@ namespace Diagnostics.ScriptHost.Controllers
                 return BadRequest("Missing script from body");
             }
 
+            if (hostNames == null || hostNames.Length <= 0)
+            {
+                return BadRequest("Invalid or empty hostnames");
+            }
+
+            if (string.IsNullOrWhiteSpace(stampName))
+            {
+                return BadRequest("Invalid or empty stampName");
+            }
+
+            DateTime startTimeUtc, endTimeUtc;
+            TimeSpan timeGrainTimeSpan;
+            string errorMessage;
+
+            if (!DateTimeHelper.PrepareStartEndTimeWithTimeGrain(startTime, endTime, timeGrain, out startTimeUtc, out endTimeUtc, out timeGrainTimeSpan, out errorMessage))
+            {
+                return BadRequest(errorMessage);
+            }
+
             EntityMetadata metaData = new EntityMetadata()
             {
                 Name = "On Demand Query",
@@ -44,22 +63,39 @@ namespace Diagnostics.ScriptHost.Controllers
             };
 
             // TODO : We want to get DataProvider or config based on Environment (dev or prod)
-            var configFactory = new AppSettingsDataProviderConfigurationFactory();
+            //var configFactory = new AppSettingsDataProviderConfigurationFactory();
+            var configFactory = new RegistryDataProviderConfigurationFactory(HostConstants.RegistryRootPath);
             var config = configFactory.LoadConfigurations();
             var dataProviders = new DataProviders.DataProviders(config);
+            
+            SiteResource resource = new SiteResource()
+            {
+                SubscriptionId = subscriptionId,
+                ResourceGroup = resourceGroupName,
+                SiteName = siteName,
+                HostNames = hostNames,
+                Stamp = stampName
+                // TODO : Fill in Tenant
+            };
+
+            OperationContext cxt = new OperationContext(
+                resource,
+                DateTimeHelper.GetDateTimeInUtcFormat(startTimeUtc).ToString(HostConstants.KustoTimeFormat),
+                DateTimeHelper.GetDateTimeInUtcFormat(endTimeUtc).ToString(HostConstants.KustoTimeFormat)
+            );
 
             using (var invoker = new EntityInvoker(metaData, ScriptHelper.GetFrameworkReferences(), ScriptHelper.GetFrameworkImports()))
             {
-                QueryResponse<DataTableResponseObject> response = new QueryResponse<DataTableResponseObject>();
+                QueryResponse<SignalResponse> response = new QueryResponse<SignalResponse>();
+                response.InvocationOutput = new SignalResponse();
 
                 try
                 {
                     await invoker.InitializeEntryPointAsync();
-                    DataTableResponseObject scriptResponse = (DataTableResponseObject)await invoker.Invoke(new object[] { dataProviders });
-                    
                     response.CompilationSucceeded = invoker.IsCompilationSuccessful;
                     response.CompilationOutput = invoker.CompilationOutput;
-                    response.InvocationOutput = scriptResponse;
+                    response.InvocationOutput = (SignalResponse)await invoker.Invoke(new object[] { dataProviders, cxt, response.InvocationOutput });
+                    
                     return Ok(response);
                 }
                 catch(Exception ex)
