@@ -19,6 +19,7 @@ namespace Diagnostics.ScriptHost
         {
             Configuration = configuration;
 
+            //var configFactory = new AppSettingsDataProviderConfigurationFactory();
             var configFactory = new RegistryDataProviderConfigurationFactory(HostConstants.RegistryRootPath);
             var config = configFactory.LoadConfigurations();
             KustoTokenService.Instance.Initialize(config.KustoConfiguration);

@@ -135,6 +135,8 @@ namespace Diagnostics.Scripts
 
         public void Dispose()
         {
+            _compilation = null;
+            _entryPointMethodInfo = null;
         }
     }
 }
