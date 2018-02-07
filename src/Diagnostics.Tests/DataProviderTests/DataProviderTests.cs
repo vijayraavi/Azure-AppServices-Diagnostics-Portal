@@ -31,7 +31,7 @@ namespace Diagnostics.Tests.ScriptsTests
 
             var dataProviders = new DataProviders.DataProviders(config);
 
-            using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>("Diagnostics.DataProviders")))
+            using (EntityInvoker invoker = new EntityInvoker(metadata, ScriptTestDataHelper.GetFrameworkReferences(), ScriptTestDataHelper.GetFrameworkImports()))
             {
                 await invoker.InitializeEntryPointAsync();
                 DataTableResponseObject result = (DataTableResponseObject)await invoker.Invoke(new object[] { dataProviders });

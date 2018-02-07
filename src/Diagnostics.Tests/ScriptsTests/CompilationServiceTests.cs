@@ -51,7 +51,38 @@ namespace Diagnostics.Tests.ScriptsTests
 
             Assert.Null(ex);
         }
-        
+
+        [Fact]
+        public async void CompilationService_TestAttributesInEntryPoint()
+        {
+            TestAttribute attr = new TestAttribute()
+            {
+                Name = "Test Definition"
+            };
+
+            var metaData = ScriptTestDataHelper.GetRandomMetadata();
+            metaData.scriptText = ScriptTestDataHelper.GetAttributedEntryPointMethodScript(attr);
+
+            var options = ScriptOptions.Default.WithReferences("Diagnostics.Tests").WithImports("Diagnostics.Tests.ScriptsTests");
+
+            var serviceInstance = CompilationServiceFactory.CreateService(metaData, options);
+            ICompilation compilation = await serviceInstance.GetCompilationAsync();
+
+            EntityMethodSignature methodSignature = null;
+            Exception ex = Record.Exception(() =>
+            {
+                methodSignature = compilation.GetEntryPointSignature();
+
+            });
+
+            Assert.Null(ex);
+            Assert.NotNull(methodSignature);
+            Assert.NotEmpty(methodSignature.Attributes);
+
+            var firstAttribute = methodSignature.Attributes.First();
+            Assert.Equal(attr.Name, firstAttribute.NamedArguments.First().Value.Value.ToString());
+        }
+
         [Theory]
         [InlineData(ScriptErrorType.DuplicateEntryPoint)]
         [InlineData(ScriptErrorType.MissingEntryPoint)]

@@ -63,12 +63,13 @@ namespace Diagnostics.Scripts.CompilationService
             }
 
             var methodParameters = entryPointReference.Parameters.Select(p => new EntityParameter(p.Name, GetFullTypeName(p.Type), p.IsOptional, p.RefKind));
-
+            var attributes = entryPointReference.GetAttributes();
             return new EntityMethodSignature(
                 entryPointReference.ContainingType.ToDisplayString(),
                 entryPointReference.Name,
                 ImmutableArray.CreateRange(methodParameters.ToArray()),
-                GetFullTypeName(entryPointReference.ReturnType));
+                GetFullTypeName(entryPointReference.ReturnType),
+                attributes);
         }
 
         public Task<Assembly> EmitAsync()
