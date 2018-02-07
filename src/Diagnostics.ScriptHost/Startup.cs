@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Diagnostics.DataProviders;
+using Diagnostics.ScriptHost.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,11 @@ namespace Diagnostics.ScriptHost
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            //var configFactory = new AppSettingsDataProviderConfigurationFactory();
+            var configFactory = new RegistryDataProviderConfigurationFactory(HostConstants.RegistryRootPath);
+            var config = configFactory.LoadConfigurations();
+            KustoTokenService.Instance.Initialize(config.KustoConfiguration);
         }
 
         public IConfiguration Configuration { get; }

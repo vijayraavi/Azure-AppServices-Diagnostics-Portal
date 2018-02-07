@@ -5,29 +5,29 @@ using System.Text;
 
 namespace Diagnostics.ScriptHost.Models
 {
-    class SignalResponse
+    public class SignalResponse
     {
-        public SignalMetaData MetaData { get; set; }
+        public SignalMetaData Metadata { get; set; }
 
-        public List<DiagnosticData> Data { get; set; }
+        public List<DiagnosticData> Dataset { get; set; }
 
         public SignalResponse()
         {
-            MetaData = new SignalMetaData();
-            Data = new List<DiagnosticData>();
+            Metadata = new SignalMetaData();
+            Dataset = new List<DiagnosticData>();
         }
     }
 
     public class DiagnosticData
     {
-        public DataTableResponseObject DataTable { get; set; }
+        public DataTableResponseObject Table { get; set; }
 
-        public RenderingProperties RenderingProperties { get; set; }
+        public Rendering RenderingProperties { get; set; }
 
         public DiagnosticData()
         {
-            DataTable = new DataTableResponseObject();
-            RenderingProperties = new RenderingProperties();
+            Table = new DataTableResponseObject();
+            RenderingProperties = new Rendering();
         }
     }
 
@@ -35,17 +35,27 @@ namespace Diagnostics.ScriptHost.Models
     {
         public string Id { get; set; }
 
-        public string DisplayName { get; set; }
+        public string Name { get; set; }
 
         public string Description { get; set; }
     }
 
-    public class RenderingProperties
+    public class Rendering
     {
-        public SignalGraphType SignalGraphType { get; set; }
+        public GraphType RenderingType { get; set; }
+
+        public Rendering()
+        {
+            RenderingType = GraphType.TimeSeries;
+        }
+
+        public Rendering(GraphType type)
+        {
+            RenderingType = type;
+        }
     }
 
-    public enum SignalGraphType
+    public enum GraphType
     {
         NoGraph = 0,
         Table,

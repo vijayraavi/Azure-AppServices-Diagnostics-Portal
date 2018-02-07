@@ -59,16 +59,17 @@ namespace Diagnostics.Scripts.CompilationService
 
             if (entryPointReference == default(IMethodSymbol))
             {
-                throw new EntryPointNotFoundException($"No Entry point found. Entry point resoultion type : {_resolutionType} , value : {_entryPointName}");
+                throw new ScriptCompilationException($"No Entry point found. Entry point resoultion type : {_resolutionType} , value : {_entryPointName}");
             }
 
             var methodParameters = entryPointReference.Parameters.Select(p => new EntityParameter(p.Name, GetFullTypeName(p.Type), p.IsOptional, p.RefKind));
-
+            var attributes = entryPointReference.GetAttributes();
             return new EntityMethodSignature(
                 entryPointReference.ContainingType.ToDisplayString(),
                 entryPointReference.Name,
                 ImmutableArray.CreateRange(methodParameters.ToArray()),
-                GetFullTypeName(entryPointReference.ReturnType));
+                GetFullTypeName(entryPointReference.ReturnType),
+                attributes);
         }
 
         public Task<Assembly> EmitAsync()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -13,13 +14,15 @@ namespace Diagnostics.Scripts.Models
         private readonly string _parentTypeName;
         private readonly string _methodName;
         private readonly string _returnTypeName;
+        private readonly ImmutableArray<AttributeData> _attributes;
 
-        public EntityMethodSignature(string parentTypeName, string methodName, ImmutableArray<EntityParameter> parameters, string returnTypeName)
+        public EntityMethodSignature(string parentTypeName, string methodName, ImmutableArray<EntityParameter> parameters, string returnTypeName, ImmutableArray<AttributeData> attributes)
         {
             _parameters = parameters;
             _parentTypeName = parentTypeName;
             _returnTypeName = returnTypeName;
             _methodName = methodName;
+            _attributes = attributes;
         }
 
         public ImmutableArray<EntityParameter> Parameters => _parameters;
@@ -29,6 +32,8 @@ namespace Diagnostics.Scripts.Models
         public string MethodName => _methodName;
 
         public string ReturnTypeName => _returnTypeName;
+
+        public ImmutableArray<AttributeData> Attributes => _attributes;
 
         public MethodInfo GetMethod(Assembly assembly)
         {

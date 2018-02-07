@@ -1,6 +1,7 @@
 ﻿using Diagnostics.Scripts.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 namespace Diagnostics.Tests.ScriptsTests
 {
@@ -20,27 +21,21 @@ namespace Diagnostics.Tests.ScriptsTests
         {
             return @"
                 public static int Run(int x) {
-                    return x * x;
+                    x = x * x;
+                    return x;
                 }";
         }
 
-        public static string GetScriptUsingNewtonSoft()
+        public static string GetAttributedEntryPointMethodScript(TestAttribute attr)
         {
-            return @"
-                using Newtonsoft;
-
-                public static string Run() {
-
-                    JArray array = new JArray();
-                    array.Add(""Some text"");
-                    JObject o = new JObject();
-                    o[""MyArray""] = array;
-
-                    string json = o.ToString();
-                    return json;
-                }";
+            return $@"
+                [TestAttribute(Name=""{attr.Name}"")]
+                public static int Run(int x) {{
+                    x = x * x;
+                    return x;
+                }}";
         }
-        
+
         public static string GetInvalidCsxScript(ScriptErrorType errorType)
         {
             switch (errorType)
@@ -66,5 +61,16 @@ namespace Diagnostics.Tests.ScriptsTests
                     }";
             }
         }
+
+        public static ImmutableArray<string> GetFrameworkReferences() => ImmutableArray.Create(
+                "System.Data",
+                "Diagnostics.DataProviders"
+            );
+
+        public static ImmutableArray<string> GetFrameworkImports() => ImmutableArray.Create(
+                "System.Data",
+                "System.Threading.Tasks",
+                "Diagnostics.DataProviders"
+            );
     }
 }

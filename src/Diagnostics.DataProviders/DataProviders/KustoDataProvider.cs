@@ -19,7 +19,7 @@ namespace Diagnostics.DataProviders
             _kustoClient = KustoClientFactory.GetKustoClient(configuration);
         }
 
-        public async Task<DataTable> ExecuteQuery(string query, string stampName)
+        public async Task<DataTableResponseObject> ExecuteQuery(string query, string stampName)
         {
             return await _kustoClient.ExecuteQueryAsync(query, stampName);
             

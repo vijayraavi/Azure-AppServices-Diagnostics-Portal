@@ -53,25 +53,43 @@ namespace Diagnostics.Tests.ScriptsTests
         }
 
         [Fact]
-        public async void CompilationService_TestNoEntryPoint()
+        public async void CompilationService_TestAttributesInEntryPoint()
         {
-            EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.MissingEntryPoint);
+            TestAttribute attr = new TestAttribute()
+            {
+                Name = "Test Definition"
+            };
 
-            var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
+            var metaData = ScriptTestDataHelper.GetRandomMetadata();
+            metaData.scriptText = ScriptTestDataHelper.GetAttributedEntryPointMethodScript(attr);
+
+            var options = ScriptOptions.Default.WithReferences("Diagnostics.Tests").WithImports("Diagnostics.Tests.ScriptsTests");
+
+            var serviceInstance = CompilationServiceFactory.CreateService(metaData, options);
             ICompilation compilation = await serviceInstance.GetCompilationAsync();
 
-            Assert.Throws<EntryPointNotFoundException>(() =>
+            EntityMethodSignature methodSignature = null;
+            Exception ex = Record.Exception(() =>
             {
-                EntityMethodSignature methodSignature = compilation.GetEntryPointSignature();
+                methodSignature = compilation.GetEntryPointSignature();
+
             });
+
+            Assert.Null(ex);
+            Assert.NotNull(methodSignature);
+            Assert.NotEmpty(methodSignature.Attributes);
+
+            var firstAttribute = methodSignature.Attributes.First();
+            Assert.Equal(attr.Name, firstAttribute.NamedArguments.First().Value.Value.ToString());
         }
 
-        [Fact]
-        public async void CompilationService_TestDuplicateEntryPoints()
+        [Theory]
+        [InlineData(ScriptErrorType.DuplicateEntryPoint)]
+        [InlineData(ScriptErrorType.MissingEntryPoint)]
+        public async void CompilationService_TestDuplicateEntryPoints(ScriptErrorType errorType)
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.DuplicateEntryPoint);
+            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(errorType);
 
             var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
             ICompilation compilation = await serviceInstance.GetCompilationAsync();
