@@ -12,7 +12,7 @@ namespace Diagnostics.Tests.ScriptsTests
             return new EntityMetadata()
             {
                 Name = "RandomEntity",
-                scriptText = GetNumSqaureScript(),
+                ScriptText = GetNumSqaureScript(),
                 Type = type
             };
         }

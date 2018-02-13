@@ -29,7 +29,7 @@ namespace Diagnostics.Tests.ScriptsTests
         public async void CompilationService_TestScriptCompilationFailure()
         {
             EntityMetadata metaData = ScriptTestDataHelper.GetRandomMetadata(EntityType.Detector);
-            metaData.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.CompilationError);
+            metaData.ScriptText = ScriptTestDataHelper.GetInvalidCsxScript(ScriptErrorType.CompilationError);
 
             var serviceInstance = CompilationServiceFactory.CreateService(metaData, ScriptOptions.Default);
             ICompilation compilation = await serviceInstance.GetCompilationAsync();
@@ -61,7 +61,7 @@ namespace Diagnostics.Tests.ScriptsTests
             };
 
             var metaData = ScriptTestDataHelper.GetRandomMetadata();
-            metaData.scriptText = ScriptTestDataHelper.GetAttributedEntryPointMethodScript(attr);
+            metaData.ScriptText = ScriptTestDataHelper.GetAttributedEntryPointMethodScript(attr);
 
             var options = ScriptOptions.Default.WithReferences("Diagnostics.Tests").WithImports("Diagnostics.Tests.ScriptsTests");
 
@@ -89,7 +89,7 @@ namespace Diagnostics.Tests.ScriptsTests
         public async void CompilationService_TestDuplicateEntryPoints(ScriptErrorType errorType)
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(errorType);
+            metadata.ScriptText = ScriptTestDataHelper.GetInvalidCsxScript(errorType);
 
             var serviceInstance = CompilationServiceFactory.CreateService(metadata, ScriptOptions.Default);
             ICompilation compilation = await serviceInstance.GetCompilationAsync();

@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Diagnostics.DataProviders
 {
-    internal static class DataTableUtility
+    public static class DataTableUtility
     {
-        internal static DataTable GetDataTable(DataTableResponseObject dataTableResponse)
+        public static DataTable GetDataTable(DataTableResponseObject dataTableResponse)
         {
             if (dataTableResponse == null)
             {

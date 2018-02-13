@@ -24,7 +24,7 @@ namespace Diagnostics.Tests.ScriptsTests
         public async void DataProvders_TestKusto()
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = GetDataProviderScript("TestA");
+            metadata.ScriptText = GetDataProviderScript("TestA");
 
             var configFactory = new MockDataProviderConfigurationFactory();
             var config = configFactory.LoadConfigurations();
@@ -38,8 +38,6 @@ namespace Diagnostics.Tests.ScriptsTests
 
                 Assert.NotNull(result);
             }
-
-
         }
 
         private void PrintDataTable(DataTable dt)

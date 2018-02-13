@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Diagnostics.ScriptHost.Utilities;
 
 namespace Diagnostics.ScriptHost.Models
 {
@@ -13,11 +10,14 @@ namespace Diagnostics.ScriptHost.Models
 
         public string EndTime;
 
+        public string TimeGrain;
+
         public OperationContext(SiteResource resource, string startTimeStr, string endTimeStr)
         {
             Resource = resource;
             StartTime = startTimeStr;
             EndTime = endTimeStr;
+            TimeGrain = HostConstants.DefaultTimeGrainInMinutes.ToString();
         }
     }
 }

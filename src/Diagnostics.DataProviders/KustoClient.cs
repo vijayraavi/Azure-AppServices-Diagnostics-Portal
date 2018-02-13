@@ -43,7 +43,7 @@ namespace Diagnostics.DataProviders
             _configuration = configuration;
         }
 
-        public async Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null)
+        public async Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null, string operationName = null)
         {
             string appserviceRegion = ParseRegionFromStamp(stampName);
 

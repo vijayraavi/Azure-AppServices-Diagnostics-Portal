@@ -1,40 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Diagnostics.DataProviders;
-using Diagnostics.ScriptHost.Utilities;
+﻿using Diagnostics.DataProviders;
+using Diagnostics.ScriptHost.DataProviderServices;
+using Diagnostics.ScriptHost.Models;
+using Diagnostics.ScriptHost.SourceWatcher;
+using Diagnostics.ScriptHost.SourceWatcher.Interfaces;
+using Diagnostics.Scripts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System;
 
 namespace Diagnostics.ScriptHost
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-
-            //var configFactory = new AppSettingsDataProviderConfigurationFactory();
-            var configFactory = new RegistryDataProviderConfigurationFactory(HostConstants.RegistryRootPath);
-            var config = configFactory.LoadConfigurations();
-            KustoTokenService.Instance.Initialize(config.KustoConfiguration);
-        }
-
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        public IHostingEnvironment Environment { get; }
+
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        {
+            Configuration = configuration;
+            Environment = env;
+        }
+        
+        // Registers services with container
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSingleton<ICacheService<string, Tuple<Definition, EntityInvoker>>, CompilationCache<string, Tuple<Definition, EntityInvoker>>>();
+            services.AddSingleton<IDataSourcesConfigurationService, DataSourcesConfigurationService>();
+            services.AddSingleton<ISourceWatcher, LocalFileSystemSourceWatcherService>();
+            services.AddSingleton<ITenantIdService, TenantIdService>();
+
+            // TODO : Not sure what's the right place for the following code piece.
+            #region Custom Start up Code
+
+            var servicesProvider = services.BuildServiceProvider();
+            var dataSourcesConfigService = servicesProvider.GetService<IDataSourcesConfigurationService>();
+            KustoTokenService.Instance.Initialize(dataSourcesConfigService.Config.KustoConfiguration);
+            
+            #endregion
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        // Adds middleware to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ISourceWatcher sourceWatcher)
         {
             if (env.IsDevelopment())
             {

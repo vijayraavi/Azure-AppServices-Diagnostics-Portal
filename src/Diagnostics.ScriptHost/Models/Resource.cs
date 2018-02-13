@@ -1,26 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Diagnostics.ScriptHost.Models
 {
-    public class Resource
+    public interface IResource
     {
     }
 
-    public class SiteResource
+    public abstract class Resource : IResource
     {
         public string SubscriptionId;
 
         public string ResourceGroup;
 
+        public IEnumerable<string> TenantIdList;
+    }
+
+    public sealed class SiteResource : Resource
+    {
         public string SiteName;
 
         public IEnumerable<string> HostNames;
 
         public string Stamp;
 
-        public string TenantId;
+        public string SourceMoniker;
     }
 }

@@ -10,7 +10,7 @@ namespace Diagnostics.DataProviders
 {
     public interface IConfigurationFactory
     {
-        //KustoDataProviderConfiguration GetKustoConfiguration();
+        DataSourcesConfiguration LoadConfigurations();
     }
 
     public class AppSettingsDataProviderConfigurationFactory : DataProviderConfigurationFactory

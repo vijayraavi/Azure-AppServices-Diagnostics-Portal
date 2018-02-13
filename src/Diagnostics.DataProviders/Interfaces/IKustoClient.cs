@@ -8,6 +8,6 @@ namespace Diagnostics.DataProviders
 {
     public interface IKustoClient
     {
-        Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null);
+        Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null, string operationName = null);
     }
 }

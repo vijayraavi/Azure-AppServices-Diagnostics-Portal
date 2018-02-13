@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Diagnostics.ScriptHost.Utilities
 {
-    public class DateTimeHelper
+    internal class DateTimeHelper
     {
         public static bool PrepareStartEndTimeWithTimeGrain(string startTime, string endTime, string timeGrain, out DateTime startTimeUtc, out DateTime endTimeUtc, out TimeSpan timeGrainTimeSpan, out string errorMessage)
         {

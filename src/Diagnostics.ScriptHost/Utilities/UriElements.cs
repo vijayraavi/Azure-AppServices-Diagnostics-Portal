@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Diagnostics.ScriptHost.Utilities
+﻿namespace Diagnostics.ScriptHost.Utilities
 {
     public class UriElements
     {
@@ -17,5 +12,7 @@ namespace Diagnostics.ScriptHost.Utilities
         public const string Diagnostics = "/diagnostics";
 
         public const string Query = "query";
+        public const string Detectors = "detectors";
+        public const string DetectorResource = "/{detectorId}";
     }
 }

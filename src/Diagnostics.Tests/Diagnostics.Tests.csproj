@@ -17,7 +17,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Diagnostics.DataProviders\Diagnostics.DataProviders.csproj" />
+    <ProjectReference Include="..\Diagnostics.ScriptHost\Diagnostics.ScriptHost.csproj" />
     <ProjectReference Include="..\Diagnostics.Scripts\Diagnostics.Scripts.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="SourceWatcherTests\TestCsxScripts\" />
+  </ItemGroup>
+
+  <Target Name="AfterBuildScript" AfterTargets="Build">
+    <Copy SourceFiles="SourceWatcherTests\LocalFileSystemSourceSettings.json" DestinationFolder="$(OutputPath)" ContinueOnError="true" />
+    <Copy SourceFiles="SourceWatcherTests\TestCsxScripts\TestFile1.csx" DestinationFolder="$(OutputPath)\TestCsxScripts" ContinueOnError="true" />
+    <Copy SourceFiles="SourceWatcherTests\TestCsxScripts\TestFile2.csx" DestinationFolder="$(OutputPath)\TestCsxScripts" ContinueOnError="true" />
+    <Copy SourceFiles="SourceWatcherTests\TestCsxScripts\TestFile3-CompilationError.csx" DestinationFolder="$(OutputPath)\TestCsxScripts" ContinueOnError="true" />
+  </Target>
 
 </Project>
