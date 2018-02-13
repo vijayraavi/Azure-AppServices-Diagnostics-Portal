@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="SourceWatcher\BlobStorage\" />
+    <Compile Remove="SourceWatcher\BlobStorage\**" />
+    <Content Remove="SourceWatcher\BlobStorage\**" />
+    <EmbeddedResource Remove="SourceWatcher\BlobStorage\**" />
+    <None Remove="SourceWatcher\BlobStorage\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
