@@ -29,7 +29,7 @@ namespace Diagnostics.Tests.ScriptsTests
         public async void EntityInvoker_TestInvokeWithCompilationError(ScriptErrorType errorType)
         {
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
-            metadata.scriptText = ScriptTestDataHelper.GetInvalidCsxScript(errorType);
+            metadata.ScriptText = ScriptTestDataHelper.GetInvalidCsxScript(errorType);
 
             using (EntityInvoker invoker = new EntityInvoker(metadata, ImmutableArray.Create<string>()))
             {

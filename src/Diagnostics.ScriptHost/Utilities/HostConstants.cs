@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Diagnostics.ScriptHost.Utilities
 {
-    public class HostConstants
+    internal class HostConstants
     {
         public const string RegistryRootPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\IIS Extensions\Web Hosting Framework";
+
+        public const string ScriptSourceConfigRegistryRootPath = RegistryRootPath + @"\ScriptSourceConfig";
+
+        public const string LocalSourceDirectoryKey = "LocalSourceDirectory";
 
         // Ideally, this should move to Data Providers
 

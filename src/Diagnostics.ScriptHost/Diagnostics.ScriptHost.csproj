@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="SourceWatcher\BlobStorage\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

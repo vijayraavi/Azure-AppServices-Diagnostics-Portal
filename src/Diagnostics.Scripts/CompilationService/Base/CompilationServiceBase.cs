@@ -21,7 +21,7 @@ namespace Diagnostics.Scripts.CompilationService
 
         public Task<ICompilation> GetCompilationAsync()
         {
-            Script<object> script = CSharpScript.Create<object>(_entityMetadata.scriptText, _scriptOptions);
+            Script<object> script = CSharpScript.Create<object>(_entityMetadata.ScriptText, _scriptOptions);
             return CreateCompilationObject(GetScriptCompilation(script));
         }
 

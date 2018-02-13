@@ -10,6 +10,16 @@ namespace Diagnostics.Scripts.Models
 
         public string Name;
 
-        public string scriptText;
+        public string ScriptText;
+
+        public EntityMetadata()
+        {
+        }
+
+        public EntityMetadata(string scriptText, EntityType type = EntityType.Signal)
+        {
+            ScriptText = scriptText;
+            Type = type;
+        }
     }
 }

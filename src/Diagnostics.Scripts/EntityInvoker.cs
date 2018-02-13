@@ -21,10 +21,13 @@ namespace Diagnostics.Scripts
         private ICompilation _compilation;
         private ImmutableArray<Diagnostic> _diagnostics;
         private MethodInfo _entryPointMethodInfo;
+        private ImmutableArray<AttributeData> _attributes;
 
         public bool IsCompilationSuccessful { get; private set; }
 
         public IEnumerable<string> CompilationOutput { get; private set; }
+
+        public ImmutableArray<AttributeData> Attributes => _attributes;
 
         public EntityInvoker(EntityMetadata entityMetadata, ImmutableArray<string> frameworkReferences)
         {
@@ -58,6 +61,7 @@ namespace Diagnostics.Scripts
                     EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
                     Assembly assembly = await _compilation.EmitAsync();
                     _entryPointMethodInfo = methodSignature.GetMethod(assembly);
+                    _attributes = methodSignature.Attributes;
                 }
                 catch(Exception ex)
                 {

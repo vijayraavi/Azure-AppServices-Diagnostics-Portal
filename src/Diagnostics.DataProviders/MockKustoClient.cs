@@ -8,8 +8,20 @@ namespace Diagnostics.DataProviders
 {
     class MockKustoClient: IKustoClient
     {
-        public async Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null)
+        public async Task<DataTableResponseObject> ExecuteQueryAsync(string query, string stampName, string requestId = null, string operationName = null)
         {
+            if (!string.IsNullOrWhiteSpace(operationName))
+            {
+                switch (operationName.ToLower())
+                {
+                    case "gettenantidforstamp":
+                        return await GetFakeTenantIdResults();
+
+                    default:
+                        return await GetTestA();
+                }
+            }
+
             switch(query)
             {
                 case "TestA":
@@ -17,6 +29,29 @@ namespace Diagnostics.DataProviders
             }
 
             return new DataTableResponseObject();
+        }
+
+        private Task<DataTableResponseObject> GetFakeTenantIdResults()
+        {
+            var tenantColumn = new DataTableResponseColumn();
+            tenantColumn.ColumnName = "Tenant";
+            tenantColumn.ColumnType = "string";
+            tenantColumn.DataType = "String";
+
+            var publicHostColumn = new DataTableResponseColumn();
+            publicHostColumn.ColumnName = "PublicHost";
+            publicHostColumn.ColumnType = "string";
+            publicHostColumn.DataType = "String";
+
+            var res = new DataTableResponseObject
+            {
+                Columns = new List<DataTableResponseColumn>(new[] { tenantColumn, publicHostColumn })
+            };
+
+            res.Rows = new string[1][];
+            res.Rows[0] = new string[2] { Guid.NewGuid().ToString(), "fakestamp.cloudapp.net" };
+            
+            return Task.FromResult(res);
         }
 
         private Task<DataTableResponseObject> GetTestA()
