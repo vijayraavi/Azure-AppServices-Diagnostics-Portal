@@ -45,6 +45,11 @@ namespace Diagnostics.Scripts
             CompilationOutput = Enumerable.Empty<string>();
         }
 
+        /// <summary>
+        /// Initializes the entry point by compiling the script and loading/saving the assembly
+        /// </summary>
+        /// <param name="assemblyInitType"></param>
+        /// <returns></returns>
         public async Task InitializeEntryPointAsync()
         {
             ICompilationService compilationService = CompilationServiceFactory.CreateService(_entityMetaData, GetScriptOptions(_frameworkReferences));
@@ -59,7 +64,7 @@ namespace Diagnostics.Scripts
                 try
                 {
                     EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
-                    Assembly assembly = await _compilation.EmitAsync();
+                    Assembly assembly = await _compilation.EmitAssemblyAsync();
                     _entryPointMethodInfo = methodSignature.GetMethod(assembly);
                     _attributes = methodSignature.Attributes;
                 }
@@ -82,6 +87,26 @@ namespace Diagnostics.Scripts
             }
         }
 
+        /// <summary>
+        /// Initializes the entry point from already loaded assembly.
+        /// </summary>
+        /// <param name="asm">Assembly</param>
+        public void InitializeEntryPoint(Assembly asm)
+        {
+            if(asm == null)
+            {
+                throw new ArgumentNullException("Assembly cannot be null");
+            }
+
+            // TODO : We might need to create a factory to get compilation object based on type.
+            _compilation = new SignalCompilation();
+
+            // If assembly is present, that means compilation was successful.
+            IsCompilationSuccessful = true;
+            EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
+            _entryPointMethodInfo = methodSignature.GetMethod(asm);
+        }
+
         public async Task<object> Invoke(object[] parameters)
         {
             if (!IsCompilationSuccessful)
@@ -100,6 +125,40 @@ namespace Diagnostics.Scripts
             }
 
             return result;
+        }
+
+        public async Task<string> SaveAssemblyToDiskAsync(string assemblyPath)
+        {
+            ICompilationService compilationService = CompilationServiceFactory.CreateService(_entityMetaData, GetScriptOptions(_frameworkReferences));
+            _compilation = await compilationService.GetCompilationAsync();
+            _diagnostics = await _compilation.GetDiagnosticsAsync();
+
+            IsCompilationSuccessful = !_diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error);
+            CompilationOutput = _diagnostics.Select(m => m.ToString());
+
+            if (!IsCompilationSuccessful)
+            {
+                return string.Empty;
+            }
+
+            return await _compilation.SaveAssemblyAsync(assemblyPath);
+        }
+
+        public async Task<Tuple<string, string>> GetAssemblyBytesAsync()
+        {
+            ICompilationService compilationService = CompilationServiceFactory.CreateService(_entityMetaData, GetScriptOptions(_frameworkReferences));
+            _compilation = await compilationService.GetCompilationAsync();
+            _diagnostics = await _compilation.GetDiagnosticsAsync();
+            
+            IsCompilationSuccessful = !_diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error);
+            CompilationOutput = _diagnostics.Select(m => m.ToString());
+
+            if (!IsCompilationSuccessful)
+            {
+                return Tuple.Create(string.Empty, string.Empty);
+            }
+
+            return await _compilation.GetAssemblyBytesAsync();
         }
 
         private ScriptOptions GetScriptOptions(ImmutableArray<string> frameworkReferences)

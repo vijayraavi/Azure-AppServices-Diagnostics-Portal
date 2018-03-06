@@ -1,5 +1,6 @@
 ﻿using Diagnostics.Scripts.Models;
 using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -12,6 +13,10 @@ namespace Diagnostics.Scripts.CompilationService.Interfaces
 
         EntityMethodSignature GetEntryPointSignature();
 
-        Task<Assembly> EmitAsync();
+        Task<Assembly> EmitAssemblyAsync();
+
+        Task<string> SaveAssemblyAsync(string assemblyPath);
+
+        Task<Tuple<string, string>> GetAssemblyBytesAsync();
     }
 }

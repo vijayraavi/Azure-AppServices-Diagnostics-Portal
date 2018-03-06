@@ -9,6 +9,10 @@ namespace Diagnostics.Scripts.CompilationService
     {
         private static string _entryPointMethodName = "Run";
 
+        public SignalCompilation() : base(EntryPointResolutionType.MethodName, _entryPointMethodName)
+        {
+        }
+
         public SignalCompilation(Compilation compilation) : base(compilation, EntryPointResolutionType.MethodName, _entryPointMethodName)
         {
         }

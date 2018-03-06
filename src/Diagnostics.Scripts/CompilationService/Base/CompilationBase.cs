@@ -21,6 +21,12 @@ namespace Diagnostics.Scripts.CompilationService
 
         protected abstract ImmutableArray<DiagnosticAnalyzer> GetCodeAnalyzers();
 
+        public CompilationBase(EntryPointResolutionType resolutionType, string entryPointName)
+        {
+            _resolutionType = resolutionType;
+            _entryPointName = entryPointName;
+        }
+
         public CompilationBase(Compilation compilation, EntryPointResolutionType resolutionType, string entryPointName)
         {
             _compilation = compilation;
@@ -30,6 +36,11 @@ namespace Diagnostics.Scripts.CompilationService
 
         public Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync()
         {
+            if(_compilation == null)
+            {
+                throw new ArgumentException("Compilation Object not initialized.");
+            }
+
             ImmutableArray<DiagnosticAnalyzer> analyzers = GetCodeAnalyzers();
             if (analyzers.IsEmpty)
             {
@@ -41,6 +52,11 @@ namespace Diagnostics.Scripts.CompilationService
 
         public EntityMethodSignature GetEntryPointSignature()
         {
+            if (_compilation == null)
+            {
+                return new EntityMethodSignature(_entryPointName);
+            }
+
             var methods = _compilation.ScriptClass
                 .GetMembers()
                 .OfType<IMethodSymbol>();
@@ -72,8 +88,13 @@ namespace Diagnostics.Scripts.CompilationService
                 attributes);
         }
 
-        public Task<Assembly> EmitAsync()
+        public Task<Assembly> EmitAssemblyAsync()
         {
+            if (_compilation == null)
+            {
+                throw new ArgumentException("Compilation Object not initialized.");
+            }
+
             return Task.Factory.StartNew<Assembly>(() =>
             {
                 try
@@ -83,6 +104,84 @@ namespace Diagnostics.Scripts.CompilationService
                     {
                         _compilation.Emit(assemblyStream, pdbStream);
                         return Assembly.Load(assemblyStream.GetBuffer(), pdbStream.GetBuffer());
+                    }
+                }
+                catch (Exception)
+                {
+                    // TODO : Need to throw custom exception?
+                    throw;
+                }
+            });
+        }
+
+        public async Task<string> SaveAssemblyAsync(string assemblyPath)
+        {
+            if (_compilation == null)
+            {
+                throw new ArgumentException("Compilation Object not initialized.");
+            }
+
+            if (string.IsNullOrWhiteSpace(assemblyPath))
+            {
+                throw new ArgumentException("AssemblyPath cannot be null");
+            }
+
+            string pdbPath = assemblyPath;
+            if (!assemblyPath.EndsWith(".dll"))
+            {
+                assemblyPath = $"{assemblyPath}.dll";
+                pdbPath = $"{pdbPath}.pdb";
+            }
+            else
+            {
+                pdbPath = assemblyPath.Replace(".dll", ".pdb");
+            }
+
+
+            if (File.Exists(assemblyPath))
+            {
+                throw new IOException($"Assembly File already exists : {assemblyPath}");
+            }
+
+            using (var assemblyStream = new MemoryStream())
+            using (var pdbStream = new MemoryStream())
+            {
+                _compilation.Emit(assemblyStream, pdbStream);
+
+                using (FileStream asmFs = File.Create(assemblyPath))
+                using (FileStream pdbFs = File.Create(pdbPath))
+                {
+                    assemblyStream.Position = 0;
+                    pdbStream.Position = 0;
+                    await assemblyStream.CopyToAsync(asmFs);
+                    await pdbStream.CopyToAsync(pdbFs);
+                }
+            }
+
+            return assemblyPath;
+        }
+
+        public Task<Tuple<string, string>> GetAssemblyBytesAsync()
+        {
+            if (_compilation == null)
+            {
+                throw new ArgumentException("Compilation Object not initialized.");
+            }
+
+            return Task.Factory.StartNew(() =>
+            {
+                Tuple<string, string> asmEncodedBytes;
+                try
+                {
+                    using (var assemblyStream = new MemoryStream())
+                    using (var pdbStream = new MemoryStream())
+                    {
+                        _compilation.Emit(assemblyStream, pdbStream);
+                        asmEncodedBytes = new Tuple<string, string>(
+                            Convert.ToBase64String(assemblyStream.GetBuffer()),
+                            Convert.ToBase64String(pdbStream.GetBuffer()));
+
+                        return asmEncodedBytes;
                     }
                 }
                 catch (Exception)
@@ -124,5 +223,7 @@ namespace Diagnostics.Scripts.CompilationService
                 ? type.ToDisplayString()
                 : string.Format(CultureInfo.InvariantCulture, "{0}, {1}", type.ToDisplayString(), type.ContainingAssembly.ToDisplayString());
         }
+
+        
     }
 }

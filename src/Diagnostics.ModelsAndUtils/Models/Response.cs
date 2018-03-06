@@ -1,16 +1,16 @@
-﻿using Diagnostics.DataProviders;
-using Diagnostics.ModelsAndUtils;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Diagnostics.ScriptHost.Models
+namespace Diagnostics.ModelsAndUtils
 {
-    public class SignalResponse
+    public class Response
     {
         public Definition Metadata { get; set; }
 
         public List<DiagnosticData> Dataset { get; set; }
 
-        public SignalResponse()
+        public Response()
         {
             Metadata = new Definition();
             Dataset = new List<DiagnosticData>();
@@ -32,16 +32,16 @@ namespace Diagnostics.ScriptHost.Models
 
     public class Rendering
     {
-        public GraphType RenderingType { get; set; }
+        public GraphType Type { get; set; }
 
         public Rendering()
         {
-            RenderingType = GraphType.TimeSeries;
+            Type = GraphType.TimeSeries;
         }
 
         public Rendering(GraphType type)
         {
-            RenderingType = type;
+            Type = type;
         }
     }
 

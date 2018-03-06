@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Diagnostics.DataProviders
+namespace Diagnostics.ModelsAndUtils
 {
     public class DataTableResponseObjectCollection
     {
@@ -24,6 +24,4 @@ namespace Diagnostics.DataProviders
         public string DataType { get; set; }
         public string ColumnType { get; set; }
     }
-
-    
 }
