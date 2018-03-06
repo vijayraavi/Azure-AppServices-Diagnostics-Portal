@@ -2,6 +2,7 @@
 using Diagnostics.RuntimeHost.Utilities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -26,9 +27,11 @@ namespace Diagnostics.RuntimeHost.Services
         private bool _isComplierHostRunning;
         private int _processId;
         private string _dotNetProductName;
+        private string _compilerHostBinaryLocation;
 
         public CompilerHostClient(IHostingEnvironment env, IConfiguration configuration)
         {
+            _semaphoreObject = new SemaphoreSlim(1, 1);
             _compilerHostUrl = $@"http://localhost:{CompilerHostConstants.Port}";
             _httpClient = new HttpClient
             {
@@ -37,9 +40,23 @@ namespace Diagnostics.RuntimeHost.Services
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             _isComplierHostRunning = false;
-            _semaphoreObject = new SemaphoreSlim(1, 1);
             _processId = -1;
             _dotNetProductName = "dotnet";
+
+            // TODO : Probably needs a better way to manage configurations accross various services.
+            if (env.IsProduction())
+            {
+                _compilerHostBinaryLocation = (string)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostBinaryLocation, string.Empty);
+            }
+            else
+            {   
+                _compilerHostBinaryLocation = (configuration[$"CompilerHost:{RegistryConstants.CompilerHostBinaryLocation}"]).ToString();
+            }
+
+            if (string.IsNullOrWhiteSpace(_compilerHostBinaryLocation))
+            {
+                throw new ArgumentNullException("Compiler Host Binary Location cannot be null or empty.");
+            }
 
             StartProcessMonitor();
         }
@@ -74,13 +91,11 @@ namespace Diagnostics.RuntimeHost.Services
 
         private async Task LaunchCompilerHostProcess()
         {
-            string serverDir = @"E:\git\Azure-WebApps-Support-Center\src\Diagnostics.CompilerHost\bin\Debug\netcoreapp2.0";
-            
             var proc = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    WorkingDirectory = serverDir,
+                    WorkingDirectory = _compilerHostBinaryLocation,
                     FileName = _dotNetProductName,
                     Arguments = $@"Diagnostics.CompilerHost.dll --urls {_compilerHostUrl}",
                     UseShellExecute = false,

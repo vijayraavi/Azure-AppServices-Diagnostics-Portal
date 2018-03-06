@@ -5,14 +5,20 @@ using System.Threading.Tasks;
 
 namespace Diagnostics.RuntimeHost.Utilities
 {
-    internal class HostConstants
+    internal class RegistryConstants
     {
         internal const string RegistryRootPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\IIS Extensions\Web Hosting Framework";
 
         internal const string ScriptSourceConfigRegistryRootPath = RegistryRootPath + @"\ScriptSourceConfig";
 
         internal const string LocalSourceDirectoryKey = "LocalSourceDirectory";
-        
+
+        internal const string CompilerHostRegistryPath = RegistryRootPath + @"\CompilerHost";
+        internal const string CompilerHostBinaryLocation = "CompilerHostBinaryLocation";
+    }
+
+    internal class HostConstants
+    {
         // Ideally, this should move to Data Providers
 
         public static TimeSpan KustoDataRetentionPeriod = TimeSpan.FromDays(-30);
@@ -40,10 +46,11 @@ namespace Diagnostics.RuntimeHost.Utilities
         #endregion
     }
 
-    internal class CompilerHostConstants
+    internal class CompilerHostConstants 
     {
         internal const int Port = 7000;
         internal const int PollIntervalInMs = 1 * 60 * 1000;
         internal const long ProcessMemoryThresholdInBytes = 300 * 1024 * 1024; // 300 MB 
+        
     }
 }
