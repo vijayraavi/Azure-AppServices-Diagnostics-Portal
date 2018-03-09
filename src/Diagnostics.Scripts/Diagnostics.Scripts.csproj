@@ -14,4 +14,8 @@
     <Folder Include="CompilationService\Signal\CodeAnalyzers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Diagnostics.ModelsAndUtils\Diagnostics.ModelsAndUtils.csproj" />
+  </ItemGroup>
+
 </Project>

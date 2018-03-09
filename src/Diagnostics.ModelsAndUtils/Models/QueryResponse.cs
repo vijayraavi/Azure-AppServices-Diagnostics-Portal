@@ -6,9 +6,7 @@ namespace Diagnostics.ModelsAndUtils
 {
     public class QueryResponse<T>
     {
-        public bool CompilationSucceeded;
-
-        public IEnumerable<string> CompilationOutput;
+        public CompilerResponse CompilationOutput;
 
         public T InvocationOutput;
     }

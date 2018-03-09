@@ -1,4 +1,5 @@
-﻿using Diagnostics.Scripts.CompilationService;
+﻿using Diagnostics.ModelsAndUtils;
+using Diagnostics.Scripts.CompilationService;
 using Diagnostics.Scripts.CompilationService.Interfaces;
 using Diagnostics.Scripts.Models;
 using Microsoft.CodeAnalysis;
@@ -21,13 +22,23 @@ namespace Diagnostics.Scripts
         private ICompilation _compilation;
         private ImmutableArray<Diagnostic> _diagnostics;
         private MethodInfo _entryPointMethodInfo;
-        private ImmutableArray<AttributeData> _attributes;
+        private Definition _entryPointDefinitionAttribute;
 
         public bool IsCompilationSuccessful { get; private set; }
 
         public IEnumerable<string> CompilationOutput { get; private set; }
 
-        public ImmutableArray<AttributeData> Attributes => _attributes;
+        public EntityMetadata EntityMetadata => _entityMetaData;
+
+        public Definition EntryPointDefinitionAttribute => _entryPointDefinitionAttribute;
+
+        public EntityInvoker(EntityMetadata entityMetadata)
+        {
+            _entityMetaData = entityMetadata;
+            _frameworkReferences = ImmutableArray.Create<string>();
+            _frameworkImports = ImmutableArray.Create<string>();
+            CompilationOutput = Enumerable.Empty<string>();
+        }
 
         public EntityInvoker(EntityMetadata entityMetadata, ImmutableArray<string> frameworkReferences)
         {
@@ -66,7 +77,8 @@ namespace Diagnostics.Scripts
                     EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
                     Assembly assembly = await _compilation.EmitAssemblyAsync();
                     _entryPointMethodInfo = methodSignature.GetMethod(assembly);
-                    _attributes = methodSignature.Attributes;
+
+                    InitializeAttributes();
                 }
                 catch(Exception ex)
                 {
@@ -93,7 +105,7 @@ namespace Diagnostics.Scripts
         /// <param name="asm">Assembly</param>
         public void InitializeEntryPoint(Assembly asm)
         {
-            if(asm == null)
+            if (asm == null)
             {
                 throw new ArgumentNullException("Assembly cannot be null");
             }
@@ -103,8 +115,29 @@ namespace Diagnostics.Scripts
 
             // If assembly is present, that means compilation was successful.
             IsCompilationSuccessful = true;
-            EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
-            _entryPointMethodInfo = methodSignature.GetMethod(asm);
+
+            try
+            {
+                EntityMethodSignature methodSignature = _compilation.GetEntryPointSignature();
+                _entryPointMethodInfo = methodSignature.GetMethod(asm);
+                InitializeAttributes();
+            }
+            catch (Exception ex)
+            {
+                if (ex is ScriptCompilationException)
+                {
+                    IsCompilationSuccessful = false;
+
+                    if (!string.IsNullOrWhiteSpace(ex.Message))
+                    {
+                        CompilationOutput.Concat(new[] { ex.Message });
+                    }
+
+                    return;
+                }
+
+                throw ex;
+            }
         }
 
         public async Task<object> Invoke(object[] parameters)
@@ -159,6 +192,16 @@ namespace Diagnostics.Scripts
             }
 
             return await _compilation.GetAssemblyBytesAsync();
+        }
+
+        private void InitializeAttributes()
+        {
+            if(_entryPointMethodInfo == null)
+            {
+                return;
+            }
+
+            _entryPointDefinitionAttribute = _entryPointMethodInfo.GetCustomAttribute<Definition>();
         }
 
         private ScriptOptions GetScriptOptions(ImmutableArray<string> frameworkReferences)

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Diagnostics.ModelsAndUtils
 {
-    public class Definition : Attribute, IEquatable<Definition>
+    public class Definition : Attribute
     {
         [DataMember]
         public string Id { get; set; }
@@ -15,10 +15,6 @@ namespace Diagnostics.ModelsAndUtils
 
         [DataMember]
         public string Description { get; set; }
-
-        public bool Equals(Definition other)
-        {
-            return this.Id == other.Id;
-        }
+        
     }
 }

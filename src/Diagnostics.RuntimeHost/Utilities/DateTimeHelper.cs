@@ -8,7 +8,7 @@ namespace Diagnostics.RuntimeHost.Utilities
 {
     internal class DateTimeHelper
     {
-        public static bool PrepareStartEndTimeWithTimeGrain(string startTime, string endTime, string timeGrain, out DateTime startTimeUtc, out DateTime endTimeUtc, out TimeSpan timeGrainTimeSpan, out string errorMessage)
+        internal static bool PrepareStartEndTimeWithTimeGrain(string startTime, string endTime, string timeGrain, out DateTime startTimeUtc, out DateTime endTimeUtc, out TimeSpan timeGrainTimeSpan, out string errorMessage)
         {
             Tuple<TimeSpan, TimeSpan, bool> selectedTimeGrainOption = null;
             const string timeGrainParameterName = "timeGrain";
@@ -57,7 +57,7 @@ namespace Diagnostics.RuntimeHost.Utilities
             return result;
         }
 
-        public static bool PrepareStartEndTimeUtc(string startTime, string endTime, out DateTime startTimeUtc, out DateTime endTimeUtc, out string errorMessage)
+        internal static bool PrepareStartEndTimeUtc(string startTime, string endTime, out DateTime startTimeUtc, out DateTime endTimeUtc, out string errorMessage)
         {
             //1. no startTime, no endTime => return current time - 24 hours, current time
             //2. startTime, no endTime => return start time, end time = start time + 24 hours
@@ -125,7 +125,7 @@ namespace Diagnostics.RuntimeHost.Utilities
             return true;
         }
 
-        public static bool ParseDateTimeParameter(string parameterName, string parameterValue, DateTime defaultValue, out DateTime dateObj)
+        internal static bool ParseDateTimeParameter(string parameterName, string parameterValue, DateTime defaultValue, out DateTime dateObj)
         {
             dateObj = defaultValue;
             if (!string.IsNullOrEmpty(parameterValue))
@@ -144,7 +144,7 @@ namespace Diagnostics.RuntimeHost.Utilities
             return true;
         }
 
-        public static DateTime GetDateTimeInUtcFormat(DateTime dateTime)
+        internal static DateTime GetDateTimeInUtcFormat(DateTime dateTime)
         {
             if (dateTime.Kind == DateTimeKind.Unspecified)
             {
@@ -171,12 +171,12 @@ namespace Diagnostics.RuntimeHost.Utilities
         /// <param name="dateTime">Date Time to round up.</param>
         /// <param name="roundUpBy">Round up value.</param>
         /// <returns>Rounded up Date Time.</returns>
-        public static DateTime RoundUpTime(DateTime dateTime, TimeSpan roundUpBy)
+        internal static DateTime RoundUpTime(DateTime dateTime, TimeSpan roundUpBy)
         {
             return new DateTime(((dateTime.Ticks + roundUpBy.Ticks) / roundUpBy.Ticks) * roundUpBy.Ticks);
         }
 
-        private static bool ParseXmlDurationParameter(string parameterName, string parameterValue, TimeSpan? defaultValue, out TimeSpan duration)
+        internal static bool ParseXmlDurationParameter(string parameterName, string parameterValue, TimeSpan? defaultValue, out TimeSpan duration)
         {
             duration = new TimeSpan();
             TimeSpan? ret = defaultValue;
@@ -201,6 +201,18 @@ namespace Diagnostics.RuntimeHost.Utilities
 
             duration = (TimeSpan)ret;
             return true;
+        }
+
+        internal static DateTime EpochTimeToDateTime(long unixTime)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddSeconds(unixTime);
+        }
+        
+        internal static long DateTimeToEpochTime(DateTime date)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return Convert.ToInt64((date - epoch).TotalSeconds);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Diagnostics.DataProviders;
 using Diagnostics.ModelsAndUtils;
 using Diagnostics.RuntimeHost.Services;
+using Diagnostics.RuntimeHost.Services.SourceWatcher;
 using Diagnostics.RuntimeHost.Utilities;
 using Diagnostics.Scripts;
 using Diagnostics.Scripts.Models;
@@ -23,10 +24,14 @@ namespace Diagnostics.RuntimeHost.Controllers
     public class SitesController : Controller
     {
         private ICompilerHostClient _compilerHostClient;
+        private ISourceWatcherService _sourceWatcherService;
+        private ICache<string, EntityInvoker> _invokerCache;
 
-        public SitesController(ICompilerHostClient compilerHostClient)
+        public SitesController(ICompilerHostClient compilerHostClient, ISourceWatcherService sourceWatcherService, ICache<string, EntityInvoker> invokerCache)
         {
             _compilerHostClient = compilerHostClient;
+            _sourceWatcherService = sourceWatcherService;
+            _invokerCache = invokerCache;
         }
 
         [HttpPost(UriElements.Query)]
@@ -70,10 +75,9 @@ namespace Diagnostics.RuntimeHost.Controllers
             Assembly tempAsm = null;
             var compilerResponse = await _compilerHostClient.GetCompilationResponse(script);
 
-            queryRes.CompilationSucceeded = compilerResponse.CompilationSucceeded;
-            queryRes.CompilationOutput = compilerResponse.CompilationOutput;
+            queryRes.CompilationOutput = compilerResponse;
 
-            if (queryRes.CompilationSucceeded)
+            if (queryRes.CompilationOutput.CompilationSucceeded)
             {
                 byte[] asmData = Convert.FromBase64String(compilerResponse.AssemblyBytes);
                 byte[] pdbData = Convert.FromBase64String(compilerResponse.PdbBytes);
@@ -83,11 +87,56 @@ namespace Diagnostics.RuntimeHost.Controllers
                 using (var invoker = new EntityInvoker(metaData, ScriptHelper.GetFrameworkReferences(), ScriptHelper.GetFrameworkImports()))
                 {
                     invoker.InitializeEntryPoint(tempAsm);
+                    queryRes.InvocationOutput.Metadata = invoker.EntryPointDefinitionAttribute;
                     queryRes.InvocationOutput = (Response)await invoker.Invoke(new object[] { dataProviders, cxt, queryRes.InvocationOutput });
                 }
             }
 
             return Ok(queryRes);
+        }
+
+        [HttpGet(UriElements.Detectors)]
+        public async Task<IActionResult> ListDetectors(string subscriptionId, string resourceGroupName, string siteName)
+        {
+            await _sourceWatcherService.Watcher.WaitForFirstCompletion();
+            IEnumerable<Definition> entityDefinitions = _invokerCache.GetAll().Select(p => p.EntryPointDefinitionAttribute);
+            return Ok(entityDefinitions);
+        }
+
+        [HttpGet(UriElements.Detectors + UriElements.DetectorResource)]
+        public async Task<IActionResult> GetDetectorResource(string subscriptionId, string resourceGroupName, string siteName, string detectorId, string[] hostNames, string stampName, string startTime = null, string endTime = null, string timeGrain = null)
+        {
+            if (!VerifyQueryParams(hostNames, stampName, out string verficationOutput))
+            {
+                return BadRequest(verficationOutput);
+            }
+
+            if (!DateTimeHelper.PrepareStartEndTimeWithTimeGrain(startTime, endTime, timeGrain, out DateTime startTimeUtc, out DateTime endTimeUtc, out TimeSpan timeGrainTimeSpan, out string errorMessage))
+            {
+                return BadRequest(errorMessage);
+            }
+
+            IConfigurationFactory factory = new AppSettingsDataProviderConfigurationFactory();
+            var config = factory.LoadConfigurations();
+            
+            var dataProviders = new DataProviders.DataProviders(config);
+            SiteResource resource = PrepareResourceObject(subscriptionId, resourceGroupName, siteName, hostNames, stampName, startTimeUtc, endTimeUtc);
+            OperationContext cxt = PrepareContext(resource, startTimeUtc, endTimeUtc);
+
+            EntityInvoker invoker;
+            if (!_invokerCache.TryGetValue(detectorId, out invoker))
+            {
+                return NotFound();
+            }
+
+            Response res = new Response
+            {
+                Metadata = invoker.EntryPointDefinitionAttribute
+            };
+
+            res = (Response)await invoker.Invoke(new object[] { dataProviders, cxt, res });
+
+            return Ok(res);
         }
 
         private bool VerifyQueryParams(string[] hostNames, string stampName, out string reason)

@@ -78,10 +78,10 @@ namespace Diagnostics.RuntimeHost.Services
                 };
 
                 HttpResponseMessage responseMessage = await _httpClient.SendAsync(requestMessage);
-                string content = await responseMessage.Content.ReadAsStringAsync();
-                var compilerResponse = JsonConvert.DeserializeObject<CompilerResponse>(content);
 
-                return compilerResponse;
+                // TODO : Check for 200 and handle errors
+
+                return await responseMessage.Content.ReadAsAsyncCustom<CompilerResponse>();
             }
             finally
             {

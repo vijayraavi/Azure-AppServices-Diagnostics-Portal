@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Diagnostics.DataProviders;
 using Diagnostics.RuntimeHost.Services;
+using Diagnostics.RuntimeHost.Services.SourceWatcher;
+using Diagnostics.Scripts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,9 @@ namespace Diagnostics.RuntimeHost
         {
             services.AddMvc();
             services.AddSingleton<ICompilerHostClient, CompilerHostClient>();
+            services.AddSingleton<ISourceWatcherService, SourceWatcherService>();
+            services.AddSingleton<ICache<string, EntityInvoker>, InvokerCacheService>();
+            services.AddSingleton<IGithubClient, GithubClient>();
 
             IConfigurationFactory factory = new AppSettingsDataProviderConfigurationFactory();
             var config = factory.LoadConfigurations();
