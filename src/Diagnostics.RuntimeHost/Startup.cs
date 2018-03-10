@@ -28,14 +28,23 @@ namespace Diagnostics.RuntimeHost
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            services.AddSingleton<IDataSourcesConfigurationService, DataSourcesConfigurationService>();
             services.AddSingleton<ICompilerHostClient, CompilerHostClient>();
             services.AddSingleton<ISourceWatcherService, SourceWatcherService>();
             services.AddSingleton<ICache<string, EntityInvoker>, InvokerCacheService>();
             services.AddSingleton<IGithubClient, GithubClient>();
+            services.AddSingleton<ITenantIdService, TenantIdService>();
+            services.AddSingleton<IResourceService, ResourceService>();
 
-            IConfigurationFactory factory = new AppSettingsDataProviderConfigurationFactory();
-            var config = factory.LoadConfigurations();
-            KustoTokenService.Instance.Initialize(config.KustoConfiguration);
+            // TODO : Not sure what's the right place for the following code piece.
+            #region Custom Start up Code
+
+            var servicesProvider = services.BuildServiceProvider();
+            var dataSourcesConfigService = servicesProvider.GetService<IDataSourcesConfigurationService>();
+            KustoTokenService.Instance.Initialize(dataSourcesConfigService.Config.KustoConfiguration);
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

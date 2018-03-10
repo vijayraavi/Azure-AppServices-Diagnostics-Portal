@@ -58,8 +58,7 @@ namespace Diagnostics.RuntimeHost.Utilities
         internal const string LocalWatcherRegistryPath = SourceWatcherRegistryPath + @"\Local";
         internal const string LocalScriptsPathKey = "LocalScriptsPath";
         internal const string GithubWatcherRegistryPath = SourceWatcherRegistryPath + @"\Github";
-        internal const string GithubClientIdKey = "Github_ClientId";
-        internal const string GithubClientSecretKey = "Github_ClientSecret";
+        internal const string GithubAccessTokenKey = "Github_AccessToken";
         internal const string GithubUserNameKey = "Github_UserName";
         internal const string GithubRepoNameKey = "Github_RepoName";
         internal const string GithubBranchKey = "Github_Branch";

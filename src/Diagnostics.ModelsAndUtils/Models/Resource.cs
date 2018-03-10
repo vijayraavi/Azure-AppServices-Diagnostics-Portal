@@ -25,6 +25,11 @@ namespace Diagnostics.ModelsAndUtils
 
         public string Stamp;
 
-        public string SourceMoniker;
+        public string SourceMoniker {
+            get
+            {
+                return string.IsNullOrWhiteSpace(Stamp) ? Stamp.ToUpper().Replace("-", string.Empty) : string.Empty;
+            }
+        }
     }
 }

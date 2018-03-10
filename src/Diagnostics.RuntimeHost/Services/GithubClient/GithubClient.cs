@@ -33,8 +33,7 @@ namespace Diagnostics.RuntimeHost.Services
         private string _userName;
         private string _repoName;
         private string _branch;
-        private string _clientId;
-        private string _clientSecret;
+        private string _accessToken;
         private HttpClient _httpClient;
 
         public string UserName => _userName;
@@ -52,13 +51,12 @@ namespace Diagnostics.RuntimeHost.Services
             InitializeHttpClient();
         }
 
-        public GithubClient(string userName, string repoName, string branch = "master", string clientId = "", string clientSecret = "")
+        public GithubClient(string userName, string repoName, string branch = "master", string accessToken = "")
         {
             _userName = userName;
             _repoName = repoName;
             _branch = !string.IsNullOrWhiteSpace(branch) ? branch : "master";
-            _clientId = clientId ?? string.Empty; ;
-            _clientSecret = clientSecret ?? string.Empty;
+            _accessToken = accessToken ?? string.Empty;
             ValidateConfigurations();
             InitializeHttpClient();
         }
@@ -111,21 +109,18 @@ namespace Diagnostics.RuntimeHost.Services
                 _userName = (string)Registry.GetValue(RegistryConstants.GithubWatcherRegistryPath, RegistryConstants.GithubUserNameKey, string.Empty);
                 _repoName = (string)Registry.GetValue(RegistryConstants.GithubWatcherRegistryPath, RegistryConstants.GithubRepoNameKey, string.Empty);
                 _branch = (string)Registry.GetValue(RegistryConstants.GithubWatcherRegistryPath, RegistryConstants.GithubBranchKey, string.Empty);
-                _clientId = (string)Registry.GetValue(RegistryConstants.GithubWatcherRegistryPath, RegistryConstants.GithubClientIdKey, string.Empty);
-                _clientSecret = (string)Registry.GetValue(RegistryConstants.GithubWatcherRegistryPath, RegistryConstants.GithubClientSecretKey, string.Empty);
+                _accessToken = (string)Registry.GetValue(RegistryConstants.GithubWatcherRegistryPath, RegistryConstants.GithubAccessTokenKey, string.Empty);
             }
             else
             {
                 _userName = (_config[$"SourceWatcher:Github:{RegistryConstants.GithubUserNameKey}"]).ToString();
                 _repoName = (_config[$"SourceWatcher:Github:{RegistryConstants.GithubRepoNameKey}"]).ToString();
                 _branch = (_config[$"SourceWatcher:Github:{RegistryConstants.GithubBranchKey}"]).ToString();
-                _clientId = (_config[$"SourceWatcher:Github:{RegistryConstants.GithubClientIdKey}"]).ToString();
-                _clientSecret = (_config[$"SourceWatcher:Github:{RegistryConstants.GithubClientSecretKey}"]).ToString();
+                _accessToken = (_config[$"SourceWatcher:Github:{RegistryConstants.GithubAccessTokenKey}"]).ToString();
             }
 
             _branch = !string.IsNullOrWhiteSpace(_branch) ? _branch : "master";
-            _clientId = _clientId ?? string.Empty;
-            _clientSecret = _clientSecret ?? string.Empty;
+            _accessToken = _accessToken ?? string.Empty;
         }
 
         private void ValidateConfigurations()
@@ -157,8 +152,7 @@ namespace Diagnostics.RuntimeHost.Services
         {
             var uriBuilder = new UriBuilder(url);
             var queryParams = HttpUtility.ParseQueryString(uriBuilder.Query);
-            queryParams.Add("client_id", _clientId);
-            queryParams.Add("client_secret", _clientSecret);
+            queryParams.Add("access_token", _accessToken);
             uriBuilder.Query = queryParams.ToString();
             return uriBuilder.ToString();
         }

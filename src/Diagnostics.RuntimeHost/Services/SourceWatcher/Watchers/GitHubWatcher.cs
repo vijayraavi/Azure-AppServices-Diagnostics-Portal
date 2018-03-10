@@ -87,6 +87,8 @@ namespace Diagnostics.RuntimeHost.Services.SourceWatcher
 
             foreach (GithubEntry gitHubDir in githubDirectories)
             {
+                if (!gitHubDir.Type.Equals("dir", StringComparison.OrdinalIgnoreCase)) continue;
+                
                 DirectoryInfo subDir = new DirectoryInfo(Path.Combine(destDirInfo.FullName, gitHubDir.Name));
                 if (!subDir.Exists)
                 {

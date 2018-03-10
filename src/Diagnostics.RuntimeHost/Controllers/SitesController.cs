@@ -21,17 +21,20 @@ namespace Diagnostics.RuntimeHost.Controllers
 {
     [Produces("application/json")]
     [Route(UriElements.SitesResource + UriElements.Diagnostics)]
-    public class SitesController : Controller
+    public class SitesController : SiteControllerBase
     {
         private ICompilerHostClient _compilerHostClient;
         private ISourceWatcherService _sourceWatcherService;
         private ICache<string, EntityInvoker> _invokerCache;
+        private IDataSourcesConfigurationService _dataSourcesConfigService;
 
-        public SitesController(ICompilerHostClient compilerHostClient, ISourceWatcherService sourceWatcherService, ICache<string, EntityInvoker> invokerCache)
+        public SitesController(ICompilerHostClient compilerHostClient, ISourceWatcherService sourceWatcherService, ICache<string, EntityInvoker> invokerCache, IResourceService resourceService, IDataSourcesConfigurationService dataSourcesConfigService)
+            : base(resourceService)
         {
             _compilerHostClient = compilerHostClient;
             _sourceWatcherService = sourceWatcherService;
             _invokerCache = invokerCache;
+            _dataSourcesConfigService = dataSourcesConfigService;
         }
 
         [HttpPost(UriElements.Query)]
@@ -59,12 +62,9 @@ namespace Diagnostics.RuntimeHost.Controllers
                 return BadRequest(errorMessage);
             }
 
-            IConfigurationFactory factory = new AppSettingsDataProviderConfigurationFactory();
-            var config = factory.LoadConfigurations();
-
             EntityMetadata metaData = new EntityMetadata(script);
-            var dataProviders = new DataProviders.DataProviders(config);
-            SiteResource resource = PrepareResourceObject(subscriptionId, resourceGroupName, siteName, hostNames, stampName, startTimeUtc, endTimeUtc);
+            var dataProviders = new DataProviders.DataProviders(_dataSourcesConfigService.Config);
+            SiteResource resource = await _resourceService.GetSite(subscriptionId, resourceGroupName, siteName, hostNames, stampName, startTimeUtc, endTimeUtc);
             OperationContext cxt = PrepareContext(resource, startTimeUtc, endTimeUtc);
 
             QueryResponse<Response> queryRes = new QueryResponse<Response>
@@ -116,15 +116,11 @@ namespace Diagnostics.RuntimeHost.Controllers
                 return BadRequest(errorMessage);
             }
 
-            IConfigurationFactory factory = new AppSettingsDataProviderConfigurationFactory();
-            var config = factory.LoadConfigurations();
-            
-            var dataProviders = new DataProviders.DataProviders(config);
-            SiteResource resource = PrepareResourceObject(subscriptionId, resourceGroupName, siteName, hostNames, stampName, startTimeUtc, endTimeUtc);
+            var dataProviders = new DataProviders.DataProviders(_dataSourcesConfigService.Config);
+            SiteResource resource = await _resourceService.GetSite(subscriptionId, resourceGroupName, siteName, hostNames, stampName, startTimeUtc, endTimeUtc);
             OperationContext cxt = PrepareContext(resource, startTimeUtc, endTimeUtc);
 
-            EntityInvoker invoker;
-            if (!_invokerCache.TryGetValue(detectorId, out invoker))
+            if (!_invokerCache.TryGetValue(detectorId, out EntityInvoker invoker))
             {
                 return NotFound();
             }
@@ -137,50 +133,6 @@ namespace Diagnostics.RuntimeHost.Controllers
             res = (Response)await invoker.Invoke(new object[] { dataProviders, cxt, res });
 
             return Ok(res);
-        }
-
-        private bool VerifyQueryParams(string[] hostNames, string stampName, out string reason)
-        {
-            reason = string.Empty;
-            if (hostNames == null || hostNames.Length <= 0)
-            {
-                reason = "Invalid or empty hostnames";
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(stampName))
-            {
-                reason = "Invalid or empty stampName";
-                return false;
-            }
-
-            return true;
-        }
-
-        protected SiteResource PrepareResourceObject(string subscriptionId, string resourceGroup, string siteName, IEnumerable<string> hostNames, string stampName, DateTime startTime, DateTime endTime, string sourceMoniker = null)
-        {
-            List<string> tenantIdList = new List<string>(); //await _tenantIdService.GetTenantIdForStamp(stampName, startTime, endTime);
-            SiteResource resource = new SiteResource()
-            {
-                SubscriptionId = subscriptionId,
-                ResourceGroup = resourceGroup,
-                SiteName = siteName,
-                HostNames = hostNames,
-                Stamp = stampName,
-                SourceMoniker = sourceMoniker ?? stampName.ToUpper().Replace("-", string.Empty),
-                TenantIdList = tenantIdList
-            };
-
-            return resource;
-        }
-
-        protected OperationContext PrepareContext(SiteResource resource, DateTime startTime, DateTime endTime)
-        {
-            return new OperationContext(
-                resource,
-                DateTimeHelper.GetDateTimeInUtcFormat(startTime).ToString(HostConstants.KustoTimeFormat),
-                DateTimeHelper.GetDateTimeInUtcFormat(endTime).ToString(HostConstants.KustoTimeFormat)
-            );
         }
     }
 }
