@@ -32,11 +32,15 @@ namespace Diagnostics.CompilerHost.Controllers
             CompilerResponse compilerResponse = new CompilerResponse();
             using (var invoker = new EntityInvoker(metaData, ScriptHelper.GetFrameworkReferences(), ScriptHelper.GetFrameworkImports()))
             {
-                Tuple<string, string> asmBytes = await invoker.GetAssemblyBytesAsync();
-                compilerResponse.AssemblyBytes = asmBytes.Item1;
-                compilerResponse.PdbBytes = asmBytes.Item2;
                 compilerResponse.CompilationOutput = invoker.CompilationOutput;
                 compilerResponse.CompilationSucceeded = invoker.IsCompilationSuccessful;
+
+                if (compilerResponse.CompilationSucceeded)
+                {
+                    Tuple<string, string> asmBytes = await invoker.GetAssemblyBytesAsync();
+                    compilerResponse.AssemblyBytes = asmBytes.Item1;
+                    compilerResponse.PdbBytes = asmBytes.Item2;
+                }
             }
 
             return Ok(compilerResponse);

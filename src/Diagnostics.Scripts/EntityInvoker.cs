@@ -84,11 +84,12 @@ namespace Diagnostics.Scripts
                 {
                     if(ex is ScriptCompilationException)
                     {
+                        var scriptEx = (ScriptCompilationException)ex;
                         IsCompilationSuccessful = false;
 
-                        if (!string.IsNullOrWhiteSpace(ex.Message))
+                        if (scriptEx.CompilationOutput.Any())
                         {
-                            CompilationOutput.Concat(new[] { ex.Message });
+                            CompilationOutput = CompilationOutput.Concat(scriptEx.CompilationOutput);
                         }
 
                         return;
@@ -107,7 +108,7 @@ namespace Diagnostics.Scripts
         {
             if (asm == null)
             {
-                throw new ArgumentNullException("Assembly cannot be null");
+                throw new ArgumentNullException("Assembly");
             }
 
             // TODO : We might need to create a factory to get compilation object based on type.
@@ -126,11 +127,12 @@ namespace Diagnostics.Scripts
             {
                 if (ex is ScriptCompilationException)
                 {
+                    var scriptEx = (ScriptCompilationException)ex;
                     IsCompilationSuccessful = false;
 
-                    if (!string.IsNullOrWhiteSpace(ex.Message))
+                    if (scriptEx.CompilationOutput.Any())
                     {
-                        CompilationOutput.Concat(new[] { ex.Message });
+                        CompilationOutput = CompilationOutput.Concat(scriptEx.CompilationOutput);
                     }
 
                     return;
@@ -144,7 +146,7 @@ namespace Diagnostics.Scripts
         {
             if (!IsCompilationSuccessful)
             {
-                throw new ScriptCompilationException();
+                throw new ScriptCompilationException(CompilationOutput);
             }
 
             int actualParameterCount = _entryPointMethodInfo.GetParameters().Length;
@@ -171,7 +173,7 @@ namespace Diagnostics.Scripts
 
             if (!IsCompilationSuccessful)
             {
-                return string.Empty;
+                throw new ScriptCompilationException(CompilationOutput);
             }
 
             return await _compilation.SaveAssemblyAsync(assemblyPath);
@@ -188,7 +190,7 @@ namespace Diagnostics.Scripts
 
             if (!IsCompilationSuccessful)
             {
-                return Tuple.Create(string.Empty, string.Empty);
+                throw new ScriptCompilationException(CompilationOutput);
             }
 
             return await _compilation.GetAssemblyBytesAsync();

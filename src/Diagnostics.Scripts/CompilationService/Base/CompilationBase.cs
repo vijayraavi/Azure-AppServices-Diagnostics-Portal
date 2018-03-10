@@ -123,7 +123,7 @@ namespace Diagnostics.Scripts.CompilationService
 
             if (string.IsNullOrWhiteSpace(assemblyPath))
             {
-                throw new ArgumentException("AssemblyPath cannot be null");
+                throw new ArgumentNullException("assemblyPath");
             }
 
             string pdbPath = assemblyPath;

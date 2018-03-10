@@ -1,7 +1,7 @@
 private static string GetQuery(OperationContext cxt)
 {
     return
-    $@"<TABLE_NAME>
+    $@"<YOUR_TABLE_NAME>
         | where {Utilities.TimeAndTenantFilterQuery(cxt)}
         | <YOUR_QUERY>";
 }
