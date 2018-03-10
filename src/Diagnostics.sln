@@ -4,17 +4,13 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.Scripts", "Diagnostics.Scripts\Diagnostics.Scripts.csproj", "{1D0CA027-705E-4D7D-935D-9CB7D362F534}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.Tests", "Diagnostics.Tests\Diagnostics.Tests.csproj", "{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.ScriptHost", "Diagnostics.ScriptHost\Diagnostics.ScriptHost.csproj", "{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.DataProviders", "Diagnostics.DataProviders\Diagnostics.DataProviders.csproj", "{D8ECFC7F-EA86-46F8-8AAB-F2F9477B8C4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diagnostics.CompilerHost", "Diagnostics.CompilerHost\Diagnostics.CompilerHost.csproj", "{B90F2D80-D3BA-476E-8891-4549DDEA51A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.CompilerHost", "Diagnostics.CompilerHost\Diagnostics.CompilerHost.csproj", "{B90F2D80-D3BA-476E-8891-4549DDEA51A4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.ModelsAndUtils", "Diagnostics.ModelsAndUtils\Diagnostics.ModelsAndUtils.csproj", "{5EFBB4F2-0F00-4E62-A95A-B074F32E04C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diagnostics.RuntimeHost", "Diagnostics.RuntimeHost\Diagnostics.RuntimeHost.csproj", "{D1E55086-4A29-4AAB-9067-655AAEE84C79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics.RuntimeHost", "Diagnostics.RuntimeHost\Diagnostics.RuntimeHost.csproj", "{D1E55086-4A29-4AAB-9067-655AAEE84C79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,30 +34,6 @@ Global
 		{1D0CA027-705E-4D7D-935D-9CB7D362F534}.Release|x64.Build.0 = Release|Any CPU
 		{1D0CA027-705E-4D7D-935D-9CB7D362F534}.Release|x86.ActiveCfg = Release|Any CPU
 		{1D0CA027-705E-4D7D-935D-9CB7D362F534}.Release|x86.Build.0 = Release|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Debug|x64.Build.0 = Debug|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Debug|x86.Build.0 = Debug|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Release|x64.ActiveCfg = Release|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Release|x64.Build.0 = Release|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Release|x86.ActiveCfg = Release|Any CPU
-		{093AFE24-F63C-4F07-85D2-F5DFF7242CF4}.Release|x86.Build.0 = Release|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Debug|x64.Build.0 = Debug|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Debug|x86.Build.0 = Debug|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Release|x64.ActiveCfg = Release|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Release|x64.Build.0 = Release|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Release|x86.ActiveCfg = Release|Any CPU
-		{C3C4D091-2F0C-41E9-BD6C-E813BAECD8A5}.Release|x86.Build.0 = Release|Any CPU
 		{D8ECFC7F-EA86-46F8-8AAB-F2F9477B8C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D8ECFC7F-EA86-46F8-8AAB-F2F9477B8C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8ECFC7F-EA86-46F8-8AAB-F2F9477B8C4A}.Debug|x64.ActiveCfg = Debug|Any CPU
