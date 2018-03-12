@@ -169,8 +169,8 @@ namespace Diagnostics.RuntimeHost.Services
             {
                 _compilerHostBinaryLocation = (string)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostBinaryLocationKey, string.Empty);
                 _compilerHostPort = (string)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostPortKey, string.Empty);
-                _pollingIntervalInSeconds = (int)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostPortKey, 60);
-                _processMemoryThresholdInMB = (long)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostProcessMemoryThresholdInMBKey, 300);
+                _pollingIntervalInSeconds = Convert.ToInt32(Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostPollingIntervalKey, 60));
+                _processMemoryThresholdInMB = Convert.ToInt64(Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostProcessMemoryThresholdInMBKey, 300));
             }
             else
             {

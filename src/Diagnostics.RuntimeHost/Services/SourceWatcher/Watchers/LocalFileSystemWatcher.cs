@@ -63,7 +63,7 @@ namespace Diagnostics.RuntimeHost.Services.SourceWatcher
 
                 if(asmFile == default(FileInfo))
                 {
-                    // TODO : Log warning about missing dll file
+                    // TODO : Log Error of missing dll
                     continue;
                 }
 

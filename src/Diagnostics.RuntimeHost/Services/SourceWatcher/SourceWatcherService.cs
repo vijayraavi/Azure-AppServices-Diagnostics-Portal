@@ -16,13 +16,17 @@ namespace Diagnostics.RuntimeHost.Services.SourceWatcher
 
         public ISourceWatcher Watcher => _watcher;
 
-        public SourceWatcherService(IHostingEnvironment env, IConfiguration configuration, ICache<string, EntityInvoker> invokerCacheService, IGithubClient githubClient)
+        public SourceWatcherService(IHostingEnvironment env, IConfiguration configuration, ICache<string, EntityInvoker> invokerCacheService)
         {
             SourceWatcherType watcherType;
 
             if (env.IsProduction())
             {
-                watcherType = (SourceWatcherType)Registry.GetValue(RegistryConstants.SourceWatcherRegistryPath, RegistryConstants.WatcherTypeKey, 0);
+                string watcherTypeRegistryValue = Registry.GetValue(RegistryConstants.SourceWatcherRegistryPath, RegistryConstants.WatcherTypeKey, 0).ToString();
+                if(!Enum.TryParse<SourceWatcherType>(watcherTypeRegistryValue, out watcherType))
+                {
+                    throw new NotSupportedException($"Source Watcher Type : {watcherTypeRegistryValue} not supported.");
+                }
             }
             else
             {
@@ -35,6 +39,7 @@ namespace Diagnostics.RuntimeHost.Services.SourceWatcher
                     _watcher = new LocalFileSystemWatcher(env, configuration, invokerCacheService);
                     break;
                 case SourceWatcherType.Github:
+                    IGithubClient githubClient = new GithubClient(env, configuration);
                     _watcher = new GitHubWatcher(env, configuration, invokerCacheService, githubClient);
                     break;
                 default:

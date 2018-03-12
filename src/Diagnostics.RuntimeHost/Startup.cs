@@ -33,7 +33,6 @@ namespace Diagnostics.RuntimeHost
             services.AddSingleton<ICompilerHostClient, CompilerHostClient>();
             services.AddSingleton<ISourceWatcherService, SourceWatcherService>();
             services.AddSingleton<ICache<string, EntityInvoker>, InvokerCacheService>();
-            services.AddSingleton<IGithubClient, GithubClient>();
             services.AddSingleton<ITenantIdService, TenantIdService>();
             services.AddSingleton<IResourceService, ResourceService>();
 

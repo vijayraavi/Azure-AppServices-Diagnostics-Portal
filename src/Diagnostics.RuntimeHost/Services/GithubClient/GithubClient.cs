@@ -127,12 +127,12 @@ namespace Diagnostics.RuntimeHost.Services
         {
             if (string.IsNullOrWhiteSpace(_userName))
             {
-                throw new ArgumentNullException("Github_UserName");
+                throw new ArgumentNullException("Github UserName");
             }
 
             if (string.IsNullOrWhiteSpace(_repoName))
             {
-                throw new ArgumentNullException("Github_RepoName");
+                throw new ArgumentNullException("Github RepoName");
             }
         }
 
