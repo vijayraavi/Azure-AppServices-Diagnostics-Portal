@@ -36,20 +36,16 @@ namespace Diagnostics.RuntimeHost.Utilities
         #endregion
     }
     
-    internal class CompilerHostConstants 
-    {
-        internal const int Port = 7000;
-        internal const int PollIntervalInMs = 1 * 60 * 1000;
-        internal const long ProcessMemoryThresholdInBytes = 300 * 1024 * 1024; // 300 MB 
-    }
-
     internal class RegistryConstants
     {
         internal const string RegistryRootPath = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\IIS Extensions\Web Hosting Framework";
 
         // Compiler Host Registry Settings
         internal const string CompilerHostRegistryPath = RegistryRootPath + @"\CompilerHost";
-        internal const string CompilerHostBinaryLocation = "CompilerHostBinaryLocation";
+        internal const string CompilerHostBinaryLocationKey = "CompilerHostBinaryLocation";
+        internal const string CompilerHostPortKey = "CompilerHostPort";
+        internal const string CompilerHostPollingIntervalKey = "PollingIntervalInSeconds";
+        internal const string CompilerHostProcessMemoryThresholdInMBKey = "ProcessMemoryThresholdInMB";
 
         // Source Watcher Registry Settings
         internal const string SourceWatcherRegistryPath = RegistryRootPath + @"\SourceWatcher";
@@ -58,10 +54,10 @@ namespace Diagnostics.RuntimeHost.Utilities
         internal const string LocalWatcherRegistryPath = SourceWatcherRegistryPath + @"\Local";
         internal const string LocalScriptsPathKey = "LocalScriptsPath";
         internal const string GithubWatcherRegistryPath = SourceWatcherRegistryPath + @"\Github";
-        internal const string GithubAccessTokenKey = "Github_AccessToken";
-        internal const string GithubUserNameKey = "Github_UserName";
-        internal const string GithubRepoNameKey = "Github_RepoName";
-        internal const string GithubBranchKey = "Github_Branch";
+        internal const string GithubAccessTokenKey = "AccessToken";
+        internal const string GithubUserNameKey = "UserName";
+        internal const string GithubRepoNameKey = "RepoName";
+        internal const string GithubBranchKey = "Branch";
         internal const string DestinationScriptsPathKey = "DestinationScriptsPath";
     }
 }

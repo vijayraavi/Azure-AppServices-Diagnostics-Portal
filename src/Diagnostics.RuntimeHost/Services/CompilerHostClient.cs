@@ -22,17 +22,24 @@ namespace Diagnostics.RuntimeHost.Services
     public class CompilerHostClient : ICompilerHostClient, IDisposable
     {
         private SemaphoreSlim _semaphoreObject;
+        private IHostingEnvironment _env;
+        private IConfiguration _configuration;
         private string _compilerHostUrl;
         private HttpClient _httpClient;
         private bool _isComplierHostRunning;
         private int _processId;
         private string _dotNetProductName;
         private string _compilerHostBinaryLocation;
+        private string _compilerHostPort;
+        private int _pollingIntervalInSeconds;
+        private long _processMemoryThresholdInMB;
 
         public CompilerHostClient(IHostingEnvironment env, IConfiguration configuration)
         {
+            _env = env;
+            _configuration = configuration;
             _semaphoreObject = new SemaphoreSlim(1, 1);
-            _compilerHostUrl = $@"http://localhost:{CompilerHostConstants.Port}";
+            
             _httpClient = new HttpClient
             {
                 MaxResponseContentBufferSize = Int32.MaxValue
@@ -43,20 +50,14 @@ namespace Diagnostics.RuntimeHost.Services
             _processId = -1;
             _dotNetProductName = "dotnet";
 
-            // TODO : Probably needs a better way to manage configurations accross various services.
-            if (env.IsProduction())
-            {
-                _compilerHostBinaryLocation = (string)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostBinaryLocation, string.Empty);
-            }
-            else
-            {   
-                _compilerHostBinaryLocation = (configuration[$"CompilerHost:{RegistryConstants.CompilerHostBinaryLocation}"]).ToString();
-            }
+            LoadConfigurations();
 
             if (string.IsNullOrWhiteSpace(_compilerHostBinaryLocation))
             {
-                throw new ArgumentNullException("Compiler Host Binary Location cannot be null or empty.");
+                throw new ArgumentNullException("compilerHostBinaryLocation");
             }
+
+            _compilerHostUrl = $@"http://localhost:{_compilerHostPort}";
 
             StartProcessMonitor();
         }
@@ -127,7 +128,7 @@ namespace Diagnostics.RuntimeHost.Services
 
                 if (proc != null && !proc.HasExited)
                 {
-                    if(proc.WorkingSet64 > CompilerHostConstants.ProcessMemoryThresholdInBytes)
+                    if(proc.WorkingSet64 > (_processMemoryThresholdInMB * 1024 * 1024))
                     {
                         try
                         {
@@ -149,7 +150,7 @@ namespace Diagnostics.RuntimeHost.Services
                     _isComplierHostRunning = false;
                 }
 
-                await Task.Delay(CompilerHostConstants.PollIntervalInMs);
+                await Task.Delay(_pollingIntervalInSeconds * 1000);
             }
         }
 
@@ -160,7 +161,26 @@ namespace Diagnostics.RuntimeHost.Services
                 script = scriptText
             };
         }
-        
+
+        private void LoadConfigurations()
+        {
+            // TODO : Probably needs a better way to manage configurations accross various services.
+            if (_env.IsProduction())
+            {
+                _compilerHostBinaryLocation = (string)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostBinaryLocationKey, string.Empty);
+                _compilerHostPort = (string)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostPortKey, string.Empty);
+                _pollingIntervalInSeconds = (int)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostPortKey, 60);
+                _processMemoryThresholdInMB = (long)Registry.GetValue(RegistryConstants.CompilerHostRegistryPath, RegistryConstants.CompilerHostProcessMemoryThresholdInMBKey, 300);
+            }
+            else
+            {
+                _compilerHostBinaryLocation = (_configuration[$"CompilerHost:{RegistryConstants.CompilerHostBinaryLocationKey}"]).ToString();
+                _compilerHostPort = (_configuration[$"CompilerHost:{RegistryConstants.CompilerHostPortKey}"]).ToString();
+                _pollingIntervalInSeconds = Convert.ToInt32(_configuration[$"CompilerHost:{RegistryConstants.CompilerHostPollingIntervalKey}"]);
+                _processMemoryThresholdInMB = Convert.ToInt64(_configuration[$"CompilerHost:{RegistryConstants.CompilerHostProcessMemoryThresholdInMBKey}"]);
+            }
+        }
+
         public void Dispose()
         {
             if(_semaphoreObject != null)
