@@ -56,61 +56,68 @@ namespace Diagnostics.RuntimeHost.Services.SourceWatcher
 
         private async Task StartWatcherInternal()
         {
-            DirectoryInfo destDirInfo = new DirectoryInfo(_destinationCsxPath);
-            string destLastModifiedMarker = await FileHelper.GetFileContentAsync(destDirInfo.FullName, _lastModifiedMarkerName);
-            HttpResponseMessage response = await _githubClient.Get(_rootContentApiPath, etag: destLastModifiedMarker);
-
-            if (response.StatusCode >= HttpStatusCode.NotFound)
+            try
             {
-                // TODO: log fatal error
-                return;
-            }
+                DirectoryInfo destDirInfo = new DirectoryInfo(_destinationCsxPath);
+                string destLastModifiedMarker = await FileHelper.GetFileContentAsync(destDirInfo.FullName, _lastModifiedMarkerName);
+                HttpResponseMessage response = await _githubClient.Get(_rootContentApiPath, etag: destLastModifiedMarker);
 
-            if (response.StatusCode == HttpStatusCode.NotModified)
-            {
-                /*
-                 * If No changes detected on Github Root Directory, skip download.
-                 * Make Sure this entity is loaded in Invoker cache for runtime.
-                 * This codepath will be mostly used when the process restarts or machine reboot (and no changes are done in scripts source).
-                 */
-
-                foreach (DirectoryInfo subDir in destDirInfo.EnumerateDirectories())
+                if (response.StatusCode >= HttpStatusCode.NotFound)
                 {
-                    await AddInvokerToCacheIfNeeded(subDir);
+                    // TODO: log fatal error
+                    return;
                 }
 
-                return;
+                if (response.StatusCode == HttpStatusCode.NotModified)
+                {
+                    /*
+                     * If No changes detected on Github Root Directory, skip download.
+                     * Make Sure this entity is loaded in Invoker cache for runtime.
+                     * This codepath will be mostly used when the process restarts or machine reboot (and no changes are done in scripts source).
+                     */
+
+                    foreach (DirectoryInfo subDir in destDirInfo.EnumerateDirectories())
+                    {
+                        await AddInvokerToCacheIfNeeded(subDir);
+                    }
+
+                    return;
+                }
+
+                string githubRootContentETag = GetHeaderValue(response, _etagHeaderName).Replace("W/", string.Empty);
+                GithubEntry[] githubDirectories = await response.Content.ReadAsAsyncCustom<GithubEntry[]>();
+
+                foreach (GithubEntry gitHubDir in githubDirectories)
+                {
+                    if (!gitHubDir.Type.Equals("dir", StringComparison.OrdinalIgnoreCase)) continue;
+
+                    DirectoryInfo subDir = new DirectoryInfo(Path.Combine(destDirInfo.FullName, gitHubDir.Name));
+                    if (!subDir.Exists)
+                    {
+                        subDir.Create();
+                    }
+
+                    FileHelper.DeleteFileIfExists(subDir.FullName, _deleteMarkerName);
+                    string subDirModifiedMarker = await FileHelper.GetFileContentAsync(subDir.FullName, _lastModifiedMarkerName);
+
+                    if (subDirModifiedMarker == gitHubDir.Sha)
+                    {
+                        await AddInvokerToCacheIfNeeded(subDir);
+                        continue;
+                    }
+
+                    await DownloadContentAndUpdateInvokerCache(gitHubDir, subDir);
+                    await FileHelper.WriteToFileAsync(subDir.FullName, _lastModifiedMarkerName, gitHubDir.Sha);
+                }
+
+                await SyncLocalDirForDeletedEntriesInGitHub(githubDirectories, destDirInfo);
+
+                await FileHelper.WriteToFileAsync(destDirInfo.FullName, _lastModifiedMarkerName, githubRootContentETag);
             }
-
-            string githubRootContentETag = GetHeaderValue(response, _etagHeaderName).Replace("W/", string.Empty);
-            GithubEntry[] githubDirectories = await response.Content.ReadAsAsyncCustom<GithubEntry[]>();
-
-            foreach (GithubEntry gitHubDir in githubDirectories)
+            catch (Exception)
             {
-                if (!gitHubDir.Type.Equals("dir", StringComparison.OrdinalIgnoreCase)) continue;
-                
-                DirectoryInfo subDir = new DirectoryInfo(Path.Combine(destDirInfo.FullName, gitHubDir.Name));
-                if (!subDir.Exists)
-                {
-                    subDir.Create();
-                }
-
-                FileHelper.DeleteFileIfExists(subDir.FullName, _deleteMarkerName);
-                string subDirModifiedMarker = await FileHelper.GetFileContentAsync(subDir.FullName, _lastModifiedMarkerName);
-
-                if (subDirModifiedMarker == gitHubDir.Sha)
-                {
-                    await AddInvokerToCacheIfNeeded(subDir);
-                    continue;
-                }
-
-                await DownloadContentAndUpdateInvokerCache(gitHubDir, subDir);
-                await FileHelper.WriteToFileAsync(subDir.FullName, _lastModifiedMarkerName, gitHubDir.Sha);
+                // TODO : Log and consume the exception
             }
-            
-            await SyncLocalDirForDeletedEntriesInGitHub(githubDirectories, destDirInfo);
-
-            await FileHelper.WriteToFileAsync(destDirInfo.FullName, _lastModifiedMarkerName, githubRootContentETag);
         }
         
         private async void StartPollingForChanges()

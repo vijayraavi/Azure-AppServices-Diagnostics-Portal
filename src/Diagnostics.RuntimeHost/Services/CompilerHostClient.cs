@@ -120,37 +120,45 @@ namespace Diagnostics.RuntimeHost.Services
         {
             while (true)
             {
-                Process proc = null;
-                if (_processId != -1)
+                try
                 {
-                    proc = Process.GetProcessById(_processId);
-                }
 
-                if (proc != null && !proc.HasExited)
-                {
-                    if(proc.WorkingSet64 > (_processMemoryThresholdInMB * 1024 * 1024))
+                    Process proc = null;
+                    if (_processId != -1)
                     {
-                        try
+                        proc = Process.GetProcessById(_processId);
+                    }
+
+                    if (proc != null && !proc.HasExited)
+                    {
+                        if (proc.WorkingSet64 > (_processMemoryThresholdInMB * 1024 * 1024))
                         {
-                            await _semaphoreObject.WaitAsync();
-                            proc.Kill();
-                            proc.WaitForExit();
-                            _processId = -1;
-                            _isComplierHostRunning = false;
-                        }
-                        finally
-                        {
-                            _semaphoreObject.Release();
+                            try
+                            {
+                                await _semaphoreObject.WaitAsync();
+                                proc.Kill();
+                                proc.WaitForExit();
+                                _processId = -1;
+                                _isComplierHostRunning = false;
+                            }
+                            finally
+                            {
+                                _semaphoreObject.Release();
+                            }
                         }
                     }
-                }
-                else
-                {
-                    _processId = -1;
-                    _isComplierHostRunning = false;
-                }
+                    else
+                    {
+                        _processId = -1;
+                        _isComplierHostRunning = false;
+                    }
 
-                await Task.Delay(_pollingIntervalInSeconds * 1000);
+                    await Task.Delay(_pollingIntervalInSeconds * 1000);
+                }
+                catch (Exception)
+                {
+                    // TODO : Log Exception
+                }
             }
         }
 
