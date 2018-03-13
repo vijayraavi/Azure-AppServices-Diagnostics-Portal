@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <Target Name="AfterBuildScript" AfterTargets="Build">
-    <Copy SourceFiles="..\templates\Detector_KustoQuery.csx" DestinationFolder="$(OutputPath)\templates" ContinueOnError="true" />
+    <Copy SourceFiles="..\data\templates\Detector_KustoQuery.csx" DestinationFolder="$(OutputPath)\templates" ContinueOnError="true" />
   </Target>
   
 </Project>
