@@ -98,7 +98,7 @@ namespace Diagnostics.Tests.ScriptsTests
                 Id = "TestId"
             };
 
-            string assemblyPath = $@"{Directory.GetCurrentDirectory()}\{Guid.NewGuid().ToString()}";
+            string assemblyPath = $@"{Directory.GetCurrentDirectory()}/{Guid.NewGuid().ToString()}";
             EntityMetadata metadata = ScriptTestDataHelper.GetRandomMetadata();
             metadata.ScriptText = await ScriptTestDataHelper.GetDetectorScript(definitonAttribute.Id);
 
