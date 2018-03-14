@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using Diagnostics.Scripts.Models;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using System.Collections.Immutable;
 
@@ -8,7 +9,11 @@ namespace Diagnostics.Scripts.CompilationService
     {
         private static string _entryPointMethodName = "Run";
 
-        public DetectorCompilation(Compilation compilation) : base(compilation, Models.EntryPointResolutionType.MethodName, _entryPointMethodName)
+        public DetectorCompilation() : base(EntryPointResolutionType.MethodName, _entryPointMethodName)
+        {
+        }
+
+        public DetectorCompilation(Compilation compilation) : base(compilation, EntryPointResolutionType.MethodName, _entryPointMethodName)
         {
         }
 

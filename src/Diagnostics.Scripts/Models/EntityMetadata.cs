@@ -8,8 +8,6 @@ namespace Diagnostics.Scripts.Models
     {
         public EntityType Type;
 
-        public string Name;
-
         public string ScriptText;
 
         public EntityMetadata()

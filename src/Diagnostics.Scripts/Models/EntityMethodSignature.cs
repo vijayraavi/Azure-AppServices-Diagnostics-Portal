@@ -16,6 +16,11 @@ namespace Diagnostics.Scripts.Models
         private readonly string _returnTypeName;
         private readonly ImmutableArray<AttributeData> _attributes;
 
+        public EntityMethodSignature(string methodName)
+        {
+            _methodName = methodName;
+        }
+
         public EntityMethodSignature(string parentTypeName, string methodName, ImmutableArray<EntityParameter> parameters, string returnTypeName, ImmutableArray<AttributeData> attributes)
         {
             _parameters = parameters;
@@ -42,9 +47,11 @@ namespace Diagnostics.Scripts.Models
                 throw new ArgumentNullException(nameof(assembly));
             }
 
-            return assembly.DefinedTypes
-                .FirstOrDefault(t => string.Compare(t.FullName, ParentTypeName, StringComparison.Ordinal) == 0)
-                ?.GetMethod(MethodName);
+            //return assembly.DefinedTypes
+            //    .FirstOrDefault(t => string.Compare(t.FullName, ParentTypeName, StringComparison.Ordinal) == 0)
+            //    ?.GetMethod(MethodName);
+
+            return assembly.DefinedTypes.FirstOrDefault(t => t.DeclaringType == null)?.GetMethod(MethodName);
         }
     }
 }
