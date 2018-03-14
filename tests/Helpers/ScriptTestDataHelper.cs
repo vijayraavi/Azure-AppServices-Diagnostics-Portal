@@ -56,7 +56,7 @@ namespace Diagnostics.Tests.Helpers
 
         public static async Task<string> GetDetectorScript(string id, string kustoTableName = "MockTable", string queryPart = "take 1")
         {
-            string kustoTemplate = await File.ReadAllTextAsync(@"templates\Detector_KustoQuery.csx");
+            string kustoTemplate = await File.ReadAllTextAsync(@"templates/Detector_KustoQuery.csx");
             return kustoTemplate.Replace("<YOUR_DETECTOR_ID>", id)
                 .Replace("<YOUR_TABLE_NAME>", kustoTableName)
                 .Replace("<YOUR_QUERY>", queryPart);
