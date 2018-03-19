@@ -54,6 +54,7 @@ namespace Diagnostics.RuntimeHost
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDiagnosticsRequestMiddleware();
             app.UseMvc();
         }
     }

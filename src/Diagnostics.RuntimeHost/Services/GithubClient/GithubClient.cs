@@ -1,4 +1,5 @@
-﻿using Diagnostics.RuntimeHost.Utilities;
+﻿using Diagnostics.Logger;
+using Diagnostics.RuntimeHost.Utilities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
@@ -66,7 +67,7 @@ namespace Diagnostics.RuntimeHost.Services
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, AppendQueryStringParams(url));
             if (!string.IsNullOrWhiteSpace(etag))
             {
-                request.Headers.Add("If-None-Match", etag);
+                request.Headers.Add(HeaderConstants.IfNoneMatchHeaderName, etag);
             }
 
             return Get(request);
@@ -145,7 +146,7 @@ namespace Diagnostics.RuntimeHost.Services
             };
             
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", _userName);
+            _httpClient.DefaultRequestHeaders.Add(HeaderConstants.UserAgentHeaderName, _userName);
         }
 
         private string AppendQueryStringParams(string url)
