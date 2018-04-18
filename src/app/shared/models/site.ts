@@ -19,6 +19,7 @@ export interface Site {
 }
 
 export class SiteInfoMetaData {
+    resourceUri: string;
     subscriptionId: string;
     resourceGroupName: string;
     siteName: string;

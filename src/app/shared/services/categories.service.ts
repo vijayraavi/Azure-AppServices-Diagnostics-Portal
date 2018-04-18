@@ -161,9 +161,24 @@ export class CategoriesService {
             AppStack : "Java"
         });
 
+        let generic = new Category();
+        generic.Name = "Generic Detectors";
+        generic.Subcategories = [];
+        generic.Collapsed = false;
+
+        generic.Subcategories.push({
+            Name: "Sample Detector",
+            BgColor: 'rgb(153, 69, 0)',
+            TextColor: 'White',
+            Href: '../detectors/sample',
+            OperatingSystem: OperatingSystem.windows,
+            AppStack : ""
+        });
+
         
         this.Categories.push(perf);
         this.Categories.push(tools);
+        this.Categories.push(generic);
     }
 
     getCategories(): Category[] {

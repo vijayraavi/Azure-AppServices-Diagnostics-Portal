@@ -166,6 +166,7 @@ export class SiteService {
     private _populateSiteInfo(resourceId: string): void {
         let pieces = resourceId.toLowerCase().split('/');
         this.currentSiteMetaData.next(<SiteInfoMetaData>{
+            resourceUri: resourceId,
             subscriptionId: pieces[pieces.indexOf('subscriptions') + 1],
             resourceGroupName: pieces[pieces.indexOf('resourcegroups') + 1],
             siteName: pieces[pieces.indexOf('sites') + 1],
