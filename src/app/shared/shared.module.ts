@@ -67,6 +67,8 @@ import { IncidentSummaryComponent } from './components/incident-summary/incident
 import { DaasValidatorComponent } from './components/daas/daas-validator.component';
 import { DaasSessionsDetailedComponent } from './components/daas-sessions-detailed/daas-sessions-detailed.component';
 import { GenericApiService } from './services/generic-api.service';
+import { TabTitleResolver } from './resolvers/tab-name.resolver';
+import { AseService } from './services/ase.service';
 
 @NgModule({
     declarations: [
@@ -192,7 +194,9 @@ export class SharedModule {
                 SolutionFactoryService,
                 DaasService,
                 ServiceIncidentService,
-                GenericApiService
+                GenericApiService,
+                TabTitleResolver,
+                AseService
             ]
         }
     }

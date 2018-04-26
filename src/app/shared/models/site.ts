@@ -28,9 +28,10 @@ export class SiteInfoMetaData {
 
 export class SiteExtensions {
     public static operatingSystem(site: Site): OperatingSystem {
-        // console.log(tsitehis.kind);
-        // console.log(this.kind.split(',').indexOf('linux') > 0 ? OperatingSystem.linux : OperatingSystem.windows);
-        return site.kind.split(',').indexOf('linux') > 0 ? OperatingSystem.linux : OperatingSystem.windows;
+        if (site && site.kind) {
+            return site.kind.split(',').indexOf('linux') > 0 ? OperatingSystem.linux : OperatingSystem.windows;
+        }
+        return OperatingSystem.linux | OperatingSystem.windows;
     }
 }
 
@@ -42,5 +43,6 @@ export interface SiteRestartData {
 // Flags
 export enum OperatingSystem {
     windows = 1 << 0,
-    linux = 1 << 1
+    linux = 1 << 1,
+    any = 11 << 0 
 }

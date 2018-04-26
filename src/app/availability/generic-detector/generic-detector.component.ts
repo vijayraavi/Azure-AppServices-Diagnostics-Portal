@@ -14,17 +14,19 @@ export class GenericDetectorComponent implements OnInit {
   startTime: moment.Moment;
   endTime: moment.Moment;
 
+  detector: string;
+
   response: DetectorResponse;
 
   constructor(private _genericDetectorApi: GenericApiService, private _activatedRoute: ActivatedRoute) {
     this.endTime = moment.tz('Etc/UTC');
     this.startTime = this.endTime.clone().add(-1, 'days');
 
-    console.log(this._activatedRoute.params);
+    this.detector = this._activatedRoute.snapshot.params['detectorName'];
   }
 
   ngOnInit() {
-    this._genericDetectorApi.getDetector('sample').subscribe(res => {
+    this._genericDetectorApi.getDetector(this.detector).subscribe(res => {
       if(res) {
         this.response = res;
       }
