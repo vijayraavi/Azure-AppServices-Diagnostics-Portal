@@ -5,17 +5,24 @@ import { MessageGroup } from '../../models/message-group';
 import { RegisterMessageFlowWithFactory } from '../message-flow.factory';
 import { FeedbackComponent } from './feedback.component';
 import { MessageSender, ButtonActionType } from '../../models/message-enums';
+import { AuthService } from '../../../shared/services/auth.service';
+import { ResourceType } from '../../../shared/models/portal';
 
 @Injectable()
 @RegisterMessageFlowWithFactory()
 export class FeedbackMessageFlow implements IMessageFlowProvider {
 
+    constructor(private _authService: AuthService) {
+    }
+
     GetMessageFlowList(): MessageGroup[] {
+        let resourceName = this._authService.resourceType === ResourceType.Site ? 'App Service' : 'App Service Environment';
+
         var messageGroupList: MessageGroup[] = [];
 
         var feedbackPromptGroup: MessageGroup = new MessageGroup('feedbackprompt', [], () => 'feedback');
 
-        feedbackPromptGroup.messages.push(new TextMessage('Thanks for using App Service diagnostics. Did you find this experience useful?', MessageSender.System, 2500));
+        feedbackPromptGroup.messages.push(new TextMessage(`Thanks for using ${resourceName} diagnostics. Did you find this experience useful?`, MessageSender.System, 2500));
         feedbackPromptGroup.messages.push(new ButtonListMessage(this._getButtonListForHealthCheckFeedback(), 'Was diagnoser useful?'));
         feedbackPromptGroup.messages.push(new TextMessage('Yes, thank you!', MessageSender.User, 100));
         feedbackPromptGroup.messages.push(new TextMessage('Great, I\'m glad I could be of help!', MessageSender.System));
