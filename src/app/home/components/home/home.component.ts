@@ -48,15 +48,6 @@ export class HomeComponent implements OnInit {
       this._detectorControlService.setDefault();
     }
 
-    // this._authService.getStartupInfo().subscribe(startupInfo => {
-    //   if (startupInfo.additionalParameters) {
-    //     let path = startupInfo.resourceId.toLowerCase();
-    //     path = this._updateRouteBasedOnAdditionalParameters(path, startupInfo.additionalParameters)
-
-    //     this._router.navigateByUrl(path);
-    //   }
-    // })
-
     setTimeout(() => {
       let notification = new Notification('This is the new App Service Diagnostics Experience. Click here to return to the old experience', () => {
         this._router.navigateByUrl(`legacy${this._resourceService.resourceIdForRouting}/diagnostics`);
