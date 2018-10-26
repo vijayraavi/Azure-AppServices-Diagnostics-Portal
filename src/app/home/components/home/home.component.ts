@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
     this._categoryService.categories.subscribe(categories => this.categories = categories);
 
     this._authService.getStartupInfo().subscribe(startupInfo => {
-      if (startupInfo.additionalParameters) {
+      if (startupInfo.additionalParameters && Object.keys(startupInfo.additionalParameters).length > 0) {
         let path = startupInfo.resourceId.toLowerCase();
         path = this._updateRouteBasedOnAdditionalParameters(path, startupInfo.additionalParameters)
 
