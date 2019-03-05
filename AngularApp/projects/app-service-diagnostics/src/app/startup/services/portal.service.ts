@@ -46,7 +46,7 @@ export class PortalService {
             }
         });
     }
-
+  
     openBlade(bladeInfo: OpenBladeInfo, source: string) {
         this.postMessage(Verbs.openBlade, JSON.stringify(bladeInfo));
     }
@@ -105,6 +105,8 @@ export class PortalService {
             this.startupInfoObservable.next(info);
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
+            console.log("Here is the ai resource");
+            console.log(aiResource);
             this.appInsightsResourceObservable.next(aiResource);
         }
     }

@@ -120,6 +120,17 @@ export class AppInsightsService {
         }));
     }
 
+    CheckIfAppInsightsEnabled(): boolean
+    {
+        let appInsightsEnabled: boolean = false;
+        this.portalService.getAppInsightsResourceInfo().subscribe((aiResource: string) => {
+            appInsightsEnabled = this.isNotNullOrEmpty(aiResource);
+        });
+
+        console.log(`App insights enabled: ${appInsightsEnabled}`);
+        return appInsightsEnabled;
+    }
+
     DeleteAppInsightsAccessKeyIfExists(): Observable<any> {
 
         const url =  `${this.armService.armUrl}${this.appInsightsSettings.resourceUri}/ApiKeys?api-version=2015-05-01`;
@@ -155,6 +166,18 @@ export class AppInsightsService {
 
         const resourceUri: string = `${this.appInsightsSettings.resourceUri}/api/query?query=${encodeURIComponent(query)}`;
         return this.armService.getResource<any>(resourceUri, '2015-05-01');
+    }
+
+    ExecuteQuerywithPostMethod(query: string): Observable<any> {
+        if (!this.isNotNullOrEmpty(query)) {
+            return of([]);
+        }
+
+        const resourceUri: string = `${this.appInsightsSettings.resourceUri}/api/query`;
+        const body: any = {
+            query: query
+        }
+        return this.armService.postResource<any, any>(resourceUri, body, '2015-05-01');
     }
 
     private isNotNullOrEmpty(item: any): boolean {

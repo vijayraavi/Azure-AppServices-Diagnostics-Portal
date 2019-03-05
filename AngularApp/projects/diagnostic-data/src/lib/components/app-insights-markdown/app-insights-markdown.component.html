@@ -1,0 +1,49 @@
+<div>
+  
+<data-container *ngIf="isAppInsightsEnabled; else notEnabled" [title]="AppInsightsEnabled">
+  <div>App insights Enabled</div>
+  </data-container> 
+
+  <ng-template #notEnabled>
+        <div style="color:red">App insights disabled</div>         
+  </ng-template>
+
+  <data-container *ngFor="let appInsightQueryMetaData of appInsightQueryMetaDataList; let i = index"
+    class="appinsight-container" [title]="appInsightQueryMetaData.title">
+    <div class="card-description">
+      {{appInsightQueryMetaData.description}}
+    </div>
+    <div class="card-description">
+      Ask the customer to run these quries: {{appInsightQueryMetaData.query}}
+    </div>
+    <div class="card-description">
+      Open this blade for more info: detailBlade: {{appInsightQueryMetaData.poralBladeInfo.detailBlade}}
+      <br />
+      extension: {{appInsightQueryMetaData.poralBladeInfo.extension}}
+      <br />
+      <br />
+      detailBladeInputs-yaya: {{appInsightQueryMetaData.poralBladeInfo.detailBladeInputs["yaya"]}}
+    </div>
+  </data-container>
+</div>
+
+
+
+
+<!-- 
+<ng-template #internalView>
+  {{renderingProperties.title}}
+  <button class="btn btn-default" style="float:right;margin-top: -7px" *ngIf="!isPublic">
+      <span class="fa fa-copy"></span>
+      
+  </button>
+  <button class="btn btn-default" style="float:right;margin-top: -7px;margin-right:10px" *ngIf="!isPublic">
+      <span class="fa fa-envelope"></span>
+      Open in Outlook
+  </button>
+
+</ng-template>
+
+<data-container [headerTemplate]="header" [title]="renderingProperties.title">
+  <markdown [data]="markdown"></markdown>
+</data-container> -->
