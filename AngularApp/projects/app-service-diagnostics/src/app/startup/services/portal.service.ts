@@ -113,6 +113,8 @@ export class PortalService {
 
     public postMessage(verb: string, data: string) {
         if (this.inIFrame()) {
+            console.log("Inside post message to get AI resource");
+            console.log(data);
             window.parent.postMessage(<Data>{
                 signature: this.portalSignature,
                 kind: verb,

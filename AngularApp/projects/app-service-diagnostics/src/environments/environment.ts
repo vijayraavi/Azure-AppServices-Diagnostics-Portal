@@ -6,10 +6,10 @@
 
 export const environment = {
   production: false,
-  backendHost: 'http://localhost:62302/',
-  useApplensBackend: false,
-  authServiceToken: "",
-  authServiceResourceId: ""
+  backendHost: 'http://localhost:5000/',
+  useApplensBackend: true,
+  authServiceToken: "AVQAq/8KAAAAF3THT0CQFXjQnkpFhSwn7QPv9Vb2k4/fLOoFSUSztmMfPvRycpyBH7vfPSbqeFe2mS+n17I+jsXxl+s5XIBEJ1LPuP07/qgL7XIpUJcmTsY="  ,
+  authServiceResourceId: "/subscriptions/0d3ae56c-deaf-4982-b514-33d016d4a683/resourceGroups/cindybuggyfn/providers/Microsoft.Web/sites/cindybuggyfn"
 };
 
 /*

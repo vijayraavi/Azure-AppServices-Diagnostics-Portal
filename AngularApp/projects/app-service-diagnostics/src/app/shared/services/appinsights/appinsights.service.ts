@@ -8,8 +8,9 @@ import { ArmService } from '../arm.service';
 import { SiteService } from '../site.service';
 import { AppAnalysisService } from '../appanalysis.service';
 import { PortalService } from '../../../startup/services/portal.service';
+import { PortalActionService } from '../portal-action.service';
 import { AvailabilityLoggingService } from '../logging/availability.logging.service';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 
 @Injectable()
 export class AppInsightsService {
@@ -35,7 +36,7 @@ export class AppInsightsService {
         appId: undefined
     };
 
-    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService, private logger: AvailabilityLoggingService) {
+    constructor(private http: Http, private authService: AuthService, private armService: ArmService, private siteService: SiteService, private appAnalysisService: AppAnalysisService, private portalService: PortalService, private portalActionService: PortalActionService, private logger: AvailabilityLoggingService) {
 
         this.loadAppInsightsResourceObservable = new BehaviorSubject<boolean>(null);
         this.loadAppDiagnosticPropertiesObservable = new BehaviorSubject<boolean>(null);
@@ -120,15 +121,20 @@ export class AppInsightsService {
         }));
     }
 
-    CheckIfAppInsightsEnabled(): boolean
+    CheckIfAppInsightsEnabled(): Observable<boolean>
     {
         let appInsightsEnabled: boolean = false;
-        this.portalService.getAppInsightsResourceInfo().subscribe((aiResource: string) => {
-            appInsightsEnabled = this.isNotNullOrEmpty(aiResource);
-        });
+        return this.portalService.getAppInsightsResourceInfo().pipe(
+            map((aiResource: string) => {
+            console.log("********Checking app insights");
 
-        console.log(`App insights enabled: ${appInsightsEnabled}`);
-        return appInsightsEnabled;
+            appInsightsEnabled = this.isNotNullOrEmpty(aiResource);
+            console.log(`App insights enabled1: ${appInsightsEnabled}`);
+            return this.isNotNullOrEmpty(aiResource);
+            }));
+
+        // console.log(`App insights enabled2: ${appInsightsEnabled}`);
+        // return appInsightsEnabled;
     }
 
     DeleteAppInsightsAccessKeyIfExists(): Observable<any> {
@@ -169,6 +175,9 @@ export class AppInsightsService {
     }
 
     ExecuteQuerywithPostMethod(query: string): Observable<any> {
+
+        console.log("inside portal appInsight service");
+        console.log(`query: ${query}`);
         if (!this.isNotNullOrEmpty(query)) {
             return of([]);
         }
@@ -177,8 +186,31 @@ export class AppInsightsService {
         const body: any = {
             query: query
         }
-        return this.armService.postResource<any, any>(resourceUri, body, '2015-05-01');
+
+        console.log(`resourceUri here:`);
+        console.log(resourceUri);
+
+        console.log(`body here:`);
+        console.log(body);
+        
+        
+        return this.armService.postResource<any, any>(resourceUri, body, '2015-05-01', true, true);
     }
+
+  
+
+    public openAppInsightsBlade() {
+        this.portalActionService.openAppInsightsBlade();
+    }
+
+    public openAppInsightsFailuresBlade() {
+        this.portalActionService.openAppInsightsFailuresBlade(this.appInsightsSettings.resourceUri);
+    }
+
+    public openAppInsightsPerformanceBlade() {
+       this.portalActionService.openAppInsightsPerformanceBlade(this.appInsightsSettings.resouceUri);
+    }
+
 
     private isNotNullOrEmpty(item: any): boolean {
         return (item && item != '');

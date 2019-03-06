@@ -1,15 +1,59 @@
 <div>
-  
-<data-container *ngIf="isAppInsightsEnabled; else notEnabled" [title]="AppInsightsEnabled">
-  <div>App insights Enabled</div>
-  </data-container> 
 
-  <ng-template #notEnabled>
-        <div style="color:red">App insights disabled</div>         
-  </ng-template>
+  <!-- <data-container *ngIf="isAppInsightsEnabled; else notEnabled" [title]="AppInsightsEnabled">
+    <div style="color:blue">App insights Enabled</div>
+  </data-container> -->
 
-  <data-container *ngFor="let appInsightQueryMetaData of appInsightQueryMetaDataList; let i = index"
-    class="appinsight-container" [title]="appInsightQueryMetaData.title">
+  <!-- <ng-template #notEnabled> -->
+    <div class="insight-container">
+      <div class="panel panel-default" >
+         <!-- #7f5292 #5c2d91 -->
+        <div class="panel-heading" style="background-color:#7f5292; color:white">
+          <h5 class="panel-title">
+            <span class="fa status-icon" [class.fa-info-circle]="true" style="color:white"></span>
+            We detected that Application Insights is disabled on your app
+          </h5>
+        </div>
+        <div class="panel-body">
+          <table>
+            <tbody>
+              <tr>
+                <td class="table-value">
+                  <div style="font-weight:500;font-size:14px;text-decoration:underline">No Application Insights Resource Found</div>
+                  <div style="margin-top:10px">
+                    <div style="color:#505050">
+                      Looks like there is no application insights resource associated with your app
+                      <span style="font-weight:500;color:black">{{siteName}}</span>.
+                      <br />Using application insights will help you detect and diagnose issues in your web application code very
+                      easily.
+                    </div>
+
+                    <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91" (click)="this._appInsightsService.openAppInsightsBlade()">
+                      Create Application Insights
+                      <i class="fa fa-chevron-right" style="margin-left:10px"></i>
+                    </button>
+                    <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91" (click)="this._appInsightsService.openAppInsightsFailuresBlade()">
+                        Application Insights Failure Blade
+                        <i class="fa fa-chevron-right" style="margin-left:10px"></i>
+                      </button>
+                      <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91" (click)="this._appInsightsService.openAppInsightsPerformanceBlade()">
+                          Application Insights Performance Blade
+                          <i class="fa fa-chevron-right" style="margin-left:10px"></i>
+                        </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="color:red">App insights disabled</div>
+    </div>
+  <!-- </ng-template> -->
+
+  <data-container *ngFor="let appInsightQueryMetaData of appInsightQueryMetaDataList; let i = index" class="appinsight-container"
+    [title]="appInsightQueryMetaData.title">
     <div class="card-description">
       {{appInsightQueryMetaData.description}}
     </div>
@@ -18,13 +62,16 @@
     </div>
     <div class="card-description">
       Open this blade for more info: detailBlade: {{appInsightQueryMetaData.poralBladeInfo.detailBlade}}
+      <br /> extension: {{appInsightQueryMetaData.poralBladeInfo.extension}}
+      <br /> rendering: {{appInsightQueryMetaData.renderingType}}
       <br />
-      extension: {{appInsightQueryMetaData.poralBladeInfo.extension}}
-      <br />
-      <br />
-      detailBladeInputs-yaya: {{appInsightQueryMetaData.poralBladeInfo.detailBladeInputs["yaya"]}}
+      <br /> detailBladeInputs-yaya: {{appInsightQueryMetaData.poralBladeInfo.detailBladeInputs["yaya"]}}
     </div>
   </data-container>
+
+  <div *ngFor="let data of diagnosticDataSet" class="dynamic-data-container">
+    <dynamic-data [diagnosticData]="data" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
+  </div>
 </div>
 
 

@@ -6,13 +6,26 @@ import { Observable ,  BehaviorSubject, of, ReplaySubject } from 'rxjs';
   
 export class AppInsightsQueryService {
 
-    CheckIfAppInsightsEnabled(): boolean
+    public loadAppInsightsResourceObservable: BehaviorSubject<boolean>;
+
+    CheckIfAppInsightsEnabled(): Observable<boolean>
     {
-        return false;
+        return null;
     }
 
-    ExecuteQuerywithPostMethod(query: string): Observable<any> {
+    ExecuteQuerywithPostMethod(query: string): Observable<any>
+    {
         return null;
+    }
+
+    openAppInsightsFailuresBlade()
+    {
+    }
+
+    openAppInsightsBlade() {
+    }
+
+    openAppInsightsPerformanceBlade() {
     }
 }
 

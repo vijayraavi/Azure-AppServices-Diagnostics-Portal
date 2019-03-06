@@ -3,7 +3,7 @@ import { TelemetryService } from './../../services/telemetry/telemetry.service';
 import { Component, Inject } from '@angular/core';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DiagnosticService } from '../../services/diagnostic.service';
-import { DiagnosticData, RenderingType, Rendering} from '../../models/detector';
+import { DataTableResponseColumn, DataTableResponseObject, DiagnosticData, RenderingType, Rendering} from '../../models/detector';
 import { FeatureNavigationService } from '../../services/feature-navigation.service';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { AppInsightsQueryService } from '../../services/appinsights.service';
@@ -19,33 +19,42 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
   isPublic: boolean;
   isAppInsightsEnabled: boolean = false;
   appInsightQueryMetaDataList: AppInsightQueryMetadata[] = [];
+  appInsightDataList: AppInsightData[] = [];
+  diagnosticDataSet: DiagnosticData[] = [];
+  loadingAppInsightsData: boolean = true;
+  appiicationInsightsDisabledInsight: DiagnosticData;
 
   constructor(private _appInsightsService: AppInsightsQueryService, private _diagnosticService: DiagnosticService, private _router: Router,
     private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService, private _navigator: FeatureNavigationService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(telemetryService);
     this.isPublic = config && config.isPublic;
+    // this.appiicationInsightsDisabledInsight = <DiagnosticData>{
+    //   table: <DataTableResponseObject> {
+    //     columns: dataColumns,
+    //     rows: rows,
+    //   },
+    //   renderingProperties: <Rendering> {
+    //     type: RenderingType.Insights,
+    //     title: "",
+    //     description: ""
+    //   };
 
-    this.isAppInsightsEnabled = this._appInsightsService.CheckIfAppInsightsEnabled();
+    if (this.isPublic)
+    {
+      this._appInsightsService.CheckIfAppInsightsEnabled().subscribe(isAppinsightsEnabled => {
+        this.isAppInsightsEnabled = isAppinsightsEnabled;
+      });
 
-
-      // if (changes['startTime'] && this.appInsightsService.appInsightsSettings.validForStack) {
-      //     this.exceptions = [];
-      //     this.loading = true;
-      //     this.appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
-      //         this.appInsightsQueryService.GetTopExceptions(this.startTime, this.endTime).subscribe((data: any) => {
-      //             let rows = data["Tables"][0]["Rows"];
-      //             this.parseRowsIntoExceptions(rows);
-      //             this.loading = false;
-
-      //             this.logger.LogAppInsightsExceptionSummary(this.startTime, this.endTime, this.exceptionTypes);
-      //         });
-      //     });
-      // }
-
+    }
+    else
+    {
+        //console.log("Not worrying about ai enabled");
+    }
 
   }
 
   protected processData(data: DiagnosticData) {
+    console.log("I am processsing I am processing");
     super.processData(data);
     this.renderingProperties = <Rendering>data.renderingProperties;
 
@@ -55,14 +64,83 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
         description: row[1],
         query: row[2],
         poralBladeInfo: row[3],
+        renderingType: row[4]
         // icon: 'fa-bar-chart',
         // linkType: parseInt(row[3]),
         // linkValue: row[4]
       });
-      console.log(row[3].detailBlade);
-      console.log(row[3].extension);
-      console.log(row[3].detailBladeInputs);
-    })
+    });
+
+    
+    if (this.isPublic && this.appInsightQueryMetaDataList !== [])
+    {
+      
+        this._appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
+          if (loadStatus === true)
+        {
+          this.appInsightQueryMetaDataList.forEach(appInsightData => {
+        
+          this._appInsightsService.ExecuteQuerywithPostMethod(appInsightData.query).subscribe(data => {
+            console.log(`Inside ExecuteQuerywithPostMethod, query: ${appInsightData.query}`);
+            if (data && data["Tables"]) {
+              console.log(`Table with query: ${appInsightData.query}`);
+              console.log(data["Tables"]);
+              let rows = data["Tables"][0]["Rows"];
+              let columns = data["Tables"][0]["Columns"];
+              let dataColumns: DataTableResponseColumn[] = [];
+              columns.forEach(column => {
+                dataColumns.push(<DataTableResponseColumn>{
+                  columnName: column.ColumnName,
+                  dataType: column.DataType,
+                  columnType: column.ColumnType,
+                }
+
+                )
+                
+              });
+              this.appInsightDataList.push(<AppInsightData>{
+                  title: appInsightData.title,
+                  description: appInsightData.description,
+                  renderingType: appInsightData.renderingType,
+                  table: rows,
+                  poralBladeInfo: appInsightData.poralBladeInfo,
+              });
+              
+              this.diagnosticDataSet.push(<DiagnosticData>{
+                table: <DataTableResponseObject> {
+                  columns: dataColumns,
+                  rows: rows,
+                },
+                renderingProperties: <Rendering> {
+                  type: appInsightData.renderingType,
+                  title: appInsightData.title,
+                  description: appInsightData.description
+                }
+              });
+              console.log("rows and columns*********");
+              console.log(rows);
+              console.log(columns);
+
+              console.log(appInsightData.renderingType);
+              console.log("end*********");
+            }
+
+            console.log("dataset*********");
+            console.log(this.diagnosticDataSet);
+            
+            
+            this.loadingAppInsightsData = false;
+        });
+      });
+    }
+    console.log(this.diagnosticDataSet);
+  
+      });
+    }
+    
+    
+
+    
   }
 
   // protected processData(data: DiagnosticData) {
@@ -116,6 +194,15 @@ export class AppInsightQueryMetadata {
   description: string;
   query: string;
   poralBladeInfo: any;
+  renderingType: any;
+}
+
+export class AppInsightData {
+  title: string;
+  description: string;
+  table: any;
+  poralBladeInfo: any;
+  renderingType: any;
 }
 
 export class BladeInfo

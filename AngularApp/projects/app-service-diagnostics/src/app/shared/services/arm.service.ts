@@ -70,8 +70,13 @@ export class ArmService {
         return this._cache.get(url, request, invalidateCache);
     }
 
-    postResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url =  this.createUrl(resourceUri, apiVersion);
+    postResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
+        console.log(`amrUrl: ${this.armUrl}`);
+        console.log(`resourceUri: ${resourceUri}`);
+        console.log(`body: `);
+        console.log(body);
+        console.log(`invalidate cache: ${invalidateCache}`);
+        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -87,7 +92,9 @@ export class ArmService {
             catchError(this.handleError)
         );
 
-        return this._cache.get(url, request, invalidateCache);
+        let cacheKey: string = appendBodyToCacheKey ? url+bodyString : url;
+
+        return this._cache.get(cacheKey, request, invalidateCache);
     }
 
     deleteResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<any> {
@@ -244,6 +251,5 @@ export class ArmService {
         }
 
         return headers;
-
     }
 }

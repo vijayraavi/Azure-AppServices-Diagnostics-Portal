@@ -13,12 +13,13 @@ export class CacheService {
     private inFlightObservables: Map<string, Subject<any>> = new Map<string, Subject<any>>();
 
     // This is useful to enable if you are trying to test and make sure this service is working properly
-    private enableConsoleLogging: boolean = false;
+    private enableConsoleLogging: boolean = true;
 
     get(key: string, fallback?: Observable<any>, invalidateCache: boolean = false): Observable<any> | Subject<any> {
 
         if (this.has(key)) {
             if (invalidateCache) {
+                console.log(`%cInvalidating ${key}`, 'color: orange');
                 this.log(`%cInvalidating ${key}`, 'color: orange');
                 this.cache.delete(key);
             } else {
@@ -28,6 +29,7 @@ export class CacheService {
         }
 
         if (this.inFlightObservables.has(key)) {
+            console.log("inFlightObservables key: true");
             return this.inFlightObservables.get(key);
         } else if (fallback && fallback instanceof Observable) {
             this.inFlightObservables.set(key, new Subject());
