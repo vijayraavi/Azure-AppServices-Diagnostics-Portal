@@ -211,6 +211,13 @@ export class AppInsightsService {
        this.portalActionService.openAppInsightsPerformanceBlade(this.appInsightsSettings.resouceUri);
     }
 
+    public openAppInsightsExtensionBlade(detailBlade?: string) {
+        return this.portalService.getAppInsightsResourceInfo().subscribe(
+            (aiResource: string) => {
+            this.portalActionService.openAppInsightsExtensionBlade(detailBlade, aiResource);
+            });
+    }
+
 
     private isNotNullOrEmpty(item: any): boolean {
         return (item && item != '');

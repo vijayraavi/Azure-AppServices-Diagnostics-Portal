@@ -3,16 +3,32 @@ import { TelemetryService } from './../../services/telemetry/telemetry.service';
 import { Component, Inject } from '@angular/core';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { DiagnosticService } from '../../services/diagnostic.service';
-import { DataTableResponseColumn, DataTableResponseObject, DiagnosticData, RenderingType, Rendering} from '../../models/detector';
+import { DataTableResponseColumn, DataTableResponseObject, DiagnosticData, RenderingType, Rendering, TimeSeriesType, TimeSeriesRendering} from '../../models/detector';
 import { FeatureNavigationService } from '../../services/feature-navigation.service';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { AppInsightsQueryService } from '../../services/appinsights.service';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-insights-markdown',
   templateUrl: './app-insights-markdown.component.html',
-  styleUrls: ['./app-insights-markdown.component.scss']
+  styleUrls: ['./app-insights-markdown.component.scss'],
+  animations: [
+    trigger(
+        'loadingAnimation',
+        [
+            state('shown', style({
+                opacity: 1
+            })),
+            state('hidden', style({
+                opacity: 0
+            })),
+            transition('* => *', animate('.5s'))
+        ]
+    )
+]
 })
+
 export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
 
   renderingProperties: Rendering;
@@ -21,8 +37,8 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
   appInsightQueryMetaDataList: AppInsightQueryMetadata[] = [];
   appInsightDataList: AppInsightData[] = [];
   diagnosticDataSet: DiagnosticData[] = [];
-  loadingAppInsightsData: boolean = true;
-  appiicationInsightsDisabledInsight: DiagnosticData;
+  loadingAppInsightsResource: boolean = true;
+  loadingAppInsightsQueryData: boolean = true;
 
   constructor(private _appInsightsService: AppInsightsQueryService, private _diagnosticService: DiagnosticService, private _router: Router,
     private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService, private _navigator: FeatureNavigationService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
@@ -43,6 +59,9 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
     {
       this._appInsightsService.CheckIfAppInsightsEnabled().subscribe(isAppinsightsEnabled => {
         this.isAppInsightsEnabled = isAppinsightsEnabled;
+        this.loadingAppInsightsResource = false;
+
+       
       });
 
     }
@@ -51,6 +70,45 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
         //console.log("Not worrying about ai enabled");
     }
 
+  }
+
+  // title: string;
+  // description: string;
+  // query: string;
+  // poralBladeInfo: any;
+  // renderingProperties: any;
+
+//   startLoadingMessage(): void {
+//     let self = this;
+//     this.loadingMessageIndex = 0;
+//     this.showLoadingMessage = true;
+
+//     setTimeout(() => {
+//         self.showLoadingMessage = false;
+//     }, 3000)
+//     this.loadingMessageTimer = setInterval(() => {
+//         self.loadingMessageIndex++;
+//         self.showLoadingMessage = true;
+
+//         if (self.loadingMessageIndex === self.loadingMessages.length - 1) {
+//             clearInterval(this.loadingMessageTimer);
+//             return;
+//         }
+
+//         setTimeout(() => {
+//             self.showLoadingMessage = false;
+//         }, 3000)
+//     }, 4000);
+// }
+
+  public getMetaDataMarkdown(metaData: AppInsightQueryMetadata)
+  {
+      // let str = "<h1>"+ metaData.title + "</h1>";
+      // str += "<h4>"+ metaData.description + "</h4>";
+
+     let str = "<p style='font-weight:bold'>Ask the customer to run the following queries in the Application Insights Analytics:</p>";
+      str += "<pre>" + metaData.query + "</pre>";
+      return str;
   }
 
   protected processData(data: DiagnosticData) {
@@ -64,7 +122,7 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
         description: row[1],
         query: row[2],
         poralBladeInfo: row[3],
-        renderingType: row[4]
+        renderingProperties: row[4]
         // icon: 'fa-bar-chart',
         // linkType: parseInt(row[3]),
         // linkValue: row[4]
@@ -78,13 +136,12 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
         this._appInsightsService.loadAppInsightsResourceObservable.subscribe(loadStatus => {
           if (loadStatus === true)
         {
+          this.loadingAppInsightsResource = false;
           this.appInsightQueryMetaDataList.forEach(appInsightData => {
         
           this._appInsightsService.ExecuteQuerywithPostMethod(appInsightData.query).subscribe(data => {
-            console.log(`Inside ExecuteQuerywithPostMethod, query: ${appInsightData.query}`);
+            
             if (data && data["Tables"]) {
-              console.log(`Table with query: ${appInsightData.query}`);
-              console.log(data["Tables"]);
               let rows = data["Tables"][0]["Rows"];
               let columns = data["Tables"][0]["Columns"];
               let dataColumns: DataTableResponseColumn[] = [];
@@ -98,49 +155,58 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
                 )
                 
               });
+
               this.appInsightDataList.push(<AppInsightData>{
                   title: appInsightData.title,
                   description: appInsightData.description,
-                  renderingType: appInsightData.renderingType,
+                  renderingProperties: appInsightData.renderingProperties,
                   table: rows,
                   poralBladeInfo: appInsightData.poralBladeInfo,
+                  diagnosticData: <DiagnosticData>{
+                    table: <DataTableResponseObject> {
+                      columns: dataColumns,
+                      rows: rows,
+                    },
+                    renderingProperties: appInsightData.renderingProperties,
+                  }
               });
               
-              this.diagnosticDataSet.push(<DiagnosticData>{
-                table: <DataTableResponseObject> {
-                  columns: dataColumns,
-                  rows: rows,
-                },
-                renderingProperties: <Rendering> {
-                  type: appInsightData.renderingType,
-                  title: appInsightData.title,
-                  description: appInsightData.description
-                }
-              });
-              console.log("rows and columns*********");
-              console.log(rows);
-              console.log(columns);
+              // this.diagnosticDataSet.push(<DiagnosticData>{
+              //   table: <DataTableResponseObject> {
+              //     columns: dataColumns,
+              //     rows: rows,
+              //   },
+              //   renderingProperties: appInsightData.renderingProperties,
+              // });
 
-              console.log(appInsightData.renderingType);
-              console.log("end*********");
+              // this.diagnosticDataSet.push(<DiagnosticData>{
+              //   table: <DataTableResponseObject> {
+              //     columns: dataColumns,
+              //     rows: rows,
+              //   },
+
+              // //   export interface TimeSeriesRendering extends Rendering {
+              // //     defaultValue: number;
+              // //     graphType: TimeSeriesType;
+              // //     graphOptions: any;
+              // //     timestampColumnName: string;
+              // //     counterColumnName: string;
+              // //     seriesColumns: string[];
+              // // }
+
+              // renderingProperties: appInsightData.renderingProperties,
+              // });
             }
-
-            console.log("dataset*********");
-            console.log(this.diagnosticDataSet);
             
-            
-            this.loadingAppInsightsData = false;
+            this.loadingAppInsightsQueryData = false;
         });
       });
     }
+ 
     console.log(this.diagnosticDataSet);
   
       });
-    }
-    
-    
-
-    
+    }  
   }
 
   // protected processData(data: DiagnosticData) {
@@ -194,7 +260,7 @@ export class AppInsightQueryMetadata {
   description: string;
   query: string;
   poralBladeInfo: any;
-  renderingType: any;
+  renderingProperties: any;
 }
 
 export class AppInsightData {
@@ -202,7 +268,8 @@ export class AppInsightData {
   description: string;
   table: any;
   poralBladeInfo: any;
-  renderingType: any;
+  renderingProperties: any;
+  diagnosticData: DiagnosticData;
 }
 
 export class BladeInfo

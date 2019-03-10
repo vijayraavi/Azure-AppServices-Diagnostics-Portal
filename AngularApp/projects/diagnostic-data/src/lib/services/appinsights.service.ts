@@ -27,5 +27,10 @@ export class AppInsightsQueryService {
 
     openAppInsightsPerformanceBlade() {
     }
+
+    openAppInsightsExtensionBlade(detailBlade?: string)
+    {
+
+    }
 }
 
