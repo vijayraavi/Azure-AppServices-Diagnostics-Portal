@@ -45,7 +45,7 @@
     "baseUrl": "./",                          /* Base directory to resolve non-absolute module names. */
     "paths": {
       "moment": [
-        "../../node_modules/moment/min/moment.min.js",
+        "node_modules/moment/min/moment.min.js",
         "../node_modules/moment/min/moment.min.js"
       ],
       "diagnostic-data": [
