@@ -1,6 +1,7 @@
 import { SolutionType } from './enumerations';
 import { INameValuePair } from './namevaluepair';
-import { SolutionTypeTag } from './solution-type-tag';
+import { SolutionTypeTag } from 'diagnostic-data';
+
 
 export interface ISolution {
     id: number;

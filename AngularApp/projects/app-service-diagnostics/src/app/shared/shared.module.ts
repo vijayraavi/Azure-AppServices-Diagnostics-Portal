@@ -22,9 +22,6 @@ import { CollapsibleListItemComponent } from './components/collapsible-list/coll
 import { CollapsibleListComponent } from './components/collapsible-list/collapsible-list.component';
 import { SupportToolsComponent } from './components/support-tools/support-tools.component';
 import { ExpandableSummaryComponent } from './components/expandable-summary/expandable-summary.component';
-import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
-import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
-import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
 import { LiveAgentChatComponent } from './components/liveagent-chat/liveagent-chat.component';
 import { GroupByPipe } from './pipes/groupBy.pipe';
 import { MapValuesPipe } from './pipes/mapValues.pipe';
@@ -92,6 +89,7 @@ import { CpuMonitoringConfigurationComponent } from './components/daas/cpu-monit
 import { CpuMonitoringActivityComponent } from './components/daas/cpu-monitoring/cpu-monitoring-activity/cpu-monitoring-activity.component';
 import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring/cpu-monitoring-sessions/cpu-monitoring-sessions.component';
 
+
 @NgModule({
     declarations: [
         LimitToFilter,
@@ -118,9 +116,6 @@ import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring
         CollapsibleListItemComponent,
         SupportToolsComponent,
         ExpandableSummaryComponent,
-        VerticalDisplayListComponent,
-        VerticalDisplayListItemComponent,
-        SolutionTypeTagComponent,
         StepWizardComponent,
         DaasSessionsComponent,
         ProfilerComponent,
@@ -193,9 +188,6 @@ import { CpuMonitoringSessionsComponent } from './components/daas/cpu-monitoring
         CollapsibleListItemComponent,
         SupportToolsComponent,
         ExpandableSummaryComponent,
-        VerticalDisplayListComponent,
-        VerticalDisplayListItemComponent,
-        SolutionTypeTagComponent,
         StepWizardComponent,
         DaasSessionsComponent,
         ProfilerComponent,

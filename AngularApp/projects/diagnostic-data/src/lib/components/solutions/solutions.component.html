@@ -16,3 +16,8 @@
 <div *ngFor="let solution of solutions">
   <solution [data]="solution" [hidden]="solution != selected"></solution>
 </div>
+
+<vertical-display-list>
+  <vertical-display-list-item [name]="'Test'" [tags]="['Mitigation']" [index]="0">
+  </vertical-display-list-item>
+</vertical-display-list>
