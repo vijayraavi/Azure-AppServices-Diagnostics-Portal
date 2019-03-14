@@ -11,6 +11,7 @@ export * from './lib/services/feature-navigation.service';
 export * from './lib/services/diagnostic-site.service';
 export * from './lib/config/diagnostic-data-config';
 export * from './lib/diagnostic-data.module';
+export * from './core/core.module';
 
 export * from './lib/models/detector';
 export * from './lib/models/insight';

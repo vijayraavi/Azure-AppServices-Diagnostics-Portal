@@ -5,7 +5,8 @@
 
   <nav aria-label="Next Step Navigation" *ngIf="smallMenu">
     <ul class="pagination" style="margin:0px;">
-      <li *ngFor="let listItem of listItems.toArray() | slice:0:3" (click)="selectItem(listItem)" [ngClass]="{'active': listItem.metaData.isSelected }">
+      <li *ngFor="let listItem of listItems.toArray() | slice:0:3" (click)="selectItem(listItem)"
+          [ngClass]="{'active': listItem.metaData.isSelected }">
         <a>{{listItem.metaData.title}}</a>
       </li>
     </ul>
@@ -14,8 +15,8 @@
   <div class="outer-container">
 
     <div class="column-container left-column-container" *ngIf="!smallMenu">
-      <div class="list-item" [ngClass]="{'list-item-selected':listItem.metaData.isSelected}" *ngFor="let listItem of listItems"
-          (click)="selectItem(listItem)">
+      <div class="list-item" [ngClass]="{'list-item-selected':listItem.metaData.isSelected}"
+          *ngFor="let listItem of listItems" (click)="selectItem(listItem)">
         <span class="list-item-text">
           <b>{{listItem.metaData.title}}</b>
         </span>

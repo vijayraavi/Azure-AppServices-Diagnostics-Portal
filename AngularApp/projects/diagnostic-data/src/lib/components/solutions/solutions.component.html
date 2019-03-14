@@ -17,7 +17,14 @@
   <solution [data]="solution" [hidden]="solution != selected"></solution>
 </div>
 
-<vertical-display-list>
-  <vertical-display-list-item [name]="'Test'" [tags]="['Mitigation']" [index]="0">
-  </vertical-display-list-item>
-</vertical-display-list>
+<vertical-nav navTitle="something" [smallMenu]="false">
+  <ng-template>
+    <vertical-nav-tab tabTitle="SomeTitle">
+      Tab Content
+    </vertical-nav-tab>
+  </ng-template>
+
+  <div *ngFor="let solution of solutions" [title]="solution.Title" class="content">
+    <solution [data]="solution" [hidden]="solution != selected"></solution>
+  </div>
+</vertical-nav>
