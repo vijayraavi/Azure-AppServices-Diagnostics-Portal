@@ -10,8 +10,11 @@ export class UnhandledExceptionHandlerService {
   constructor(private logService: KustoTelemetryService) { }
 
   handleError(error: Error) {
-    this.logService.logException(error, null, null, null, SeverityLevel.Critical);
-
-    throw error;
+    try {
+      this.logService.logException(error, null, null, null, SeverityLevel.Critical);
+    }
+    finally {
+      throw error;
+    }
   }
 }
