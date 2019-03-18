@@ -70,15 +70,13 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>): Observable<any> {
-    switch (actionType) {
-      case ActionType.RestartSite:
-        return this._siteService.restartSiteFromUri(resourceUri);
-      case ActionType.UpdateSiteAppSettings:
-        // TODO: Convert this call to return HttpResponse<any>
-        return this._siteService.updateSettingsFromUri(resourceUri, args);
-      case ActionType.KillW3wpOnInstance:
-        break;
+    const actionName = actionType.toString();
+
+    if (!this._siteService[actionName]) {
+      throw new Error(`Method Not Found: Solution API does not have a method named ${actionName}`)
     }
+
+    return this._siteService[actionName](resourceUri, args);
   }
 
   copyInstructions(copyValue: string) {
