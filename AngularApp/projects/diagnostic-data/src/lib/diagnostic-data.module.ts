@@ -64,7 +64,6 @@ import { SolutionsComponent } from './components/solutions/solutions.component';
 import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
 import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
 import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
-import { CoreModule } from 'diagnostic-data';
 
 
 @NgModule({
@@ -74,8 +73,7 @@ import { CoreModule } from 'diagnostic-data';
     NgxDatatableModule,
     MarkdownModule.forRoot(),
     FormsModule,
-    MonacoEditorModule.forRoot(),
-    CoreModule
+    MonacoEditorModule.forRoot()
   ],
   providers: [
     ClipboardService
