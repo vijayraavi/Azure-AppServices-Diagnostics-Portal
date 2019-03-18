@@ -5,27 +5,25 @@ import { Rendering } from '../../models/detector';
 import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { SolutionText, getSolutionText } from './solution-text';
+import { UriUtilities } from '../../utilities/uri-utilities';
 
 export enum ActionType {
-  RestartSite = "RestartSite",
-  UpdateSiteAppSettings = "UpdateSiteAppSettings",
-  KillW3wpOnInstance = "KillW3wpOnInstance"
+  ArmApi = 'ArmApi',
+  OpenTab = 'OpenTab',
+  GoToBlade = 'GoToBlade'
 }
 
 export class Solution {
+  Name: string;
   Title: string;
   Description: string;
-  ActionName: string;
+  Action: ActionType;
   RequiresConfirmation: boolean;
   ResourceUri: string;
-  IsInternal: boolean;
   InternalInstructions: string;
-  DetectorLink: string;
-  Action: ActionType;
-  ActionArgs: Dictionary<any>;
-  PremadeDescription: SolutionText;
-  PremadeInstructions: SolutionText;
+  ActionOptions: Dictionary<any>;
+  IsInternal: boolean;
+  DetectorId: string;
 }
 
 @Component({
@@ -53,10 +51,16 @@ export class SolutionComponent extends DataRenderBaseComponent {
     this.buildSolutionText();
   }
 
+  buildSolutionText() {
+    let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
+    let detectorLinkMarkdown = `[Go To Detector](${detectorLink})`;
+    this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
+  }
+
   performAction() {
     this.actionStatus = "Running...";
 
-    this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionArgs).subscribe(res => {
+    this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionOptions).subscribe(res => {
       if (res.ok == null || res.ok) {
         this.actionStatus = "Complete!"
       } else {
@@ -75,53 +79,6 @@ export class SolutionComponent extends DataRenderBaseComponent {
       case ActionType.KillW3wpOnInstance:
         break;
     }
-  }
-
-  buildSolutionText() {
-    this.applyPremadeText();
-    this.buildDynamicText();
-
-    let detectorLinkMarkdown = `[Go To Detector](${this.solution.DetectorLink})`;
-    this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
-  }
-
-  applyPremadeText() {
-    if (this.solution.PremadeDescription) {
-      this.solution.Description = getSolutionText(this.solution.PremadeDescription);
-    }
-
-    if (this.solution.PremadeInstructions) {
-      this.solution.InternalInstructions = getSolutionText(this.solution.PremadeInstructions);
-    }
-  }
-
-  buildDynamicText() {
-    let appSettingsText = '';
-
-    if (this.solution.PremadeDescription === SolutionText.UpdateSettingsDescription) {
-      appSettingsText = this.buildAppsettingsText();
-
-      this.solution.Description = this.solution.Description + '\n' + appSettingsText;
-    }
-
-    if (this.solution.PremadeInstructions === SolutionText.UpdateSettingsInstructions) {
-      if (appSettingsText === '') {
-        appSettingsText = this.buildAppsettingsText();
-      }
-
-      this.solution.InternalInstructions = this.solution.InternalInstructions + '\n' + appSettingsText;
-    }
-  }
-
-  buildAppsettingsText() {
-    let resultText = '';
-
-    for (let key in this.solution.ActionArgs['properties']) {
-      let value = JSON.stringify(this.solution.ActionArgs['properties'][key]);
-      resultText = resultText + '\n' + ` - ${key}: ${value}`;
-    }
-
-    return resultText
   }
 
   copyInstructions(copyValue: string) {

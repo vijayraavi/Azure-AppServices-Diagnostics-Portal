@@ -6,11 +6,11 @@
 
   <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action">
     <div *ngIf="solution.RequiresConfirmation; else dont_confirm_buttons" class="confirm-buttons">
-      <span class="app-name-text">{{solution.ActionName}} for App <span class="app-name">{{appName}}</span>?</span>
+      <span class="app-name-text">{{solution.Name}} for App <span class="app-name">{{appName}}</span>?</span>
       <div class="action-buttons">
-        <button type="button" class="custom-button deny">No, Don't {{solution.ActionName}}</button>
+        <button type="button" class="custom-button deny">No, Don't {{solution.Name}}</button>
         <button type="button" (click)="performAction()" class="custom-button confirm">
-          Yes, {{solution.ActionName}}
+          Yes, {{solution.Name}}
         </button>
       </div>
     </div>
@@ -29,6 +29,7 @@
 </div>
 
 <ng-template #internal_solution>
+  <h3>Send the following instructions to the customer:</h3>
   <div class="solution-action">
     <div (click)="copyInstructions(solution.InternalInstructions)" class="copy-instructions">
       <i class="fa fa-files-o" aria-hidden="true"></i>
