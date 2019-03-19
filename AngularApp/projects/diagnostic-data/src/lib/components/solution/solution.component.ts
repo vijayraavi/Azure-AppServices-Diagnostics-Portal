@@ -6,6 +6,7 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { UriUtilities } from '../../utilities/uri-utilities';
 import { SolutionService } from '../../services/solution.service';
+import { SolutionTypeTag } from '../../models/solution-type-tag';
 
 export enum ActionType {
   ArmApi = 'ArmApi',
@@ -22,6 +23,7 @@ export class Solution {
   ResourceUri: string;
   InternalInstructions: string;
   ActionOptions: Dictionary<any>;
+  TypeTag: SolutionTypeTag;
   IsInternal: boolean;
   DetectorId: string;
 }
