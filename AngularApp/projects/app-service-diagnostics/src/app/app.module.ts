@@ -16,8 +16,10 @@ import { GenericApiService } from './shared/services/generic-api.service';
 import { GenericCommsService } from './shared/services/generic-comms.service';
 import { environment } from '../environments/environment';
 import { PortalKustoTelemetryService } from './shared/services/portal-kusto-telemetry.service';
-import { DiagnosticSiteService } from 'projects/diagnostic-data/src/lib/services/diagnostic-site.service';
+import { DiagnosticSiteService } from 'diagnostic-data';
+import { SolutionService } from 'diagnostic-data';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
+import { GenericSolutionService } from './shared/services/generic-solution.service';
 
 @NgModule({
   imports: [
@@ -53,7 +55,8 @@ import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/ser
       useFactory: (_localBackendService: LocalBackendService, _genericApiService: GenericApiService) => environment.useApplensBackend ? _localBackendService : _genericApiService,
       deps: [LocalBackendService, GenericApiService] },
     { provide: CommsService, useExisting: GenericCommsService },
-    { provide: DiagnosticSiteService, useExisting: SiteService }
+    { provide: DiagnosticSiteService, useExisting: SiteService },
+    { provide: SolutionService, useExisting: GenericSolutionService }
   ],
   bootstrap: [AppComponent]
 })

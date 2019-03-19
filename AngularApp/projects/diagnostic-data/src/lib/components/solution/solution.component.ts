@@ -2,10 +2,10 @@ import { Observable } from 'rxjs';
 import { Component, Input } from '@angular/core';
 import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
 import { Rendering } from '../../models/detector';
-import { DiagnosticSiteService } from '../../services/diagnostic-site.service';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { UriUtilities } from '../../utilities/uri-utilities';
+import { SolutionService } from '../../services/solution.service';
 
 export enum ActionType {
   ArmApi = 'ArmApi',
@@ -40,7 +40,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   copyText = this.defaultCopyText;
   appName: string;
 
-  constructor(telemetryService: TelemetryService, private _siteService: DiagnosticSiteService) {
+  constructor(telemetryService: TelemetryService, private _siteService: SolutionService) {
     super(telemetryService);
   }
 
@@ -76,6 +76,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
       throw new Error(`Method Not Found: Solution API does not have a method named ${actionName}`)
     }
 
+    console.log(args['verb']);
     return this._siteService[actionName](resourceUri, args);
   }
 
