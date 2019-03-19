@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,15 +7,15 @@ import { Observable } from 'rxjs';
 export class GenericSolutionService {
 
   ArmApi(resourceUri: string, actionOptions: {}): Observable<any> {
-    return null;
+    return of("Not implemented");
   }
 
   OpenTab(resourceUri: string, actionOptions: {}): Observable<any> {
-    return null;
+    return of("Not implemented");
   }
 
   GoToBlade(resourceUri: string, actionOptions: {}): Observable<any> {
-    return null;
+    return of("Not implemented");
   }
 
 }
