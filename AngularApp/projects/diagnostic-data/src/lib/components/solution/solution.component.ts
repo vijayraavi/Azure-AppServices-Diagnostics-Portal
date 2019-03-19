@@ -78,7 +78,6 @@ export class SolutionComponent extends DataRenderBaseComponent {
       throw new Error(`Method Not Found: Solution API does not have a method named ${actionName}`)
     }
 
-    console.log(args['verb']);
     return this._siteService[actionName](resourceUri, args);
   }
 

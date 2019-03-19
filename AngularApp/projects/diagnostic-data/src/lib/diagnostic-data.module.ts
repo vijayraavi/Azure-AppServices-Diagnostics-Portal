@@ -64,6 +64,8 @@ import { SolutionsComponent } from './components/solutions/solutions.component';
 import { VerticalDisplayListComponent } from './components/vertical-display-list/vertical-display-list.component';
 import { VerticalDisplayListItemComponent } from './components/vertical-display-list/vertical-display-list-item/vertical-display-list-item.component';
 import { SolutionTypeTagComponent } from './components/solution-type-tag/solution-type-tag.component';
+import { SolutionDisplayComponent } from './components/solution-display/solution-display.component';
+import { SolutionDisplayItemComponent } from './components/solution-display/solution-display-item/solution-display-item.component';
 
 
 @NgModule({
@@ -86,7 +88,8 @@ import { SolutionTypeTagComponent } from './components/solution-type-tag/solutio
     DropdownComponent, StatusIconComponent, DetectorControlComponent, DetectorContainerComponent, InternalPipe,
     CommAlertComponent, FeedbackComponent, CopyInsightDetailsComponent, MarkdownEditorComponent, CardSelectionComponent,
     GuageGraphicComponent, GuageControlComponent, SolutionComponent, SolutionsComponent, FormComponent,
-    VerticalDisplayListComponent, VerticalDisplayListItemComponent, SolutionTypeTagComponent
+    VerticalDisplayListComponent, VerticalDisplayListItemComponent, SolutionTypeTagComponent, SolutionDisplayComponent,
+    SolutionDisplayItemComponent
   ],
   exports: [
     FormsModule, TimeSeriesGraphComponent, DataTableComponent, DynamicDataComponent, DetectorViewComponent,

@@ -1,5 +1,6 @@
-<vertical-display-list [showTitle]="false">
-  <vertical-display-list-item *ngFor="let solution of solutions; index as i" [name]="solution.Title" [index]="i">
+<solution-display [showTitle]="false">
+  <solution-display-item *ngFor="let solution of solutions; index as i"
+      [title]="solution.Title" [titleTag]="solution.TypeTag" [index]="i">
     <solution [data]="solution"></solution>
-  </vertical-display-list-item>
-</vertical-display-list>
+  </solution-display-item>
+</solution-display>
