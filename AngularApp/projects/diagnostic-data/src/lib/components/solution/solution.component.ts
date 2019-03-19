@@ -56,7 +56,10 @@ export class SolutionComponent extends DataRenderBaseComponent {
   buildSolutionText() {
     let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
     let detectorLinkMarkdown = `[Go To Detector](${detectorLink})`;
-    this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
+
+    if (!this.solution.InternalInstructions.includes(detectorLinkMarkdown)) {
+      this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
+    }
   }
 
   performAction() {
