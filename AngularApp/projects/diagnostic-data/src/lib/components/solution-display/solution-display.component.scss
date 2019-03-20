@@ -17,13 +17,10 @@
 }
 
 .list-item {
-  height: 90px;
+  min-height: 90px;
   text-align: right;
-  background-color: #f5f5f5;
-  padding: 20px 10px 20px 10px;
+  padding: 20px 10px;
   cursor: pointer;
-  border-right: 3px solid #aaaaaa;
-  flex: 0 1 auto;
   color: #646464;
 }
 
@@ -32,7 +29,7 @@
 }
 
 .list-item-selected {
-  border-right: 3px solid #87d286;
+  border-left: 3px solid #87d286;
   color: #000000;
   background-color: #d0d0d0;
 }
@@ -42,4 +39,33 @@
   margin-right: 0;
   width: fit-content;
   padding: 5px;
+}
+
+@media only screen and (min-width : 768px) {
+  .is-table-row {
+      display: table;
+  }
+  .is-table-row [class*="col-"] {
+      float: none;
+      display: table-cell;
+      vertical-align: top;
+  }
+}
+
+.row.match-col-height {
+  overflow: hidden;
+  margin-left: 0;
+}
+
+// A hack to force bootstrap columns to be the same height
+.row.match-col-height [class*="col-"] {
+  margin-bottom: -99999px;
+  padding-bottom: 99999px;
+}
+
+.vertical-tabs {
+  padding: 0;
+  margin: 0;
+  border-right: 1px solid #aaaaaa;
+  background-color: #f5f5f5;
 }
