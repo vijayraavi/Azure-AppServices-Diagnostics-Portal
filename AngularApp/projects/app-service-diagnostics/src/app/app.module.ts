@@ -8,7 +8,6 @@ import {
 } from 'projects/diagnostic-data/src/lib/services/diagnostic-site.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
@@ -33,7 +32,6 @@ import { StartupModule } from './startup/startup.module';
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule,
     SharedModule.forRoot(),
     StartupModule.forRoot(),
     DiagnosticDataModule.forRoot(environment.production ? PUBLIC_PROD_CONFIGURATION : PUBLIC_DEV_CONFIGURATION),
