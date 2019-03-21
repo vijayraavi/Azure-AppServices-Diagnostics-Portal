@@ -85,6 +85,9 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
           },{
             path: 'changelist',
             component: TabChangelistComponent
+          },{
+            path: 'changelist/:sha',
+            component: TabChangelistComponent
           }
         ]
       },
