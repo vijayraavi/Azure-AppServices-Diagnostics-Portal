@@ -1,5 +1,5 @@
 import { Component, Input, QueryList, ContentChildren, AfterContentInit } from '@angular/core';
-import { TitleData, SolutionDisplayItemComponent } from './solution-display-item/solution-display-item.component';
+import { TabMetadata, SolutionDisplayItemComponent } from './solution-display-item/solution-display-item.component';
 
 @Component({
   selector: 'solution-display',
@@ -10,23 +10,18 @@ export class SolutionDisplayComponent implements AfterContentInit {
 
   @Input() showTitle = true;
   @ContentChildren(SolutionDisplayItemComponent) listItems: QueryList<SolutionDisplayItemComponent>;
-  titles: TitleData[] = [];
-  selectedItem: TitleData;
+  titles: TabMetadata[] = [];
 
-  select(item: TitleData) {
-    this.listItems.forEach(
-      listItem => listItem.isSelected = listItem.title === item.title
-    );
-    this.selectedItem = item;
+  select(selectedTab: TabMetadata) {
+    this.listItems.forEach(item => {
+      item.tabData.isSelected = item.tabData == selectedTab;
+    });
   }
 
   ngAfterContentInit() {
-    this.listItems.forEach((item, index) => {
-      item.isSelected = index === 0;
-      this.titles.push(item.titleData)
+    this.listItems.forEach(item => {
+      this.titles.push(item.tabData)
     });
-
-    this.selectedItem = this.titles.length > 0 ? this.titles[0] : null;
   }
 
 }

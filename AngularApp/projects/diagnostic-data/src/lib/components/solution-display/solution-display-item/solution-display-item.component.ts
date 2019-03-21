@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { SolutionTypeTag } from '../../../models/solution-type-tag';
 
-export class TitleData {
-  constructor(public title: string, public tag: SolutionTypeTag, public index: number) {}
+export class TabMetadata {
+  constructor(public title: string, public tag: SolutionTypeTag, public isSelected: boolean) {}
 }
 
 @Component({
@@ -15,13 +15,16 @@ export class SolutionDisplayItemComponent implements OnInit {
   @Input() title: string;
   @Input() titleTag: SolutionTypeTag;
   @Input() index: number;
-  titleData: TitleData;
-  isSelected: boolean;
+  tabData: TabMetadata;
+
+  get isSelected(): boolean {
+    return this.tabData.isSelected;
+  }
 
   constructor() { }
 
   ngOnInit() {
-    this.titleData = new TitleData(this.title, this.titleTag, this.index);
+    this.tabData = new TabMetadata(this.title, this.titleTag, this.index === 0);
   }
 
 }
