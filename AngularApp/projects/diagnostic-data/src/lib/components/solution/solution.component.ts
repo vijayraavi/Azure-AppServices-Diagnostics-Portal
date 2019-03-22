@@ -75,13 +75,19 @@ export class SolutionComponent extends DataRenderBaseComponent {
   }
 
   chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>): Observable<any> {
-    const actionName = actionType.toString();
-
-    if (!this._siteService[actionName]) {
-      throw new Error(`Method Not Found: Solution API does not have a method named ${actionName}`)
+    switch (actionType) {
+      case ActionType.ArmApi: {
+        return this._siteService.ArmApi(resourceUri, args);
+      }
+      case ActionType.GoToBlade: {
+        return this._siteService.GoToBlade(resourceUri, args);
+      }
+      case ActionType.OpenTab: {
+        return this._siteService.OpenTab(resourceUri, args);
+      }
     }
 
-    return this._siteService[actionName](resourceUri, args);
+    throw new Error(`Not Implemented: Solution service does not have an implementation for the action.`)
   }
 
   copyInstructions(copyValue: string) {

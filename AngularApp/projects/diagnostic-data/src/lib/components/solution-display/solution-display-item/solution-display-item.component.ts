@@ -21,8 +21,6 @@ export class SolutionDisplayItemComponent implements OnInit {
     return this.tabData.isSelected;
   }
 
-  constructor() { }
-
   ngOnInit() {
     this.tabData = new TabMetadata(this.title, this.titleTag, this.index === 0);
   }

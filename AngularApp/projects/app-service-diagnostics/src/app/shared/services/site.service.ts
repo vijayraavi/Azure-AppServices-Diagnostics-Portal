@@ -113,7 +113,7 @@ export class SiteService {
     restartSiteFromUri(resourceUri: string): Observable<HttpResponse<any>> {
         const restartUri = this._uriElementsService.getRestartUri(resourceUri);
 
-        let result = this._armClient.postResourceFullResponse(restartUri, true);
+        let result = this._armClient.postResourceFullResponse(restartUri, null, true);
         result.subscribe(response => {
             this.logService.logEvent('Solution_RestartSite', {
                 'status': response.status.toString(),
