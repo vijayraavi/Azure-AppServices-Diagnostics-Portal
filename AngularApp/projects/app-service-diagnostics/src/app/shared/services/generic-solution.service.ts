@@ -12,14 +12,30 @@ import { PortalActionService } from './portal-action.service';
 })
 export class GenericSolutionService {
 
+  whitelistedRoutes = {
+    'post': ['restart']
+  }
+
   constructor(private armService: ArmService, private portalService: PortalService,
     private logService: TelemetryService, private portalNavService: PortalActionService,
     private _router: Router) {}
 
-  validateArmApiOptions(options: {}) {
-    // Check for keys: route, verb, body (optional)
-    // Check for valid verb
-    // Check for whitelisted route
+  assertPropertyExists(dict: {}, property: string) {
+    if (!(property in dict)) {
+      throw new Error(`Property Not Found: expected property named "${property}"`);
+    }
+  }
+
+  validateArmApiOptions(options: {route: string, verb: string}) {
+    for (let prop of ['route', 'verb']) {
+      this.assertPropertyExists(options, prop);
+    }
+
+    let cleanedRoute = options.route.startsWith('/') ? options.route.substring(1) : options.route;
+
+    if (!(this.whitelistedRoutes[options.verb.toLowerCase()].includes(cleanedRoute))) {
+      throw new Error(`Invalid Operation: cannot perform ${options.verb} on route ${cleanedRoute}`)
+    }
   }
 
   buildRoute(resourceUri: string, routeSegment: string): string {
@@ -32,7 +48,7 @@ export class GenericSolutionService {
     return 'api-version' in urlTree.queryParams ? urlTree.queryParams['api-version'] : null;
   }
 
-  ArmApi(resourceUri: string, actionOptions: {}): Observable<any> {
+  ArmApi(resourceUri: string, actionOptions: {route: string, verb: string}): Observable<any> {
     this.validateArmApiOptions(actionOptions);
 
     const verb = actionOptions['verb'].toLowerCase();
@@ -40,7 +56,7 @@ export class GenericSolutionService {
     const apiVersion = this.getApiVersion(route);
     const body = 'body' in actionOptions ? actionOptions['body'] : null;
 
-    this.logService.logEvent('solution_arm_api', {'fullRoute': route, ...actionOptions});
+    this.logService.logEvent('SolutionArmApi', {'fullRoute': route, ...actionOptions});
 
     if (verb === 'get') {
       return this.armService.getResourceFullResponse(route, true, apiVersion);
@@ -51,7 +67,7 @@ export class GenericSolutionService {
   }
 
   OpenTab(resourceUri: string, actionOptions: {tabUrl: string}): Observable<any> {
-    this.logService.logEvent('solution_open_tab', {'resourceUri': resourceUri, ...actionOptions});
+    this.logService.logEvent('SolutionOpenTab', {'resourceUri': resourceUri, ...actionOptions});
 
     if (!('tabUrl' in actionOptions)) {
       throw new Error('ActionOptions should include the tabUrl property');
@@ -72,7 +88,7 @@ export class GenericSolutionService {
   }
 
   GoToBlade(resourceUri: string, actionOptions: {detailBlade: string}): Observable<any> {
-    this.logService.logEvent('solution_goto_blade', {'resourceUri': resourceUri, ...actionOptions});
+    this.logService.logEvent('SolutionGoToBlade', {'resourceUri': resourceUri, ...actionOptions});
 
     const bladeInfo = this.getBladeInfo(actionOptions);
 
