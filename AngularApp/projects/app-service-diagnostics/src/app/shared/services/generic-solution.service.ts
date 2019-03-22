@@ -76,10 +76,22 @@ export class GenericSolutionService {
 
     const bladeInfo = this.getBladeInfo(actionOptions);
 
-    if (bladeInfo.detailBlade === 'scaleup') {
-      this.portalNavService.openBladeScaleUpBlade();
-    } else {
-      this.portalService.openBlade(bladeInfo, 'troubleshoot');
+    switch (bladeInfo.detailBlade) {
+      case 'scaleup': {
+        this.portalNavService.openBladeScaleUpBlade();
+        break;
+      }
+      case 'AutoScaleSettingsBlade': {
+        this.portalNavService.openBladeScaleOutBlade();
+        break;
+      }
+      case 'TinfoilSecurityBlade': {
+        this.portalNavService.openTifoilSecurityBlade();
+        break;
+      }
+      default: {
+        this.portalService.openBlade(bladeInfo, 'troubleshoot');
+      }
     }
 
     return of(bladeInfo.detailBlade);
