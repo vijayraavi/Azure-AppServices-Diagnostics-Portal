@@ -118,6 +118,7 @@ function Copy-FrameworkDependencies {
     }
     else {
         Write-Error "Unable to get access to build path $buildPath, please check you Internet or VPN connection"
+        exit 1
     }
 }
 
