@@ -13,7 +13,7 @@ import { PortalActionService } from './portal-action.service';
 export class GenericSolutionService {
 
   whitelistedRoutes = {
-    'post': ['restart']
+    'restart': ['post']
   }
 
   constructor(private armService: ArmService, private portalService: PortalService,
@@ -32,8 +32,9 @@ export class GenericSolutionService {
     }
 
     let cleanedRoute = options.route.startsWith('/') ? options.route.substring(1) : options.route;
+    cleanedRoute = cleanedRoute.toLowerCase();
 
-    if (!(this.whitelistedRoutes[options.verb.toLowerCase()].includes(cleanedRoute))) {
+    if (!(this.whitelistedRoutes[cleanedRoute].includes(options.verb.toLowerCase()))) {
       throw new Error(`Invalid Operation: cannot perform ${options.verb} on route ${cleanedRoute}`)
     }
   }
