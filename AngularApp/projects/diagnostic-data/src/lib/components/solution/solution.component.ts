@@ -19,7 +19,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
   @Input("data") solution: Solution;
   renderingProperties: Rendering;
   actionStatus: string;
-  defaultCopyText = 'Copy';
+  defaultCopyText = 'Copy to Email';
   copyText = this.defaultCopyText;
   appName: string;
 
@@ -36,10 +36,10 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
   buildSolutionText() {
     let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
-    let detectorLinkMarkdown = `[Go To Detector](${detectorLink})`;
+    let detectorLinkMarkdown = `[Diagnose and Solve Problems](${detectorLink})`;
 
     if (!this.solution.InternalInstructions.includes(detectorLinkMarkdown)) {
-      this.solution.InternalInstructions = detectorLinkMarkdown + "\n\n" + this.solution.InternalInstructions;
+      this.solution.InternalInstructions = this.solution.InternalInstructions + "\n\n" + detectorLinkMarkdown;
     }
   }
 
