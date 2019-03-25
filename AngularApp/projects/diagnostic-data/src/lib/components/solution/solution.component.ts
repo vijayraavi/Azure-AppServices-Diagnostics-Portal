@@ -6,27 +6,8 @@ import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { UriUtilities } from '../../utilities/uri-utilities';
 import { SolutionService } from '../../services/solution.service';
-import { SolutionTypeTag } from '../../models/solution-type-tag';
-
-export enum ActionType {
-  ArmApi = 'ArmApi',
-  OpenTab = 'OpenTab',
-  GoToBlade = 'GoToBlade'
-}
-
-export class Solution {
-  Name: string;
-  Title: string;
-  Description: string;
-  Action: ActionType;
-  RequiresConfirmation: boolean;
-  ResourceUri: string;
-  InternalInstructions: string;
-  ActionOptions: Dictionary<any>;
-  TypeTag: SolutionTypeTag;
-  IsInternal: boolean;
-  DetectorId: string;
-}
+import { Solution, ActionType } from './solution';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
 @Component({
   selector: 'solution',
@@ -65,8 +46,8 @@ export class SolutionComponent extends DataRenderBaseComponent {
   performAction() {
     this.actionStatus = "Running...";
 
-    this.chooseAction(this.solution.Action, this.solution.ResourceUri, this.solution.ActionOptions).subscribe(res => {
-      if (res.ok == null || res.ok) {
+    this.chooseAction().subscribe(res => {
+      if (res.ok == undefined || res.ok) {
         this.actionStatus = "Complete!"
       } else {
         this.actionStatus = `Error completing request. Status code: ${res.status}`
@@ -74,20 +55,53 @@ export class SolutionComponent extends DataRenderBaseComponent {
     });
   }
 
-  chooseAction(actionType: ActionType, resourceUri: string, args?: Dictionary<string>): Observable<any> {
-    switch (actionType) {
-      case ActionType.ArmApi: {
-        return this._siteService.ArmApi(resourceUri, args);
+  lowercaseFirst(target: string): string {
+    return target.charAt(0).toLowerCase() + target.slice(1)
+  }
+
+  convertOptions(): Dictionary<any> {
+    let actionOptions = {};
+    switch (this.solution.Action) {
+      case (ActionType.ArmApi): {
+        actionOptions = this.solution.ApiOptions;
+        break;
       }
-      case ActionType.GoToBlade: {
-        return this._siteService.GoToBlade(resourceUri, args);
+      case (ActionType.GoToBlade): {
+        actionOptions = this.solution.BladeOptions;
+        break;
       }
-      case ActionType.OpenTab: {
-        return this._siteService.OpenTab(resourceUri, args);
+      case (ActionType.OpenTab): {
+        actionOptions = this.solution.TabOptions;
+        break;
       }
     }
 
-    throw new Error(`Not Implemented: Solution service does not have an implementation for the action.`)
+    let overrideOptions = {};
+    for (let key in actionOptions) {
+      overrideOptions[this.lowercaseFirst(key)] = actionOptions[key]
+    }
+
+    overrideOptions = {...overrideOptions, ...this.solution.OverrideOptions};
+
+    return overrideOptions;
+  }
+
+  chooseAction(): Observable<any> {
+    let options = this.convertOptions();
+
+    switch (this.solution.Action) {
+      case ActionType.ArmApi: {
+        return this._siteService.ArmApi(this.solution.ResourceUri, options);
+      }
+      case ActionType.GoToBlade: {
+        return this._siteService.GoToBlade(this.solution.ResourceUri, options);
+      }
+      case ActionType.OpenTab: {
+        return this._siteService.OpenTab(this.solution.ResourceUri, options);
+      }
+    }
+
+    throw new Error(`Not Implemented: Solution Service does not have an implementation for the action.`)
   }
 
   copyInstructions(copyValue: string) {
