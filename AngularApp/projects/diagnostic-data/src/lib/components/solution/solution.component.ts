@@ -7,7 +7,6 @@ import { DataRenderBaseComponent } from '../data-render-base/data-render-base.co
 import { UriUtilities } from '../../utilities/uri-utilities';
 import { SolutionService } from '../../services/solution.service';
 import { Solution, ActionType } from './solution';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 @Component({
   selector: 'solution',

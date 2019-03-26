@@ -1,3 +1,5 @@
+@import '../../../../../app-service-diagnostics/src/styles/main';
+
 .title-container {
   width: 100%;
   box-shadow: 0px 5px 4px -4px #bfbfbf;
@@ -17,15 +19,18 @@
 }
 
 .list-item {
-  min-height: 90px;
   text-align: right;
-  padding: 20px 10px;
+  padding: 15px 10px;
   cursor: pointer;
   color: #646464;
+
+  @include xl {
+    padding: 15px 8px;
+  }
 }
 
 .list-item-text {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .list-item-selected {
@@ -41,7 +46,7 @@
   padding: 5px;
 }
 
-@media only screen and (min-width : 768px) {
+@media only screen and (min-width: $screen-md-min) {
   .is-table-row {
       display: table;
   }
