@@ -50,3 +50,8 @@
 .date-control > input:focus {
     outline: none;
 }
+
+.errorMessage {
+    background-color: darkred;
+    color: white;
+}
