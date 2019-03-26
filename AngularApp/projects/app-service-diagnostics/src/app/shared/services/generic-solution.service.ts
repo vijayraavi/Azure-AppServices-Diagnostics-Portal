@@ -70,20 +70,16 @@ export class GenericSolutionService {
   OpenTab(resourceUri: string, actionOptions: {tabUrl: string}): Observable<any> {
     this.logService.logEvent('SolutionOpenTab', {'resourceUri': resourceUri, ...actionOptions});
 
-    if (!('tabUrl' in actionOptions)) {
-      throw new Error('ActionOptions should include the tabUrl property');
-    }
+    this.assertPropertyExists(actionOptions, 'tabUrl');
 
-    const tabUrl = actionOptions['tabUrl'].toLowerCase();
+    const tabUrl = actionOptions.tabUrl.toLowerCase();
     this._router.navigateByUrl(tabUrl);
 
     return of(tabUrl);
   }
 
   getBladeInfo(options: {}) {
-    if (!('detailBlade' in options)) {
-      throw new Error('ActionOptions should include the detailBlade property');
-    }
+    this.assertPropertyExists(options, 'detailBlade');
 
     return options as OpenBladeInfo;
   }

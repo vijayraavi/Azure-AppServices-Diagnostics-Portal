@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { SolutionTypeTag } from '../../models/solution-type-tag';
 
-
 @Component({
     selector: 'solution-type-tag',
     templateUrl: 'solution-type-tag.component.html',
