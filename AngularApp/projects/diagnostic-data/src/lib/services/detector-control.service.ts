@@ -53,6 +53,8 @@ export class DetectorControlService {
 
   public DetectorQueryParams = this.detectorQueryParams.asObservable();
 
+  public timeRangeDefaulted : boolean = false;
+
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     this.internalClient = !config.isPublic;
   }
@@ -70,8 +72,15 @@ export class DetectorControlService {
     let returnValue: string = '';
     if (startTime && endTime) {
       start = moment.utc(startTime);
+      if(!start.isValid()) {
+        returnValue = 'Invalid Start date time specified. Expected format: YYYY-MM-DD hh:mm';
+        return returnValue;
+      }
       end = moment.utc(endTime);
-
+      if(!end.isValid()) {
+        returnValue = 'Invalid End date time specified. Expected format: YYYY-MM-DD hh:mm';
+        return returnValue;
+      }
       let allowedDurationInDays: number = 0;
       if (this.isInternalView) {
         allowedDurationInDays = 1;
@@ -88,7 +97,7 @@ export class DetectorControlService {
           }
           else {
             //Duration is fine. Just make sure that the start date is not more than the past 30 days
-            if (moment.duration(moment().diff(start)).asMonths() > 1) {
+            if (moment.duration(moment.utc(moment()).diff(start)).asMonths() > 1) {
               returnValue = `Start date time cannot be more than a month from now.`;
             }
             else {
@@ -102,6 +111,8 @@ export class DetectorControlService {
           }
         }
         else {
+          console.log(start);
+          console.log(end);
           returnValue = 'Start date time should be greater than the End date time.';
         }
       }
@@ -119,6 +130,7 @@ export class DetectorControlService {
   }
 
   public setCustomStartEnd(start?: string, end?: string): void {
+    this.timeRangeDefaulted = false;
     this._duration = null;
     let startTime, endTime: momentNs.Moment;
     if (start && end) {
@@ -135,9 +147,17 @@ export class DetectorControlService {
       return;
     }
 
-    this._startTime = startTime;
-    this._endTime = endTime;
-    this._refreshData();
+    if(this.getTimeDurationError(start, end) === '') {      
+      this._startTime = startTime;
+      this._endTime = endTime;
+      this._refreshData();
+    }
+    else {
+      this.timeRangeDefaulted = true;
+      this._endTime = moment.utc(moment());
+      this._startTime = this._endTime.clone().subtract(1, 'days');
+      this._refreshData();
+    }    
   }
 
   public selectDuration(duration: DurationSelector) {
