@@ -120,9 +120,20 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
     this.copyText = "Copied!";
 
+    this.logTextCopied();
+
     setTimeout(() => {
       this.copyText = this.defaultCopyText;
     }, 2000);
+  }
+
+  logTextCopied() {
+    this.telemetryService.logEvent('SolutionTextCopied',
+      {
+        'solutionName': this.solution.Name,
+        'appName': this.appName
+      }
+    );
   }
 
 }
