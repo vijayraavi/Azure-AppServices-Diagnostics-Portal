@@ -30,7 +30,7 @@ export class ArmService {
         if (!resourceUri.startsWith('/')) {
             resourceUri = '/' + resourceUri;
         }
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
 
         const request = this._http.get<ResponseMessageEnvelope<T>>(url, {
             headers: this.getHeaders()
@@ -46,7 +46,7 @@ export class ArmService {
         if (!resourceUri.startsWith('/')) {
             resourceUri = '/' + resourceUri;
         }
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
 
         const request = this._http.get<T>(url, {
             headers: this.getHeaders()
@@ -59,7 +59,7 @@ export class ArmService {
     }
 
     getResourceWithoutEnvelope<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<{} | T> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
 
         const request = this._http.get<T>(url, {
             headers: this.getHeaders()
@@ -71,7 +71,7 @@ export class ArmService {
     }
 
     postResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -91,7 +91,7 @@ export class ArmService {
     }
 
     deleteResource<T>(resourceUri: string, apiVersion?: string, invalidateCache: boolean = false): Observable<any> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         return this._http.delete(url, { headers: this.getHeaders() }).pipe(
             // map((response: Response) => {
             //     let body = response.text();
@@ -102,7 +102,7 @@ export class ArmService {
     }
 
     postResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -116,7 +116,7 @@ export class ArmService {
     }
 
     putResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -130,7 +130,7 @@ export class ArmService {
     }
 
     patchResource<T, S>(resourceUri: string, body?: S, apiVersion?: string): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -146,7 +146,7 @@ export class ArmService {
     }
 
     putResourceWithoutEnvelope<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false): Observable<boolean | {} | T> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -161,7 +161,7 @@ export class ArmService {
 
     postResourceFullResponse<T>(resourceUri: string, body: any, invalidateCache: boolean = false, apiVersion?: string):
             Observable<HttpResponse<T>> {
-        const url: string = this.createUrl(resourceUri, apiVersion);
+        const url =  this.createUrl(resourceUri, apiVersion);
         const request = this._http.post<T>(url, body, {
             headers: this.getHeaders(),
             observe: 'response'
