@@ -120,8 +120,6 @@ export class DetectorControlService {
           }
         }
         else {
-          console.log(start);
-          console.log(end);
           returnValue = 'Start date time should be greater than the End date time.';
         }
       }
