@@ -53,7 +53,7 @@ export class DetectorControlService {
 
   public DetectorQueryParams = this.detectorQueryParams.asObservable();
 
-  public timeRangeDefaulted : boolean = false;
+  public timeRangeDefaulted: boolean = false;
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     this.internalClient = !config.isPublic;
@@ -72,24 +72,24 @@ export class DetectorControlService {
     let returnValue: string = '';
     if (startTime && endTime) {
       start = moment.utc(startTime);
-      if(!start.isValid()) {
+      if (!start.isValid()) {
         returnValue = 'Invalid Start date time specified. Expected format: YYYY-MM-DD hh:mm';
         return returnValue;
       }
       end = moment.utc(endTime);
-      if(!end.isValid()) {
+      if (!end.isValid()) {
         returnValue = 'Invalid End date time specified. Expected format: YYYY-MM-DD hh:mm';
         return returnValue;
       }
-      if(moment.duration(moment.utc(moment()).diff(start)).asMinutes() < 0) {
+      if (moment.duration(moment.utc(moment()).diff(start)).asMinutes() < 0) {
         returnValue = 'Start date time must be less than current date time';
         return returnValue;
       }
-      if(moment.duration(moment.utc(moment()).diff(end)).asMinutes() < 0) {
+      if (moment.duration(moment.utc(moment()).diff(end)).asMinutes() < 0) {
         returnValue = 'End date time must be less than current date time';
         return returnValue;
       }
-      
+
       let allowedDurationInDays: number = 0;
       if (this.isInternalView) {
         allowedDurationInDays = 1;
@@ -156,7 +156,7 @@ export class DetectorControlService {
       return;
     }
 
-    if(this.getTimeDurationError(start, end) === '') {      
+    if (this.getTimeDurationError(start, end) === '') {
       this._startTime = startTime;
       this._endTime = endTime;
       this._refreshData();
@@ -166,7 +166,7 @@ export class DetectorControlService {
       this._endTime = moment.utc(moment());
       this._startTime = this._endTime.clone().subtract(1, 'days');
       this._refreshData();
-    }    
+    }
   }
 
   public selectDuration(duration: DurationSelector) {
