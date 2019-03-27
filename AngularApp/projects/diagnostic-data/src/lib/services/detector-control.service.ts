@@ -81,6 +81,15 @@ export class DetectorControlService {
         returnValue = 'Invalid End date time specified. Expected format: YYYY-MM-DD hh:mm';
         return returnValue;
       }
+      if(moment.duration(moment.utc(moment()).diff(start)).asMinutes() < 0) {
+        returnValue = 'Start date time must be less than current date time';
+        return returnValue;
+      }
+      if(moment.duration(moment.utc(moment()).diff(end)).asMinutes() < 0) {
+        returnValue = 'End date time must be less than current date time';
+        return returnValue;
+      }
+      
       let allowedDurationInDays: number = 0;
       if (this.isInternalView) {
         allowedDurationInDays = 1;
