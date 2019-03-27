@@ -10,11 +10,7 @@
           <input class="date-input" [(ngModel)]="endTime" (keyup.enter)="setManualDate()"/>
       </div>
     </div> -->
-    <div class="control-group" *ngIf="timeDiffError !==''">
-      <div class="control control-static errorMessage">
-        Error : {{timeDiffError}}
-      </div>
-    </div>
+    
     <div class="control-group" *ngIf="detectorControlService.duration">
       <div (click)="detectorControlService.moveBackwardDuration()" class="control">
         <i class="fa fa-chevron-left"></i>
@@ -57,5 +53,11 @@
         <i class="fa fa-refresh"></i>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="outer-container" *ngIf="timeDiffError !==''">
+  <div class=" errorMessage">
+      <strong>Error :</strong> {{timeDiffError}}<span style='vertical-align:super'>*</span>
   </div>
 </div>
