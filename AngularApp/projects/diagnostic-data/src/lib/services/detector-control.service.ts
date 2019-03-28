@@ -55,7 +55,7 @@ export class DetectorControlService {
 
   public timeRangeDefaulted: boolean = false;
   public timeRangeErrorString: string = '';
-  public allowedDurationInDays: number  = 1;
+  public allowedDurationInDays: number = 1;
 
   constructor(@Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     this.internalClient = !config.isPublic;
@@ -74,6 +74,7 @@ export class DetectorControlService {
     let returnValue: string = '';
     this.timeRangeDefaulted = false;
     this.timeRangeErrorString = '';
+
     if (startTime && endTime) {
       start = moment.utc(startTime);
       if (!start.isValid()) {
@@ -109,7 +110,7 @@ export class DetectorControlService {
         let dayDiff: number = diff.asDays();
         if (dayDiff > -1) {
           if (dayDiff > this.allowedDurationInDays) {
-            returnValue = `Difference between start and end date times should not be more than ${this.allowedDurationInDays * 24} hours.`;
+            returnValue = `Difference between start and end date times should not be more than ${(this.allowedDurationInDays * 24).toString()} hours.`;
           }
           else {
             //Duration is fine. Just make sure that the start date is not more than the past 30 days
@@ -121,7 +122,7 @@ export class DetectorControlService {
                 returnValue = 'Start and End date time cannot be equal.';
               }
               else {
-                if(diff.asMinutes() < 15) {
+                if (diff.asMinutes() < 15) {
                   returnValue = 'Selected time duration must be at least 15 minutes.';
                 }
                 else {
@@ -175,15 +176,15 @@ export class DetectorControlService {
     }
     else {
       this.timeRangeDefaulted = true;
-      if(this.timeRangeErrorString === 'Selected time duration must be at least 15 minutes.') {
+      if (this.timeRangeErrorString === 'Selected time duration must be at least 15 minutes.') {
         this.timeRangeErrorString = 'Defaulting to a 15 minutes duration. Selected time duration was less than 15 minutes.';
         this._endTime = endTime;
         this._startTime = this._endTime.clone().subtract(30, 'minutes');
       }
       else {
-          this.timeRangeErrorString = `Defaulting to last 24 hrs. Start and End date time must not be more than ${(this.allowedDurationInDays*24).toString()} hrs apart and Start date must be within the past 30 days.`;
-          this._endTime = moment.utc(moment());
-          this._startTime = this._endTime.clone().subtract(1, 'days');
+        this.timeRangeErrorString = `Defaulting to last 24 hrs. Start and End date time must not be more than ${(this.allowedDurationInDays * 24).toString()} hrs apart and Start date must be within the past 30 days.`;
+        this._endTime = moment.utc(moment());
+        this._startTime = this._endTime.clone().subtract(1, 'days');
       }
       this._refreshData();
     }
