@@ -179,7 +179,7 @@ export class DetectorControlService {
       if (this.timeRangeErrorString === 'Selected time duration must be at least 15 minutes.') {
         this.timeRangeErrorString = 'Defaulting to a 15 minutes duration. Selected time duration was less than 15 minutes.';
         this._endTime = endTime;
-        this._startTime = this._endTime.clone().subtract(30, 'minutes');
+        this._startTime = this._endTime.clone().subtract(15, 'minutes');
       }
       else {
         this.timeRangeErrorString = `Defaulting to last 24 hrs. Start and End date time must not be more than ${(this.allowedDurationInDays * 24).toString()} hrs apart and Start date must be within the past 30 days.`;
