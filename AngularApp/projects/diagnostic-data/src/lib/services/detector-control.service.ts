@@ -88,12 +88,12 @@ export class DetectorControlService {
         this.timeRangeErrorString = returnValue;
         return returnValue;
       }
-      if (moment.duration(moment.utc(moment()).diff(start)).asMinutes() < 0) {
+      if (moment.duration(moment.utc().diff(start)).asMinutes() < 0) {
         returnValue = 'Start date time must be less than current date time';
         this.timeRangeErrorString = returnValue;
         return returnValue;
       }
-      if (moment.duration(moment.utc(moment()).diff(end)).asMinutes() < 0) {
+      if (moment.duration(moment.utc().diff(end)).asMinutes() < 0) {
         returnValue = 'End date time must be less than current date time';
         this.timeRangeErrorString = returnValue;
         return returnValue;
@@ -114,7 +114,7 @@ export class DetectorControlService {
           }
           else {
             //Duration is fine. Just make sure that the start date is not more than the past 30 days
-            if (moment.duration(moment.utc(moment()).diff(start)).asMonths() > 1) {
+            if (moment.duration(moment.utc().diff(start)).asMonths() > 1) {
               returnValue = `Start date time cannot be more than a month from now.`;
             }
             else {
@@ -192,8 +192,8 @@ export class DetectorControlService {
       else {
         if (this.timeRangeErrorString === 'Empty End date time supplied.') {
           this._startTime = moment.utc(start);
-          if (moment.duration(moment.utc(moment()).diff(this._startTime)).asMinutes() < 15) {
-            this._startTime = moment.utc(moment()).subtract(15, 'minutes');
+          if (moment.duration(moment.utc().diff(this._startTime)).asMinutes() < 15) {
+            this._startTime = moment.utc().subtract(15, 'minutes');
             this._endTime = this._startTime.clone().add(1, 'days');
             this.timeRangeErrorString += ' Auto adjusted Start and End date time.';
           }
@@ -204,7 +204,7 @@ export class DetectorControlService {
         }
         else {
           this.timeRangeErrorString = `Defaulting to last 24 hrs. Start and End date time must not be more than ${(this.allowedDurationInDays * 24).toString()} hrs apart and Start date must be within the past 30 days.`;
-          this._endTime = moment.utc(moment());
+          this._endTime = moment.utc();
           this._startTime = this._endTime.clone().subtract(1, 'days');
         }
       }
