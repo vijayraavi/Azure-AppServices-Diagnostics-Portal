@@ -1,7 +1,7 @@
 <div class="solution-container">
 
-  <div *ngIf="solution.Description" class="my-2 mx-0">
-    <markdown [data]="solution.Description"></markdown>
+  <div *ngIf="solution.DescriptionMarkdown" class="my-2 mx-0">
+    <markdown [data]="solution.DescriptionMarkdown"></markdown>
   </div>
 
   <div *ngIf="!solution.IsInternal; else internal_solution" class="solution-action mt-5">
@@ -31,7 +31,7 @@
 <ng-template #internal_solution>
     <ng-template #header>
         Instructions for the Customer
-        <button class="btn btn-default copy-text" (click)="copyInstructions(solution.InternalInstructions)">
+        <button class="btn btn-default copy-text" (click)="copyInstructions(solution.InternalMarkdown)">
             <span class="fa fa-copy"></span>
             {{copyText}}
         </button>
@@ -39,7 +39,7 @@
 
     <div class="mt-5">
       <data-container [headerTemplate]="header">
-          <markdown [data]="solution.InternalInstructions"></markdown>
+          <markdown [data]="solution.InternalMarkdown"></markdown>
       </data-container>
     </div>
 </ng-template>

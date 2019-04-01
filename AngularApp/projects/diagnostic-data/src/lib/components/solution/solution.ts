@@ -4,7 +4,7 @@ import { Dictionary } from 'projects/applens/src/app/shared/models/extensions';
 export class Solution {
   Name: string;
   Title: string;
-  Description: string;
+  DescriptionMarkdown: string;
   Action: ActionType;
   ApiOptions: ArmApiOptions;
   BladeOptions: GoToBladeOptions;
@@ -12,7 +12,7 @@ export class Solution {
   OverrideOptions: Dictionary<any>;
   RequiresConfirmation: boolean;
   ResourceUri: string;
-  InternalInstructions: string;
+  InternalMarkdown: string;
   TypeTag: SolutionTypeTag;
   IsInternal: boolean;
   DetectorId: string;
