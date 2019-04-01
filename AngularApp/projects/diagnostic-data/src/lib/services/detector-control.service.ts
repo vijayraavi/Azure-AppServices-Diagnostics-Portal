@@ -141,7 +141,15 @@ export class DetectorControlService {
     }
     else {
       if (startTime) {
-        returnValue = 'Empty End date time supplied.';
+        start = moment.utc(startTime);
+        if (!start.isValid()) {
+          returnValue = 'Invalid Start date time specified. Expected format: YYYY-MM-DD hh:mm';
+          this.timeRangeErrorString = returnValue;
+          return returnValue;
+        }
+        else {
+          returnValue = 'Empty End date time supplied.';
+        }
       }
       else {
         returnValue = 'Empty Start date time supplied.';
@@ -182,9 +190,23 @@ export class DetectorControlService {
         this._startTime = this._endTime.clone().subtract(15, 'minutes');
       }
       else {
-        this.timeRangeErrorString = `Defaulting to last 24 hrs. Start and End date time must not be more than ${(this.allowedDurationInDays * 24).toString()} hrs apart and Start date must be within the past 30 days.`;
-        this._endTime = moment.utc(moment());
-        this._startTime = this._endTime.clone().subtract(1, 'days');
+        if(this.timeRangeErrorString === 'Empty End date time supplied.') {
+          this._startTime = moment.utc(start);          
+          if(moment.duration(moment.utc(moment()).diff(this._startTime)).asMinutes() < 15) {
+            this._startTime = moment.utc(moment()).subtract(15, 'minutes');
+            this._endTime = this._startTime.clone().add(1,'days');
+            this.timeRangeErrorString+= ' Auto adjusted Start and End date time.';
+          }
+          else {            
+            this._endTime = this._startTime.clone().add(1,'days');
+            this.timeRangeErrorString+= ' Auto adjusted End date time.';
+          }
+        }
+        else {
+          this.timeRangeErrorString = `Defaulting to last 24 hrs. Start and End date time must not be more than ${(this.allowedDurationInDays * 24).toString()} hrs apart and Start date must be within the past 30 days.`;
+          this._endTime = moment.utc(moment());
+          this._startTime = this._endTime.clone().subtract(1, 'days');
+        }        
       }
       this._refreshData();
     }
