@@ -68,9 +68,8 @@ export class GenericSolutionService {
   }
 
   OpenTab(resourceUri: string, actionOptions: {tabUrl: string}): Observable<any> {
-    this.logService.logEvent('SolutionOpenTab', {'resourceUri': resourceUri, ...actionOptions});
-
     this.assertPropertyExists(actionOptions, 'tabUrl');
+    this.logService.logEvent('SolutionOpenTab', {'resourceUri': resourceUri, ...actionOptions});
 
     const tabUrl = actionOptions.tabUrl.toLowerCase();
     this._router.navigateByUrl(tabUrl);
@@ -85,9 +84,8 @@ export class GenericSolutionService {
   }
 
   GoToBlade(resourceUri: string, actionOptions: {detailBlade: string}): Observable<any> {
-    this.logService.logEvent('SolutionGoToBlade', {'resourceUri': resourceUri, ...actionOptions});
-
     const bladeInfo = this.getBladeInfo(actionOptions);
+    this.logService.logEvent('SolutionGoToBlade', {'resourceUri': resourceUri, ...actionOptions});
 
     switch (bladeInfo.detailBlade) {
       case 'scaleup': {
