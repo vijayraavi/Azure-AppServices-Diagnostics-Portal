@@ -6,7 +6,9 @@ export const TelemetryEventNames = {
     InsightsSummary: 'InsightsSummary',
     ChildDetectorsSummary: 'ChildDetectorsSummary',
     MarkdownClicked: 'MarkdownClicked',
-    StarRatingSubmitted: 'StarRatingSubmitted'
+    StarRatingSubmitted: 'StarRatingSubmitted',
+    CardClicked: 'CardClicked', 
+    FormButtonClicked: 'FormButtonClicked',
 };
 
 export interface ITelemetryProvider {

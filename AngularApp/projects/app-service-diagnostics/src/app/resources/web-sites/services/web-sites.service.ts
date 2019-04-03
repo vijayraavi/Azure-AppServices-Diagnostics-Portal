@@ -6,6 +6,7 @@ import { AppAnalysisService } from '../../../shared/services/appanalysis.service
 import { ArmService } from '../../../shared/services/arm.service';
 import { Sku } from '../../../shared/models/server-farm';
 import { IDiagnosticProperties } from '../../../shared/models/diagnosticproperties';
+import { Observable ,  BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class WebSitesService extends ResourceService {
@@ -28,7 +29,7 @@ export class WebSitesService extends ResourceService {
     }
 
     public get azureServiceName(): string {
-        return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Azure Web App(Windows)' : 'Azure Web App(Linux)' : 'Azure Function App';
+        return this.appType === AppType.WebApp ? this.platform === OperatingSystem.windows ? 'Web App (Windows)' : 'Web App (Linux)' : 'Function App';
     }
 
     public get isApplicableForLiveChat(): boolean {
@@ -38,9 +39,14 @@ export class WebSitesService extends ResourceService {
         && (this.platform & (OperatingSystem.windows | OperatingSystem.linux)) > 0;
     }
 
+    public getSitePremierAddOns(resourceUri: string): Observable<any> {
+        return this._armService.getArmResource(`${resourceUri}/premieraddons`, '2018-02-01');
+    }
+
     protected makeWarmUpCalls() {
         super.makeWarmUpCalls();
         this._populateSiteInfo();
+        this.warmUpCallFinished.next(true);
     }
 
     private _populateSiteInfo(): void {

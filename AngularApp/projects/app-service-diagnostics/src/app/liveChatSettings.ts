@@ -19,7 +19,7 @@ export class LiveChatSettings {
     // List of Support Topics for which Live chat is Enabled
     public static enabledSupportTopicsPerAzureService: any = {
 
-      "Azure Web App(Windows)": [
+      "Web App (Windows)": [
         '32542218',     //Availability and Performance/Web App Down
         '32457411',     //Availability and Performance/Web App Slow
         '32570954',     //Availability and Performance/Web App Restarted
@@ -35,96 +35,18 @@ export class LiveChatSettings {
         '32589277',     //How Do I/Configure domains and certificates,
         '32589281'      //How Do I/IP Configuration
       ],
-      "Azure Web App(Linux)": [
+      "Web App (Linux)": [
         '32542218',     //Availability and Performance/Web App Down
+        '32570954',     //Availability and Performance/Web App Restarted
+        '32440123',     //Configuration and Management/Configuring SSL
+        '32440122',     //Configuration and Management/Configuring custom domain names
+        '32542208',     //Configuration and Management/Backup and Restore
+        '32542210'      //Configuration and Management/IP Configuration
       ]
     };
 
     // This indicates the time after which Live Chat will pop up.
     public static InactivityTimeoutInMs: number = 5000;
-
-    // Live Chat Business Hours
-    public static BuisnessStartDay: number = 1; // Monday
-    public static BuisnessEndDay: number = 5;   // Friday
-    public static BusinessStartHourPST: number = 7;   // 7 AM PST
-    public static BusinessEndHourPST: number = 17;     // 5 PM PST
-
-    public static PublicHolidays: any = [
-        {
-            // Martin Luther King Day
-            "Day": 21,
-            "Month": 1,
-            "Year": 2019
-          },
-          {
-            // Presidents Day
-            "Day": 18,
-            "Month": 2,
-            "Year": 2019
-          },
-          {
-            // 	Memorial Day
-            "Day": 27,
-            "Month": 5,
-            "Year": 2019
-          },
-          {
-            // 	Independence Day
-            "Day": 4,
-            "Month": 7,
-            "Year": 2019
-          },
-          {
-            //  Labor Day
-            "Day": 2,
-            "Month": 9,
-            "Year": 2019
-          },
-          {
-            // Thanksgiving Day - 1
-            "Day": 28,
-            "Month": 11,
-            "Year": 2019
-          },
-          {
-            // Thanksgiving Day - 2
-            "Day": 29,
-            "Month": 11,
-            "Year": 2019
-          },
-          {
-            // Xmas eve
-            "Day": 24,
-            "Month": 12,
-            "Year": 2019
-          },
-          {
-            // Xmas
-            "Day": 25,
-            "Month": 12,
-            "year": 2019
-          },
-          {
-            // New Yr Eve
-            "Day": 31,
-            "Month": 12,
-            "Year": 2019
-          },
-          {
-            // New Yr
-            "Day": 1,
-            "Month": 1,
-            "Year": 2020
-          }
-    ];
-
-    public static WeeklyChatOffHours = {
-        Day: 4,  //Thursday, 11 AM - 12:30 PM
-        StartHourPST: 11,
-        StartMinutesPST: 0,
-        EndHourPST: 12,
-        EndMinutePST: 30
-    };
 }
 
 export class ChatStatus {
