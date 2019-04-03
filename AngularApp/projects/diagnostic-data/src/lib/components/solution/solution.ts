@@ -1,5 +1,4 @@
 import { SolutionTypeTag } from '../../models/solution-type-tag';
-import { Dictionary } from 'projects/applens/src/app/shared/models/extensions';
 
 export class Solution {
   Name: string;
@@ -9,7 +8,7 @@ export class Solution {
   ApiOptions: ArmApiOptions;
   BladeOptions: GoToBladeOptions;
   TabOptions: OpenTabOptions;
-  OverrideOptions: Dictionary<any>;
+  OverrideOptions: {};
   RequiresConfirmation: boolean;
   ResourceUri: string;
   InternalMarkdown: string;

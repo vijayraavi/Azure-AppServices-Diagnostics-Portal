@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { Component, Input } from '@angular/core';
-import { Dictionary } from '../../../../../applens/src/app/shared/models/extensions';
 import { Rendering } from '../../models/detector';
 import { TelemetryService } from '../../services/telemetry/telemetry.service';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
@@ -58,7 +57,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
     return target.charAt(0).toLowerCase() + target.slice(1)
   }
 
-  convertOptions(): Dictionary<any> {
+  convertOptions(): {} {
     let actionOptions = {};
     switch (this.solution.Action) {
       case (ActionType.ArmApi): {
