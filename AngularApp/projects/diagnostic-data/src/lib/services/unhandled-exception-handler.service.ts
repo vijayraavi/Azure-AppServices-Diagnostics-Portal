@@ -13,8 +13,8 @@ export class UnhandledExceptionHandlerService {
     try {
       this.logService.logException(error, null, null, null, SeverityLevel.Critical);
     }
-    finally {
-      throw error;
+    catch(err) {
+      // Squash logging error
     }
   }
 }
