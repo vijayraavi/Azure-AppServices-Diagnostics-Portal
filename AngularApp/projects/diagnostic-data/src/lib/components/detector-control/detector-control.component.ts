@@ -2,7 +2,6 @@ import { Component, Inject, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DIAGNOSTIC_DATA_CONFIG, DiagnosticDataConfig } from '../../config/diagnostic-data-config';
 import { DetectorControlService, DurationSelector } from '../../services/detector-control.service';
-
 @Component({
   selector: 'detector-control',
   templateUrl: './detector-control.component.html',
@@ -14,6 +13,7 @@ export class DetectorControlComponent implements OnInit {
   endTime: string;
 
   isInternal: boolean;
+  timeDiffError: string;
 
   constructor(public _router: Router, private _activatedRoute: ActivatedRoute, public detectorControlService: DetectorControlService,
     @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
@@ -21,23 +21,33 @@ export class DetectorControlComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.timeDiffError = '';
+    if(this.detectorControlService.timeRangeDefaulted){
+      this.timeDiffError = this.detectorControlService.timeRangeErrorString;
+    } 
     this.detectorControlService.update.subscribe(validUpdate => {
       if (validUpdate) {
         this.startTime = this.detectorControlService.startTimeString;
         this.endTime = this.detectorControlService.endTimeString;
       }
 
-      const timeParams = {
+      const routeParams = {
         'startTime': this.detectorControlService.startTime.format('YYYY-MM-DDTHH:mm'),
         'endTime': this.detectorControlService.endTime.format('YYYY-MM-DDTHH:mm')
       };
-      this._router.navigate([], { queryParams: timeParams, relativeTo: this._activatedRoute });
+      if(this.detectorControlService.detectorQueryParamsString != "") {
+        routeParams['detectorQueryParams'] = this.detectorControlService.detectorQueryParamsString;
+      }
+      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
 
     });
   }
 
   setManualDate() {
-    this.detectorControlService.setCustomStartEnd(this.startTime, this.endTime);
+    this.timeDiffError = this.detectorControlService.getTimeDurationError(this.startTime, this.endTime);
+    if(this.timeDiffError === ''){
+      this.detectorControlService.setCustomStartEnd(this.startTime, this.endTime);     
+    }
   }
 }
 
