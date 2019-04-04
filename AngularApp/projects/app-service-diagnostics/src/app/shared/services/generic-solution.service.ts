@@ -12,7 +12,7 @@ import { PortalActionService } from './portal-action.service';
 })
 export class GenericSolutionService {
 
-  whitelistedRoutes = {
+  allowedRoutes = {
     'restart': ['post']
   }
 
@@ -34,7 +34,7 @@ export class GenericSolutionService {
     let cleanedRoute = options.route.startsWith('/') ? options.route.substring(1) : options.route;
     cleanedRoute = cleanedRoute.toLowerCase();
 
-    if (!(this.whitelistedRoutes[cleanedRoute].includes(options.verb.toLowerCase()))) {
+    if (!(this.allowedRoutes[cleanedRoute].includes(options.verb.toLowerCase()))) {
       throw new Error(`Invalid Operation: cannot perform ${options.verb} on route ${cleanedRoute}`)
     }
   }
@@ -87,16 +87,16 @@ export class GenericSolutionService {
     const bladeInfo = this.getBladeInfo(actionOptions);
     this.logService.logEvent('SolutionGoToBlade', {'resourceUri': resourceUri, ...actionOptions});
 
-    switch (bladeInfo.detailBlade) {
+    switch (bladeInfo.detailBlade.toLowerCase()) {
       case 'scaleup': {
         this.portalNavService.openBladeScaleUpBlade();
         break;
       }
-      case 'AutoScaleSettingsBlade': {
+      case 'autoscalesettingsblade': {
         this.portalNavService.openBladeScaleOutBlade();
         break;
       }
-      case 'TinfoilSecurityBlade': {
+      case 'tinfoilsecurityblade': {
         this.portalNavService.openTifoilSecurityBlade();
         break;
       }
