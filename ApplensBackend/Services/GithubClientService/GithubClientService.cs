@@ -147,7 +147,7 @@ namespace AppLensV3
                 var commitContent = await OctokitClient.Repository.Content.GetAllContentsByRef(UserName, RepoName, filePath, sha);
                 return commitContent?[0].Content;
             }
-            catch
+            catch (NotFoundException)
             {
                 // Ignore exception and return empty string.
                 return string.Empty;
