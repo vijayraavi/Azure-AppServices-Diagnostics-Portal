@@ -11,7 +11,7 @@ export class UnhandledExceptionHandlerService {
 
   handleError(error: Error) {
     try {
-      this.logService.logException(error, null, null, null, SeverityLevel.Critical);
+      this.logService.logException(error, "unhandled", null, null, SeverityLevel.Critical);
     }
     catch(err) {
       // Squash logging error
