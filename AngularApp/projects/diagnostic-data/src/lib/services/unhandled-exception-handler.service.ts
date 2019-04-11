@@ -10,12 +10,14 @@ export class UnhandledExceptionHandlerService {
 
     router: Router;
 
-    constructor(private logService: KustoTelemetryService, private injector: Injector) {
-        this.router = injector.get(Router);
-    }
+    constructor(private logService: KustoTelemetryService, private injector: Injector) { }
 
     handleError(error: Error) {
         try {
+            if (this.router == undefined) {
+                this.router = this.injector.get(Router);
+            }
+
             const props = {
                 'route': this.router.url
             }
