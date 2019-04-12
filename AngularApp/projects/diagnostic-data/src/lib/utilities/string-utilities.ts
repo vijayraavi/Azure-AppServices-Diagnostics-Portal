@@ -1,5 +1,9 @@
 export class StringUtilities {
-    static TrimStart(target: string, trimSubstring: string): string {
+    static TrimStart(target: string, trimSubstring?: string): string {
+        if (trimSubstring == undefined) {
+            return target.replace(/^\s+/m, '');
+        }
+
         let result = target;
 
         while (result.length >= trimSubstring.length && result.startsWith(trimSubstring)) {
@@ -9,7 +13,11 @@ export class StringUtilities {
         return result;
     }
 
-    static TrimEnd(target: string, trimSubstring: string): string {
+    static TrimEnd(target: string, trimSubstring?: string): string {
+        if (trimSubstring == undefined) {
+            return target.replace(/\s+$/m, '');
+        }
+
         let result = target;
 
         while (result.length >= trimSubstring.length && result.endsWith(trimSubstring)) {

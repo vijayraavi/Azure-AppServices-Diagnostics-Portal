@@ -42,9 +42,7 @@ export class SolutionComponent extends DataRenderBaseComponent {
     let detectorLinkMarkdown = `Go to [App Service Diagnostics](${detectorLink})`;
 
     if (markdownBuilder.toLowerCase().includes("{detectorlink}")) {
-        console.log(markdownBuilder);
         markdownBuilder = markdownBuilder.replace(/{detectorlink}/gi, detectorLink);
-        console.log(markdownBuilder);
     } else if (!markdownBuilder.includes(detectorLinkMarkdown)) {
         markdownBuilder = markdownBuilder + "\n\n" + detectorLinkMarkdown;
     }
