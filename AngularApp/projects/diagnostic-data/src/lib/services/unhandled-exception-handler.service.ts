@@ -22,6 +22,10 @@ export class UnhandledExceptionHandlerService {
                 'route': this.router.url
             }
 
+            if (error.stack != undefined) {
+                props['stack'] = error.stack;
+            }
+
             this.logService.logException(error, "unhandled", props, null, SeverityLevel.Critical);
         }
         catch (err) {
