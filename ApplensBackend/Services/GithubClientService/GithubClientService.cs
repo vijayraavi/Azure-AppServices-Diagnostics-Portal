@@ -111,6 +111,24 @@ namespace AppLensV3
             return await GetRawFile(gistFileUrl);
         }
 
+        public async Task<string> GetMetadataFile(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            var gistFileUrl = string.Format(
+                GithubConstants.MetadataFilePathFormat,
+                UserName,
+                RepoName,
+                id,
+                Branch,
+                AccessToken);
+
+            return await GetRawFile(gistFileUrl);
+        }
+
         /// <summary>
         /// Get package configuration.
         /// </summary>

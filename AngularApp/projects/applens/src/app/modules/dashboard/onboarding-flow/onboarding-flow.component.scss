@@ -403,3 +403,119 @@ span.rotate {
   visibility: visible;
   opacity: 1;
 }
+
+.utterancestab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.utterancestab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.utterancestab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.utterancestab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.utterancestabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+  overflow-y: scroll;
+  max-height: 400px;
+}
+
+.utterances-text{
+  color: black;
+}
+
+.utterancesaddicon {
+  float: left;
+  margin-right: 10px;
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.utterancesremoveicon {
+  float: right;
+  color: red;
+  margin-right: 10px;
+  margin-top: 3px;
+  cursor: pointer
+}
+
+.utteranceslist {
+  list-style: none;
+  color: indigo;
+  font-size: 14px;
+}
+
+.btn-link {
+  background-color: #1ea4fff2;
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline;
+  float: right;
+}
+
+.btn-link:hover {
+  background-color: RoyalBlue;
+}
+
+.btn-add {
+  background-color: transparent;
+  border: none;
+  color: green;
+  padding: 3px 8px;
+  font-size: 16px;
+  cursor: pointer;
+  float:right;
+}
+
+.icon-err {
+  background-color: transparent;
+  border: none;
+  color: red;
+  padding: 3px 8px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+

@@ -77,6 +77,13 @@ namespace AppLensV3.Controllers
             return Ok(content);
         }
 
+        [HttpGet("package/{id}/metadata")]
+        public async Task<IActionResult> GetMetadataFile(string id)
+        {
+            string content = await GithubService.GetMetadataFile(id);
+            return Ok(content);
+        }
+
         /// <summary>
         /// Get change list.
         /// </summary>
