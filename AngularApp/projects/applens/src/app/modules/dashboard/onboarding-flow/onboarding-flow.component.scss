@@ -408,37 +408,21 @@ span.rotate {
   overflow: hidden;
   border: 1px solid #ccc;
   background-color: #f1f1f1;
-}
-
-/* Style the buttons that are used to open the tab content */
-.utterancestab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
   cursor: pointer;
-  padding: 14px 16px;
   transition: 0.3s;
+  text-align: center;
+  width: 50%;
 }
 
-/* Change background color of buttons on hover */
-.utterancestab button:hover {
+.utterancestab:hover {
   background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.utterancestab button.active {
-  background-color: #ccc;
 }
 
 /* Style the tab content */
 .utterancestabcontent {
-  display: none;
-  padding: 6px 12px;
   border: 1px solid #ccc;
-  border-top: none;
   overflow-y: scroll;
-  max-height: 400px;
+  height: 300px;
 }
 
 .utterances-text{
@@ -481,16 +465,6 @@ span.rotate {
   background-color: RoyalBlue;
 }
 
-.btn-add {
-  background-color: transparent;
-  border: none;
-  color: green;
-  padding: 3px 8px;
-  font-size: 16px;
-  cursor: pointer;
-  float:right;
-}
-
 .icon-err {
   background-color: transparent;
   border: none;
@@ -517,5 +491,9 @@ span.rotate {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+td {
+  vertical-align: top;
 }
 

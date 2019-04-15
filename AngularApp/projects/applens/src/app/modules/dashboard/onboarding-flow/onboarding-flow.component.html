@@ -6,38 +6,62 @@
       <hr style="margin-top: 10px;margin-bottom: 10px;">
       <span>Published changes will be live in Applens and App Services "Diagnose and Solve" blade for external
         customers if the detector is marked public.</span>
-      <div class="row" style="width:100%; margin-left: 10px;">
-        <div class="utterancestab">
-          <button (click)="showRecommendedUtterances()" [ngClass]="{'active': displayRecommendedUtterances}">Recommended Utterances</button>
-          <button (click)="showManageUtterances()" [ngClass]="{'active': displayManageUtterances}">Manage Utterances</button>
-        </div>
-        <div [style.display]="displayRecommendedUtterances? 'block' : 'none'" class="utterancestabcontent">
-          <div style="width: 100%; margin-left: 10px;">
-            <ul class="utteranceslist" *ngIf="recommendedUtterances.length>0">
-              <li *ngFor="let utterance of recommendedUtterances;">
-                <input type="checkbox" [(ngModel)]="utterance.selected" /><span class="utterances-text">{{utterance.sampleUtterance.text}}</span><span *ngFor="let link of utterance.sampleUtterance.links; let i=index;"><a href="{{link}}" target="_blank">[{{i+1}}]</a></span>
-              </li>
-            </ul>
-            <button type="button" class="btn-add" (click)="addRecommendedUtterances()" [style.display]="recommendedUtterances.length>0? '': 'none'"><i class="fa fa-arrow-right"></i></button>
-          </div>
-        </div>
-        <div [style.display]="displayManageUtterances? 'block' : 'none'" class="utterancestabcontent">
-          <div style="width:100%; margin-left: 10px" *ngIf="allUtterances.length==0">
-            <span>No utterances added.</span>
-          </div>
-          <div style="width: 100%; margin-left: 10px;">
-            <input type="text" style="width: 90%; display: inline;" placeholder="Create your custom utterance" (keyup.enter)="createUtterance();" [(ngModel)]="utteranceInput">
-            <span class="icon-err" [style.display]="displayError? '': 'none'" title="At least 5 characters"><i class="fa fa-exclamation"></i></span>
-            <button type="button" class="btn-link"><i class="fa fa-plus"></i></button>
-          </div>
-          <div style="width: 100%; margin-left: 10px;">
-            <ul class="utteranceslist" *ngIf="allUtterances.length>0">
-              <li *ngFor="let utterance of allUtterances;">
-                <span class="utterances-text">{{utterance.text}}</span><span *ngFor="let link of utterance.links; let i=index;"><a href="{{link}}" target="_blank">[{{i+1}}]</a></span><i class="fa fa-close utterancesremoveicon" (click)="removeUtterance(utterance)"></i>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <div style="width:100%;height:400px">
+        <br />
+        <span>Make your detector discoverable for users by adding at least 5 utterances that describe the problems your detector can solve.</span>
+        <table style="width:100%;">
+          <tr>
+            <td class="utterancestab">Recommended Utterances</td>
+            <td class="utterancestab">Manage Utterances</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="utterancestabcontent">
+                <div style="width: 100%;">
+                  <ul class="utteranceslist" *ngIf="recommendedUtterances.length>0">
+                    <li *ngFor="let utterance of recommendedUtterances;">
+                      <input type="checkbox" [(ngModel)]="utterance.selected" (change)="addRecommendedUtterances()" />
+                      <span class="utterances-text">{{utterance.sampleUtterance.text}}</span>
+                      <span *ngIf="utterance.sampleUtterance.links && utterance.sampleUtterance.links.length>0">&nbsp;[Problem Links]</span>
+                      <span *ngFor="let link of utterance.sampleUtterance.links; let i=index;">
+                        <a href="{{link}}" target="_blank">[{{i+1}}]</a>
+                      </span>
+                    </li>
+                  </ul>
+                  <span *ngIf="recommendedUtterances.length==0">Nothing new.</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="utterancestabcontent">
+                <div style="width:100%;" *ngIf="allUtterances.length==0">
+                  <span>No utterances added.</span>
+                </div>
+                <div style="width: 100%;">
+                  <input type="text" style="width: 90%; display: inline;" placeholder="Create your custom utterance" (keyup.enter)="createUtterance();" [(ngModel)]="utteranceInput">
+                  <span class="icon-err" [style.display]="displayError? '': 'none'" title="At least 5 characters">
+                    <i class="fa fa-exclamation"></i>
+                  </span>
+                  <button type="button" class="btn-link">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+                <div style="width: 100%;" *ngIf="allUtterances.length>0">
+                  <ul class="utteranceslist">
+                    <li *ngFor="let utterance of allUtterances;">
+                      <span class="utterances-text">{{utterance.text}}</span>
+                      <span *ngIf="utterance.links && utterance.links.length>0">&nbsp;[Problem Links]</span>
+                      <span *ngFor="let link of utterance.links; let i=index;">
+                        <a href="{{link}}" target="_blank">[{{i+1}}]</a>
+                      </span>
+                      <i class="fa fa-trash utterancesremoveicon" (click)="removeUtterance(utterance)"></i>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
       </div>
       <div style="margin-top:10px;margin-bottom: 10px;position: relative;">
         <button type="button" class="btn btn-primary" (click)="publish()"
