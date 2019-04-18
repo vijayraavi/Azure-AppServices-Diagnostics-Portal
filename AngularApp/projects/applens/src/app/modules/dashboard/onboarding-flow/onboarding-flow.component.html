@@ -8,19 +8,21 @@
         customers if the detector is marked public.</span>
       <div style="width:100%;height:400px">
         <br />
-        <span>Make your detector discoverable for users by adding at least 5 utterances that describe the problems your detector can solve.</span>
-        <table style="width:100%;">
+        <span>Make your detector discoverable for users by adding at least 5 search terms that describe the problems your detector can solve. We have some <strong>recommendations based on the detector description you provided</strong>.</span>
+        <table style="width:100%;table-layout:fixed;">
           <tr>
-            <td class="utterancestab">Recommended Utterances</td>
-            <td class="utterancestab">Manage Utterances</td>
+            <td class="utterancestab"><strong>Recommended Search Terms</strong></td>
+            <td class="utterancestab"><strong>Already added</strong></td>
           </tr>
           <tr>
-            <td>
+            <td class="utterancessection">
               <div class="utterancestabcontent">
                 <div style="width: 100%;">
                   <ul class="utteranceslist" *ngIf="recommendedUtterances.length>0">
                     <li *ngFor="let utterance of recommendedUtterances;">
-                      <input type="checkbox" [(ngModel)]="utterance.selected" (change)="addRecommendedUtterances()" />
+                      <button type="button" class="btn-add" (click)="addUtterance(utterance)">
+                        <i class="fa fa-plus"></i>
+                      </button>&nbsp;&nbsp;
                       <span class="utterances-text">{{utterance.sampleUtterance.text}}</span>
                       <span *ngIf="utterance.sampleUtterance.links && utterance.sampleUtterance.links.length>0">&nbsp;[Problem Links]</span>
                       <span *ngFor="let link of utterance.sampleUtterance.links; let i=index;">
@@ -32,13 +34,13 @@
                 </div>
               </div>
             </td>
-            <td>
+            <td  class="utterancessection">
               <div class="utterancestabcontent">
                 <div style="width:100%;" *ngIf="allUtterances.length==0">
                   <span>No utterances added.</span>
                 </div>
                 <div style="width: 100%;">
-                  <input type="text" style="width: 90%; display: inline;" placeholder="Create your custom utterance" (keyup.enter)="createUtterance();" [(ngModel)]="utteranceInput">
+                  <input type="text" style="width: 90%; display: inline;" placeholder="Add your custom search term" (keyup.enter)="createUtterance();" [(ngModel)]="utteranceInput">
                   <span class="icon-err" [style.display]="displayError? '': 'none'" title="At least 5 characters">
                     <i class="fa fa-exclamation"></i>
                   </span>

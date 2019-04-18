@@ -67,8 +67,6 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
   allUtterances: any[] = [];
   utteranceInput: string = "";
   recommendedUtterances: RecommendedUtterance[] = [];
-  displayRecommendedUtterances: boolean = false;
-  displayManageUtterances: boolean = false;
   displayError: boolean = false;
 
   modalPublishingButtonText: string;
@@ -274,14 +272,15 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
         this.queryResponse = response.body;
         if (this.queryResponse.invocationOutput.suggestedUtterances) {
           this.recommendedUtterances = this.queryResponse.invocationOutput.suggestedUtterances.results;
-          this.recommendedUtterances.forEach(x => x.selected = false);
         }
         this.runButtonDisabled = false;
         this.runButtonText = "Run";
         this.runButtonIcon = "fa fa-play";
-        this.queryResponse.compilationOutput.compilationTraces.forEach(element => {
+        if (this.queryResponse.compilationOutput.compilationTraces) {
+          this.queryResponse.compilationOutput.compilationTraces.forEach(element => {
             this.buildOutput.push(element);
           });
+        }
         // If the script etag returned by the server does not match the previous script-etag, update the values in memory
         if (response.headers.get('diag-script-etag') != undefined && this.compilationPackage.scriptETag !== response.headers.get('diag-script-etag')) {
           this.compilationPackage.scriptETag = response.headers.get('diag-script-etag');
@@ -305,6 +304,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
           this.publishButtonDisabled = true;
         }
         this.localDevButtonDisabled = false;
+        this.publishButtonDisabled = false;
 
       }, ((error: any) => {
         this.runButtonDisabled = false;
@@ -319,32 +319,18 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
 
   confirmPublish() {
     if (!this.publishButtonDisabled) {
-      this.showRecommendedUtterances();
       this.ngxSmartModalService.getModal('publishModal').open();
     }
   }
 
-  showRecommendedUtterances() {
-    this.displayManageUtterances = false;
-    this.displayRecommendedUtterances = true;
-  }
-
-  showManageUtterances() {
-    this.displayRecommendedUtterances = false;
-    this.displayManageUtterances = true;
-  }
-
-  addRecommendedUtterances() {
-    this.recommendedUtterances.filter(x => x.selected).forEach(x => {
-      this.addUtterance(x);
-    });
-    this.recommendedUtterances = this.recommendedUtterances.filter(x => !x.selected);
-  }
-
   addUtterance(utterance: RecommendedUtterance) {
-    var index = this.allUtterances.filter(x => x.text == utterance.sampleUtterance.text);
-    if (index.length==0) {
-      this.allUtterances.push(utterance.sampleUtterance);
+    var index = this.allUtterances.indexOf(utterance.sampleUtterance);
+    if (index<0) {
+      this.allUtterances.unshift(utterance.sampleUtterance);
+      var idx = this.recommendedUtterances.indexOf(utterance);
+      if (idx >= 0) {
+        this.recommendedUtterances.splice(idx, 1);
+      }
     }
   }
 
@@ -359,7 +345,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
   }
 
   removeUtterance(utterance: any) {
-    var index = this.allUtterances.indexOf(x => x.text == utterance.text);
+    var index = this.allUtterances.indexOf(utterance);
     this.allUtterances.splice(index, 1);
   }
 
@@ -471,8 +457,6 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     this.hideModal = localStorage.getItem("localdevmodal.hidden") === "true";
     let detectorFile: Observable<string>;
     this.recommendedUtterances = [];
-    this.displayManageUtterances = false;
-    this.displayRecommendedUtterances = false;
     this.utteranceInput = "";
     this.githubService.getMetadataFile(this.id).subscribe(res => {
       this.allUtterances = JSON.parse(res).utterances;

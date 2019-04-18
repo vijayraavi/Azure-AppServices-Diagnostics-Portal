@@ -418,6 +418,10 @@ span.rotate {
   background-color: #ddd;
 }
 
+.utterancessection {
+  width: 50%;
+}
+
 /* Style the tab content */
 .utterancestabcontent {
   border: 1px solid #ccc;
@@ -459,6 +463,16 @@ span.rotate {
   cursor: pointer;
   display: inline;
   float: right;
+}
+
+.btn-add {
+  background-color: green;
+  border: none;
+  color: white;
+  padding: 0px 4px;
+  font-size: 11px;
+  cursor: pointer;
+  display: inline;
 }
 
 .btn-link:hover {

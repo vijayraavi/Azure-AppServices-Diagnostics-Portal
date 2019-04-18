@@ -171,7 +171,6 @@ export interface MarkdownRendering extends Rendering {
 export interface RecommendedUtterance {
   sampleUtterance: SampleUtterance;
   score: number;
-  selected: boolean;
 }
 
 interface SampleUtterance {
