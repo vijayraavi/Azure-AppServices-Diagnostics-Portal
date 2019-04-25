@@ -411,7 +411,8 @@ span.rotate {
   cursor: pointer;
   transition: 0.3s;
   text-align: center;
-  width: 50%;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .utterancestab:hover {
@@ -426,7 +427,9 @@ span.rotate {
 .utterancestabcontent {
   border: 1px solid #ccc;
   overflow-y: scroll;
-  height: 300px;
+  height: 350px;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
 .utterances-text{
