@@ -157,9 +157,6 @@ export class DiagnosticApiService {
         headers: this._getHeaders(path, method, internalView, emailRecipients, additionalParams)
       });
     }
-    if (body.Text != null)
-      useCache = false;
-
     return useCache ? this._cacheService.get(this.getCacheKey(method, path), request, invalidateCache) : request;
   }
 

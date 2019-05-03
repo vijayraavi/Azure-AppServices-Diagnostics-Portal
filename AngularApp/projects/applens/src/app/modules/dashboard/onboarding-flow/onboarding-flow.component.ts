@@ -250,7 +250,8 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
     var body = {
       script: this.code,
       references: this.reference,
-      entityType: this.gistMode ? 'gist' : 'signal'
+      entityType: this.gistMode ? 'gist' : 'signal',
+      detectorUtterances: JSON.stringify(this.allUtterances.map(x => x.text))
     };
 
     this.runButtonDisabled = true;
@@ -265,8 +266,7 @@ export class OnboardingFlowComponent implements OnInit, OnDestroy {
       this._detectorControlService.endTimeString, this.dataSource, this.timeRange, {
         scriptETag: this.compilationPackage.scriptETag,
         assemblyName: this.compilationPackage.assemblyName,
-        getFullResponse: true,
-        detectorUtterances: JSON.stringify(this.allUtterances.map(x => x.text))
+        getFullResponse: true
       })
       .subscribe((response: any) => {
         this.queryResponse = response.body;
