@@ -1,12 +1,12 @@
-<div class="panel with-nav-tabs panel-default app-container">
+<div class="panel with-nav-tabs panel-default app-container" tabindex="0">
   <div class="panel-heading app-nav-bar">
     <ul class="nav nav-tabs">
 
       <li role="presentation" class="app-nav-tab" *ngFor="let tab of navigationItems; let i = index"
-          [routerLink]="[tab.url]" [ngClass]="{'active':  tab.isActive}">
-        <a>
+          [ngClass]="{'active':  tab.isActive}">
+        <a tabindex="0" [routerLink]="[tab.url]">
           {{tab.title}}
-          <i *ngIf="i !== 0" class="fa fa-times" aria-hidden="true" (click)="closeTab(i)" style="margin-left:10px"></i>
+          <i *ngIf="i !== 0" class="fa fa-times" aria-hidden="true" (click)="closeTab(i)" (keyup.enter)="closeTab(i)" tabindex="0" style="margin-left:10px"></i>
         </a>
       </li>
 
@@ -15,7 +15,7 @@
 
   <div id="app-content" class="panel-body">
       <notification></notification>
-      <div class="tab-content container-fluid">
+      <div class="tab-content container-fluid" tabindex="0">
           <ng-content></ng-content>
       </div>
   </div>
