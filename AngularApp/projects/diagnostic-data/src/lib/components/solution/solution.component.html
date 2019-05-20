@@ -20,7 +20,7 @@
       <span *ngIf="actionStatus === 'Running...'">
         <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
       </span>
-      <span *ngIf="actionStatus === 'Complete!'">
+      <span *ngIf="actionStatus === confirmationMessage">
         <i class="fa fa-check-circle" aria-hidden="true"></i>
       </span>
     </span>
@@ -31,7 +31,7 @@
 <ng-template #internal_solution>
     <ng-template #header>
         Instructions for the Customer
-        <button class="btn btn-default copy-text" (click)="copyInstructions(solution.InternalMarkdown)">
+        <button class="btn btn-default copy-text" (click)="copyInstructions(renderedInternalMarkdown)">
             <span class="fa fa-copy"></span>
             {{copyText}}
         </button>
@@ -39,7 +39,7 @@
 
     <div class="mt-5">
       <data-container [headerTemplate]="header">
-          <markdown [data]="solution.InternalMarkdown"></markdown>
+          <markdown [data]="renderedInternalMarkdown"></markdown>
       </data-container>
     </div>
 </ng-template>

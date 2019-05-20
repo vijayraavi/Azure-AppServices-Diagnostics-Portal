@@ -1,7 +1,7 @@
 
 import {map} from 'rxjs/operators';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injectable } from '@angular/core';
+import { NgModule, Injectable, ErrorHandler } from '@angular/core';
 import { RouterModule, Resolve, ActivatedRouteSnapshot, Router, UrlSerializer } from '@angular/router';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
@@ -16,7 +16,8 @@ import { LoginComponent } from './shared/components/login/login.component';
 import { AdalService, AdalGuard, AdalInterceptor } from 'adal-angular4';
 import { CustomUrlSerializerService } from './shared/services/custom-url-serializer.service';
 import { DiagnosticDataModule } from 'diagnostic-data';
-
+import { UnhandledExceptionHandlerService } from 'diagnostic-data';
+import {CustomMaterialModule} from './material-module';
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
   constructor(private _startupService: StartupService, private _http: Http, private _router: Router) { }
@@ -98,7 +99,8 @@ export const Routes = RouterModule.forRoot([
     HttpClientModule,
     DiagnosticDataModule.forRoot(),
     Routes,
-    SharedModule.forRoot()
+    SharedModule.forRoot(),
+    CustomMaterialModule
   ],
   providers: [
     ValidResourceResolver,
@@ -106,6 +108,10 @@ export const Routes = RouterModule.forRoot([
     {
       provide: UrlSerializer,
       useClass: CustomUrlSerializerService
+    },
+    {
+      provide: ErrorHandler,
+      useClass: UnhandledExceptionHandlerService
     }
   ],
   bootstrap: [AppComponent]

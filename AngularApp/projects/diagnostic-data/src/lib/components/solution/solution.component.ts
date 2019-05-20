@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
 import { Component, Input } from '@angular/core';
 import { Rendering } from '../../models/detector';
-import { TelemetryService } from '../../services/telemetry/telemetry.service';
-import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
-import { UriUtilities } from '../../utilities/uri-utilities';
 import { SolutionService } from '../../services/solution.service';
-import { Solution, ActionType } from './solution';
+import { TelemetryService } from '../../services/telemetry/telemetry.service';
+import { UriUtilities } from '../../utilities/uri-utilities';
+import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
+import { ActionType, Solution } from './solution';
 
 @Component({
   selector: 'solution',
@@ -17,9 +17,12 @@ export class SolutionComponent extends DataRenderBaseComponent {
   @Input("data") solution: Solution;
   renderingProperties: Rendering;
   actionStatus: string;
+  confirmationMessage: string;
   defaultCopyText = 'Copy to Email';
   copyText = this.defaultCopyText;
   appName: string;
+  renderedInternalMarkdown = '';
+  overrideOptions: {};
 
   constructor(telemetryService: TelemetryService, private _siteService: SolutionService) {
     super(telemetryService);
@@ -29,16 +32,50 @@ export class SolutionComponent extends DataRenderBaseComponent {
     let uriParts = this.solution.ResourceUri.split('/');
     this.appName = uriParts[uriParts.length - 1];
 
-    this.buildSolutionText();
+    if (this.renderedInternalMarkdown === '') {
+        this.buildInternalText();
+    }
+
+    this.prepareAction();
   }
 
-  buildSolutionText() {
-    let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
-    let detectorLinkMarkdown = `Go to [Diagnose and Solve Problems](${detectorLink})`;
+  prepareAction() {
+    let actionOptions = {};
 
-    if (!this.solution.InternalMarkdown.includes(detectorLinkMarkdown)) {
-      this.solution.InternalMarkdown = this.solution.InternalMarkdown + "\n\n" + detectorLinkMarkdown;
+    switch (this.solution.Action) {
+      case (ActionType.ArmApi): {
+        actionOptions = this.solution.ApiOptions;
+        this.confirmationMessage = 'Completed';
+        break;
+      }
+      case (ActionType.GoToBlade): {
+        actionOptions = this.solution.BladeOptions;
+        this.confirmationMessage = 'Blade Opened';
+        break;
+      }
+      case (ActionType.OpenTab): {
+        actionOptions = this.solution.TabOptions;
+        this.confirmationMessage = 'Tab Opened';
+        break;
+      }
     }
+
+    this.convertOptions(actionOptions);
+  }
+
+  buildInternalText() {
+    let markdownBuilder = this.solution.InternalMarkdown;
+
+    let detectorLink = UriUtilities.BuildDetectorLink(this.solution.ResourceUri, this.solution.DetectorId);
+    let detectorLinkMarkdown = `Go to [App Service Diagnostics](${detectorLink})`;
+
+    if (markdownBuilder.toLowerCase().includes("{detectorlink}")) {
+        markdownBuilder = markdownBuilder.replace(/{detectorlink}/gi, detectorLink);
+    } else if (!markdownBuilder.includes(detectorLinkMarkdown)) {
+        markdownBuilder = markdownBuilder + "\n\n" + detectorLinkMarkdown;
+    }
+
+    this.renderedInternalMarkdown = markdownBuilder;
   }
 
   performAction() {
@@ -46,60 +83,38 @@ export class SolutionComponent extends DataRenderBaseComponent {
 
     this.chooseAction().subscribe(res => {
       if (res.ok == undefined || res.ok) {
-        this.actionStatus = "Complete!"
+        this.actionStatus = this.confirmationMessage;
       } else {
-        this.actionStatus = `Error completing request. Status code: ${res.status}`
+        this.actionStatus = `Error completing request. Status code: ${res.status}`;
       }
     });
   }
 
   lowercaseFirst(target: string): string {
-    return target.charAt(0).toLowerCase() + target.slice(1)
+    return target.charAt(0).toLowerCase() + target.slice(1);
   }
 
-  convertOptions(): {} {
-    let actionOptions = {};
-    switch (this.solution.Action) {
-      case (ActionType.ArmApi): {
-        actionOptions = this.solution.ApiOptions;
-        break;
-      }
-      case (ActionType.GoToBlade): {
-        actionOptions = this.solution.BladeOptions;
-        break;
-      }
-      case (ActionType.OpenTab): {
-        actionOptions = this.solution.TabOptions;
-        break;
-      }
-    }
-
+  convertOptions(actionOptions: {}) {
     let overrideOptions = {};
     for (let key in actionOptions) {
-      overrideOptions[this.lowercaseFirst(key)] = actionOptions[key]
+      overrideOptions[this.lowercaseFirst(key)] = actionOptions[key];
     }
 
-    overrideOptions = {...overrideOptions, ...this.solution.OverrideOptions};
-
-    return overrideOptions;
+    this.overrideOptions = {...overrideOptions, ...this.solution.OverrideOptions};
   }
 
   chooseAction(): Observable<any> {
-    let options = this.convertOptions();
-
     switch (this.solution.Action) {
-      case ActionType.ArmApi: {
-        return this._siteService.ArmApi(this.solution.ResourceUri, options);
-      }
-      case ActionType.GoToBlade: {
-        return this._siteService.GoToBlade(this.solution.ResourceUri, options);
-      }
-      case ActionType.OpenTab: {
-        return this._siteService.OpenTab(this.solution.ResourceUri, options);
-      }
+        case (ActionType.ArmApi): {
+            return this._siteService.ArmApi(this.solution.ResourceUri, this.overrideOptions);
+        }
+        case (ActionType.GoToBlade): {
+            return this._siteService.GoToBlade(this.solution.ResourceUri, this.overrideOptions);
+        }
+        case (ActionType.OpenTab): {
+            return this._siteService.OpenTab(this.solution.ResourceUri, this.overrideOptions);
+        }
     }
-
-    throw new Error(`Not Implemented: Solution Service does not have an implementation for the action.`)
   }
 
   copyInstructions(copyValue: string) {
