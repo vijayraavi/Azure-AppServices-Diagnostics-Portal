@@ -106,9 +106,8 @@ export class TabsComponent implements OnInit {
     }
     }
 
-    navigateByUrl(index: number): void {
+    navigateTab(index: number): void {
 
-        // We dont want to close the first tab.
         if (index >= 0) {
             const tab = this.navigationItems[index];
             if (!tab.isActive) {
