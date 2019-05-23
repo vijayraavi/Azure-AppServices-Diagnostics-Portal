@@ -77,6 +77,11 @@ namespace AppLensV3.Controllers
             return Ok(content);
         }
 
+        /// <summary>
+        /// Get metadata file.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>Task for getting metadata file.</returns>
         [HttpGet("package/{id}/metadata")]
         public async Task<IActionResult> GetMetadataFile(string id)
         {

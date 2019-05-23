@@ -110,7 +110,12 @@ namespace AppLensV3
 
             return await GetRawFile(gistFileUrl);
         }
-
+        
+        /// <summary>
+        /// Get metadata file.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <returns>Task for getting metadata file.</returns>
         public async Task<string> GetMetadataFile(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
