@@ -84,8 +84,13 @@ export class HomeComponent implements OnInit {
   }
 
   onSearchLostFocus() {
-    if (this.searchValue == '') {
+    if (this.searchValue === '') {
       this.searchResultCount = 0;
+    }
+  }
+
+  onFocusClear() {
+    if (this.searchValue === '') {
       this.clearSearch();
     }
   }
