@@ -39,6 +39,7 @@ import { TabChangelistComponent } from './tabs/tab-changelist/tab-changelist.com
 import { GistChangelistComponent } from './gist-changelist/gist-changelist.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TabAnalysisComponent } from './tabs/tab-analysis/tab-analysis.component';
+import {SearchTermAdditionComponent} from './search-term-addition/search-term-addition.component';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -222,7 +223,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
     { provide: DiagnosticSiteService, useExisting: ResourceService },
     { provide: SolutionService, useExisting: GenericSolutionService }
   ],
-  declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent,
+  declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, SearchTermAdditionComponent,
     SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
     TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent]
 })

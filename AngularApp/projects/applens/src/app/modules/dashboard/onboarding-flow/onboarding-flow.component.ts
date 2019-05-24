@@ -63,10 +63,9 @@ export class OnboardingFlowComponent implements OnInit {
   selectedGist: string = '';
   temporarySelection: object = {};
   allUtterances: any[] = [];
-  utteranceInput: string = "";
   recommendedUtterances: RecommendedUtterance[] = [];
-  displayError: boolean = false;
-
+  utteranceInput: string = "";
+  
   modalPublishingButtonText: string;
   modalPublishingButtonDisabled: boolean;
 
@@ -320,33 +319,7 @@ export class OnboardingFlowComponent implements OnInit {
     }
   }
 
-  addUtterance(utterance: RecommendedUtterance) {
-    var index = this.allUtterances.indexOf(utterance.sampleUtterance);
-    if (index<0) {
-      this.allUtterances.unshift(utterance.sampleUtterance);
-      var idx = this.recommendedUtterances.indexOf(utterance);
-      if (idx >= 0) {
-        this.recommendedUtterances.splice(idx, 1);
-      }
-    }
-  }
-
-  createUtterance() {
-    if (this.utteranceInput.length < 5) {
-      this.displayError = true;
-      return;
-    }
-    this.displayError = false;
-    this.allUtterances.push({ "text": this.utteranceInput.valueOf(), "links": [] });
-    this.utteranceInput = "";
-  }
-
-  removeUtterance(utterance: any) {
-    var index = this.allUtterances.indexOf(utterance);
-    this.allUtterances.splice(index, 1);
-  }
-
-  prepareMetdata() {
+  prepareMetadata() {
     this.publishingPackage.metadata = JSON.stringify({ "utterances": this.allUtterances });
   }
 
@@ -358,7 +331,7 @@ export class OnboardingFlowComponent implements OnInit {
       return;
     }
     
-    this.prepareMetdata();
+    this.prepareMetadata();
     this.publishButtonDisabled = true;
     this.runButtonDisabled = true;
     this.modalPublishingButtonDisabled = true;
