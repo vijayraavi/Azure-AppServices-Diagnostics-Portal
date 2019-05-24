@@ -402,3 +402,20 @@ td {
   vertical-align: top;
 }
 
+.custom-utterance-input {
+    width: 90% !important;
+    display: inline!important;
+    border: 1px solid grey;
+}
+
+.custom-utterance-box {
+    margin-left: 40px;
+    margin-top: 10px;
+}
+
+.recommended-terms-title {
+    width: 100%;
+    margin-left: 40px;
+    display: block;
+}
+

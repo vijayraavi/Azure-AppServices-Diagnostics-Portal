@@ -264,7 +264,7 @@ export class OnboardingFlowComponent implements OnInit {
       })
       .subscribe((response: any) => {
         this.queryResponse = response.body;
-        if (this.queryResponse.invocationOutput.suggestedUtterances) {
+          if (this.queryResponse.invocationOutput.suggestedUtterances && this.queryResponse.invocationOutput.suggestedUtterances.results) {
           this.recommendedUtterances = this.queryResponse.invocationOutput.suggestedUtterances.results;
         }
         this.runButtonDisabled = false;
