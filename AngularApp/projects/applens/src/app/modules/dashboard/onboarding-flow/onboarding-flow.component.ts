@@ -300,8 +300,6 @@ export class OnboardingFlowComponent implements OnInit {
         )
 
         this.localDevButtonDisabled = false;
-        this.publishButtonDisabled = false;
-
       }, ((error: any) => {
         this.runButtonDisabled = false;
         this.publishingPackage = null;
@@ -318,7 +316,7 @@ export class OnboardingFlowComponent implements OnInit {
       this.ngxSmartModalService.getModal('publishModal').open();
     }
   }
-
+  
   prepareMetadata() {
     this.publishingPackage.metadata = JSON.stringify({ "utterances": this.allUtterances });
   }
