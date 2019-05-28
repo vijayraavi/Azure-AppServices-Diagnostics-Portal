@@ -40,11 +40,11 @@ export class ApplensDiagnosticService {
     if (query != null)
       queryParams = [{ "key": "text", "value": query }];
       return this._diagnosticApi.getDetectors(
-      this._resourceService.versionPrefix, 
-      this._resourceService.getCurrentResourceId(true),
-      this._resourceService.getRequestBody(),
-      queryParams,
-      internalClient);
+        this._resourceService.versionPrefix, 
+        this._resourceService.getCurrentResourceId(true),
+        this._resourceService.getRequestBody(),
+        queryParams,
+        internalClient);
   }
 
   getUsers(body: any): Observable<any> {
