@@ -33,6 +33,7 @@ export class ResourceHomeComponent implements OnInit {
     supportTopicL2Images: { [name: string]: any } = {};
     viewType: string = 'category';
 
+    searchTerm: string = "";
 
     constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: HttpClient, private _resourceService: ResourceService, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _cacheService: CacheService) { }
 
@@ -115,6 +116,13 @@ export class ResourceHomeComponent implements OnInit {
         });
     };
 
+    triggerSearch(){
+        if (this.searchTerm && this.searchTerm.length>3){
+            console.log(this.searchTerm);
+            this.navigateTo(`../../search`, {searchTerm: this.searchTerm}, 'merge');
+        }
+    }
+
     navigateToCategory(category: CategoryItem) {
         this.navigateTo(`../../categories/${category.label}`);
     }
@@ -123,11 +131,12 @@ export class ResourceHomeComponent implements OnInit {
         this.navigateTo(`../../supportTopics/${supportTopic.supportTopicL2Name}`);
     }
 
-    navigateTo(path: string) {
+    navigateTo(path: string, queryParams?: any, queryParamsHandling?: any) {
         let navigationExtras: NavigationExtras = {
-            queryParamsHandling: 'preserve',
+            queryParamsHandling: queryParamsHandling || 'preserve',
             preserveFragment: true,
-            relativeTo: this._activatedRoute
+            relativeTo: this._activatedRoute,
+            queryParams: queryParams
         };
 
         this._router.navigate([path], navigationExtras);

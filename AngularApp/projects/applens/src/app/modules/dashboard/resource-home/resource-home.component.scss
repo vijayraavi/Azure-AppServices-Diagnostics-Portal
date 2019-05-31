@@ -435,3 +435,32 @@ input[type='button'] {
   margin: 60px;
   text-align: center;
 }
+
+.search-input{
+  background-color: #FCFCFC;
+  border: 1px solid #D8DCE1;
+  line-height: 35px;
+  border-radius: 10px;
+  padding-left: 38px;
+  margin-left: 25%;
+  width: 50%;
+  font-size: 20px;
+  color: #464646;
+}
+
+.search-icon{
+  font-size: 28px;
+  color: #848080;
+  position: absolute;
+  margin-left: 21.8vw;
+  margin-top: 0.5vh;
+}
+
+.search-box{
+  display: block;
+  width: 100%;
+}
+
+::placeholder {
+  color: #848080;
+}

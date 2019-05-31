@@ -47,6 +47,7 @@ import { SupportTopicPageComponent } from './support-topic-page/support-topic-pa
 import { SelfHelpContentComponent } from './self-help-content/self-help-content.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { SearchTermAdditionComponent } from './search-term-addition/search-term-addition.component';
+import { SearchResultsComponent } from './search-results/search-results.component';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
@@ -213,6 +214,10 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
             component: TabDataSourcesComponent
           }
         ]
+      },
+      {
+        path: 'search',
+        component: SearchResultsComponent
       }
     ]
   },
@@ -251,6 +256,6 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
   ],
   declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, SearchTermAdditionComponent,
     SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
-    TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent, SelfHelpContentComponent, UserProfileComponent]
+    TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent, SelfHelpContentComponent, UserProfileComponent, SearchResultsComponent]
 })
 export class DashboardModule { }

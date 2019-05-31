@@ -65,7 +65,7 @@ export class DashboardComponent implements OnDestroy {
       if (!this._activatedRoute.queryParams['detectorQueryParams']) {
         routeParams['detectorQueryParams'] = this._activatedRoute.snapshot.queryParams['detectorQueryParams'];
       }
-      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
+      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
     }
 
     let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
