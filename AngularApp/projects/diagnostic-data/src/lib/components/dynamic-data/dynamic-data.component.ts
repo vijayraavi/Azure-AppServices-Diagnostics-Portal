@@ -51,6 +51,7 @@ export class DynamicDataComponent implements OnInit {
   @Input() executionScript: string;
   @Input() detector: string = '';
   @Input() compilationPackage: CompilationProperties;
+  @Input() isAnalysisView:boolean = false;
   @ViewChild('dynamicDataContainer', { read: ViewContainerRef }) dynamicDataContainer: ViewContainerRef;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
@@ -73,6 +74,7 @@ export class DynamicDataComponent implements OnInit {
       instance.executionScript = this.executionScript;
       instance.detector = this.detector;
       instance.compilationPackage = this.compilationPackage;
+      instance.isAnalysisView = this.isAnalysisView;
     });
   }
 

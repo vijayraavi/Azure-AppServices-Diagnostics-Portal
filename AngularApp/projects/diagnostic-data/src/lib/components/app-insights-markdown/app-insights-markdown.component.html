@@ -1,7 +1,3 @@
-<!-- <data-container *ngIf="isAppInsightsEnabled; else notEnabled" [title]="AppInsightsEnabled">
-    <div style="color:blue">App insights Enabled</div>
-  </data-container> -->
-
 <ng-template #notEnabled>
 </ng-template>
 <ng-template #loadingAppInsight>
@@ -18,72 +14,79 @@
   </div>
 </ng-template>
 
-
 <ng-template #loadInternalView>
-    <div class="panel panel-default">
-        <!-- #7f5292 #5c2d91 -->
-        <div class="panel-heading" style="background-color:#8a47a7; color:white">
-          <h5 class="panel-title">
-            <span class="fa status-icon" [class.fa-info-circle]="true" style="color:white"></span>
-            This is the internal view of Applicaiton Insights Analyzation.
-          </h5>
-        </div>
-        <div class="panel-body">
-            <table>
-              <tbody>
-                <tr>
-                  <td class="table-value">
-                    <div style="font-weight:500;font-size:14px;text-decoration:underline"></div>
-                    <div style="margin-top:10px">
-                      <div style="color:#505050">
-                          In external portal, we will automatically check if customer has enabled Applictaion Insight. 
-                          <br />If yes, the following queries and analyzation will be automatically run for customer.
-                        <br /><br />Using application insights will help customer detect and diagnose issues in the web application code very
-                        easily. 
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" class="app-insights-internal-markdown">
+      <h5 class="panel-title">
+        <span class="fa status-icon" [class.fa-info-circle]="true"></span>
+        This is the internal view of Applicaiton Insights Analyzation.
+      </h5>
+    </div>
+    <div class="panel-body">
+      <table>
+        <tbody>
+          <tr>
+            <td class="table-value">
+              <div class="app-insights-markdown">
+                <div>
+                  In external portal, we will automatically check if customer has enabled Applictaion Insight.
+                  <br />If yes, the following queries and analyzation will be automatically run for customer.
+                  <br />
+                  <br />Using application insights will help customer detect and diagnose issues in the web application code very
+                  easily.
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
   <div *ngFor="let metadata of appInsightQueryMetaDataList;let i = index" class="dynamic-data-container">
-    <data-container [title]="metadata.title" [description]="metadata.description" [isAppliationInsightContainer]="true">
-        <markdown [data]="getMetaDataMarkdown(metadata)"></markdown>
-
-            <!-- <table>
-              <tbody>
-                <tr *ngFor="let key of insight.getKeys()">
-                  <td class="table-key">
-                    <b>{{key}}</b>
-                  </td>
-                  <td class="table-value">
-                    <div *ngIf="!isMarkdown(insight.data[key])" [innerHtml]="insight.data[key]"></div>
-                    <markdown [data]="getMarkdown(insight.data[key])" *ngIf="isMarkdown(insight.data[key])"></markdown>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-        
-
-      <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
-      <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91"
-        (click)="_appInsightsService.openAppInsightsExtensionBlade(data.poralBladeInfo.detailBlade)">
-        {{data.poralBladeInfo.description}}
-        <i class="fa fa-chevron-right" style="margin-left:10px"></i>
-      </button> -->
+    <data-container [title]="metadata.title" [description]="metadata.description" [applicationInsightContainerStyle]="1">
+      <markdown [data]="getMetaDataMarkdown(metadata)"></markdown>
     </data-container>
   </div>
 </ng-template>
 
 <ng-template #appInsightsEnabled>
-    <div  class="panel panel-default">
-        <!-- #7f5292 #5c2d91 -->
-        <div class="panel-heading" style="background-color:#7f5292; color:white">
+  <div class="panel panel-default">
+    <div class="panel-heading" class="app-insights-header">
+      <h5 class="panel-title">
+        <span class="fa status-icon" [class.fa-info-circle]="true"></span>
+        Application Insights is enabled and we have running the following analyzations for you.
+      </h5>
+    </div>
+    <div class="panel-body">
+      <table>
+        <tbody>
+          <tr>
+            <td class="table-value">
+              <div class="app-insights-markdown">
+                <div>
+                  Using application insights will help you detect and diagnose issues in your web application code very easily.
+                </div>
+
+                <button type="button" class="btn btn-info" class="app-insights-blade" (click)="this._appInsightsService.openAppInsightsBlade()">
+                  Open Application Insights Blade
+                  <i class="fa fa-chevron-right"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ng-template>
+<div *ngIf="!isAnalysisView">
+  <div *ngIf="isPublic; else loadInternalView">
+    <div *ngIf="!loadingAppInsightsResource; else loadingAppInsight" class="insight-container">
+      <div *ngIf="!isAppInsightsEnabled; else appInsightsEnabled" class="panel panel-default">
+        <div class="panel-heading" class="app-insights-header">
           <h5 class="panel-title">
-            <span class="fa status-icon" [class.fa-info-circle]="true" style="color:white"></span>
-            Application Insights is enabled and we have running the following analyzations for you.
+            <span class="fa status-icon" [class.fa-info-circle]="true"></span>
+            We detected that Application Insights is disabled on your app
           </h5>
         </div>
         <div class="panel-body">
@@ -91,16 +94,18 @@
             <tbody>
               <tr>
                 <td class="table-value">
-                   <div style="margin-top:10px">
-                    <div style="color:#505050">
-                      Using application insights will help you detect and diagnose issues in your web application code very
+                  <div class="app-insights-disabled">No Application Insights Resource Found</div>
+                  <div class="app-insights-markdown">
+                    <div>
+                      Looks like there is no application insights resource associated with your app
+                      <span class="app-insights-disabled-sitename">{{siteName}}</span>.
+                      <br />Using application insights will help you detect and diagnose issues in your web application code very
                       easily.
                     </div>
-    
-                    <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91"
-                      (click)="this._appInsightsService.openAppInsightsBlade()">
-                      Open Application Insights Blade
-                      <i class="fa fa-chevron-right" style="margin-left:10px"></i>
+
+                    <button type="button" class="btn btn-info" class="app-insights-blade" (click)="this._appInsightsService.openAppInsightsBlade()">
+                      Create Application Insights
+                      <i class="fa fa-chevron-right"></i>
                     </button>
                   </div>
                 </td>
@@ -108,122 +113,20 @@
             </tbody>
           </table>
         </div>
+      </div>
+      <div *ngIf="isAppInsightsEnabled">
+        <div *ngIf="!loadingAppInsightsQueryData; else loadingAppInsightsData">
+          <div *ngFor="let data of appInsightDataList;let i = index" class="dynamic-data-container">
+            <data-container [title]="data.title" [description]="data.description" [applicationInsightContainerStyle]="1">
+              <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
+              <button type="button" class="btn btn-info" class="app-insights-blade" (click)="_appInsightsService.openAppInsightsExtensionBlade(data.poralBladeInfo.bladeName)">
+                {{data.poralBladeInfo.description}}
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </data-container>
+          </div>
         </div>
-</ng-template>
-<div *ngIf="isPublic; else loadInternalView">
-  <!-- <ng-template #notEnabled> -->
-  <div *ngIf="!loadingAppInsightsResource; else loadingAppInsight" class="insight-container">
-    <div *ngIf="!isAppInsightsEnabled; else appInsightsEnabled" class="panel panel-default">
-      <!-- #7f5292 #5c2d91 -->
-      <div class="panel-heading" style="background-color:#7f5292; color:white">
-        <h5 class="panel-title">
-          <span class="fa status-icon" [class.fa-info-circle]="true" style="color:white"></span>
-          We detected that Application Insights is disabled on your app
-        </h5>
-      </div>
-      <div class="panel-body">
-        <table>
-          <tbody>
-            <tr>
-              <td class="table-value">
-                <div style="font-weight:500;font-size:14px;text-decoration:underline">No Application Insights Resource Found</div>
-                <div style="margin-top:10px">
-                  <div style="color:#505050">
-                    Looks like there is no application insights resource associated with your app
-                    <span style="font-weight:500;color:black">{{siteName}}</span>.
-                    <br />Using application insights will help you detect and diagnose issues in your web application code very
-                    easily.
-                  </div>
-
-                  <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91"
-                    (click)="this._appInsightsService.openAppInsightsBlade()">
-                    Create Application Insights
-                    <i class="fa fa-chevron-right" style="margin-left:10px"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
-    <div *ngIf="isAppInsightsEnabled">
-    <div *ngIf="!loadingAppInsightsQueryData; else loadingAppInsightsData">
-      <div *ngFor="let data of appInsightDataList;let i = index" class="dynamic-data-container">
-        <data-container [title]="data.title" [description]="data.description" [isAppliationInsightContainer]="true">
-          <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
-          <button type="button" class="btn btn-info" style="min-width:200px;margin-top:10px; background-color:#5c2d91; border-color:#5c2d91"
-            (click)="_appInsightsService.openAppInsightsExtensionBlade(data.poralBladeInfo.detailBlade)">
-            {{data.poralBladeInfo.description}}
-            <i class="fa fa-chevron-right" style="margin-left:10px"></i>
-          </button>
-        </data-container>
-      </div>
-    </div>
-  </div>
   </div>
 </div>
-<!-- </ng-template> -->
-
-<!-- <data-container *ngFor="let appInsightQueryMetaData of appInsightQueryMetaDataList; let i = index" class="appinsight-container"
-    [title]="appInsightQueryMetaData.title">
-    <div class="card-description">
-      {{appInsightQueryMetaData.description}}
-    </div>
-    <div class="card-description">
-      Ask the customer to run these quries: {{appInsightQueryMetaData.query}}
-    </div>
-    <div class="card-description">
-      Open this blade for more info: detailBlade: {{appInsightQueryMetaData.poralBladeInfo.detailBlade}}
-      <br /> extension: {{appInsightQueryMetaData.poralBladeInfo.extension}}
-      <br /> rendering: {{appInsightQueryMetaData.renderingType}}
-      <br />
-      <br /> detailBladeInputs-yaya: {{appInsightQueryMetaData.poralBladeInfo.detailBladeInputs["yaya"]}}
-    </div>
-  </data-container> -->
-
-
-
-<!-- <ng-template #noContainer>
-  <ng-container *ngTemplateOutlet="graphView"></ng-container>
-</ng-template> -->
-
-
-
-<!-- <ng-template #header>
-    {{renderingProperties.title}}
-    <button class="btn btn-default" style="float:right;margin-top: -7px" *ngIf="!isPublic" (click)="copyMarkdown()">
-        <span class="fa fa-copy"></span>
-        Copy to Email
-    </button>
-    <button class="btn btn-default" style="float:right;margin-top: -7px;margin-right:10px" *ngIf="!isPublic" (click)="openEmail()">
-        <span class="fa fa-envelope"></span>
-        Open in Outlook
-    </button>
-
-</ng-template>
-
-<data-container [headerTemplate]="header" [title]="renderingProperties.title">
-    <markdown [data]="markdown"></markdown>
-</data-container> -->
-
-
-
-
-<!-- 
-<ng-template #internalView>
-  {{renderingProperties.title}}
-  <button class="btn btn-default" style="float:right;margin-top: -7px" *ngIf="!isPublic">
-      <span class="fa fa-copy"></span>
-      
-  </button>
-  <button class="btn btn-default" style="float:right;margin-top: -7px;margin-right:10px" *ngIf="!isPublic">
-      <span class="fa fa-envelope"></span>
-      Open in Outlook
-  </button>
-
-</ng-template>
-
-<data-container [headerTemplate]="header" [title]="renderingProperties.title">
-  <markdown [data]="markdown"></markdown>
-</data-container> -->

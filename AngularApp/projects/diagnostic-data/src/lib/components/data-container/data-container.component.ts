@@ -15,5 +15,5 @@ export class DataContainerComponent {
 
   @Input() hideIfNoTitle: boolean = true;
 
-  @Input() isAppliationInsightContainer: boolean = false;
+  @Input() applicationInsightContainerStyle: number = 0;
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { Observable ,  BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { StartupInfo, ResourceType } from '../../models/portal';
 import { Verbs } from '../../models/portal';
 import { AuthService } from '../../../startup/services/auth.service';
@@ -99,19 +99,6 @@ export class AppInsightsService {
 
             this.logger.LogAppInsightsSettings(this.appInsightsSettings.enabledForWebApp);
         });
-
-        // Check if App Insights is connected to Support Center.
-        /*this.siteService.getSiteAppSettings(subscription, resourceGroup, siteName, slotName)
-            .subscribe(data => {
-                if (data && data.properties && this.isNotNullOrEmpty(data.properties[this.appId_AppSettingStr]) && this.isNotNullOrEmpty(data.properties[this.appKey_AppSettingStr]) && this.isNotNullOrEmpty(data.properties[this.resourceUri_AppSettingStr])) {
-
-                    this.appInsightsSettings.connectedWithSupportCenter = true;
-                    // TODO : To make the check more robust, we can make a ping call to the resource to identify whether the key is valid or not.
-                }
-                else {
-                    this.appInsightsSettings.connectedWithSupportCenter = false;
-                }
-            });*/
     }
 
     private postCommandToGetAIResource(resouceUri: string) {
@@ -121,25 +108,18 @@ export class AppInsightsService {
         }));
     }
 
-    CheckIfAppInsightsEnabled(): Observable<boolean>
-    {
+    CheckIfAppInsightsEnabled(): Observable<boolean> {
         let appInsightsEnabled: boolean = false;
         return this.portalService.getAppInsightsResourceInfo().pipe(
             map((aiResource: string) => {
-            console.log("********Checking app insights");
-
-            appInsightsEnabled = this.isNotNullOrEmpty(aiResource);
-            console.log(`App insights enabled1: ${appInsightsEnabled}`);
-            return this.isNotNullOrEmpty(aiResource);
+                appInsightsEnabled = this.isNotNullOrEmpty(aiResource);
+                return this.isNotNullOrEmpty(aiResource);
             }));
-
-        // console.log(`App insights enabled2: ${appInsightsEnabled}`);
-        // return appInsightsEnabled;
     }
 
     DeleteAppInsightsAccessKeyIfExists(): Observable<any> {
 
-        const url =  `${this.armService.armUrl}${this.appInsightsSettings.resourceUri}/ApiKeys?api-version=2015-05-01`;
+        const url = `${this.armService.armUrl}${this.appInsightsSettings.resourceUri}/ApiKeys?api-version=2015-05-01`;
         return this.http.get(url).pipe(tap((data: any) => {
             if (data && data.length && data.length > 0) {
 
@@ -154,8 +134,7 @@ export class AppInsightsService {
     }
 
     GenerateAppInsightsAccessKey(): Observable<any> {
-
-        const url =  `${this.appInsightsSettings.resourceUri}/ApiKeys`;
+        const url = `${this.appInsightsSettings.resourceUri}/ApiKeys`;
         const body: any = {
             name: this.appInsights_KeyStr,
             linkedReadProperties: [`${this.appInsightsSettings.resourceUri}/api`],
@@ -175,9 +154,6 @@ export class AppInsightsService {
     }
 
     ExecuteQuerywithPostMethod(query: string): Observable<any> {
-
-        console.log("inside portal appInsight service");
-        console.log(`query: ${query}`);
         if (!this.isNotNullOrEmpty(query)) {
             return of([]);
         }
@@ -187,17 +163,8 @@ export class AppInsightsService {
             query: query
         }
 
-        console.log(`resourceUri here:`);
-        console.log(resourceUri);
-
-        console.log(`body here:`);
-        console.log(body);
-        
-        
         return this.armService.postResource<any, any>(resourceUri, body, '2015-05-01', true, true);
     }
-
-  
 
     public openAppInsightsBlade() {
         this.portalActionService.openAppInsightsBlade();
@@ -208,18 +175,17 @@ export class AppInsightsService {
     }
 
     public openAppInsightsPerformanceBlade() {
-       this.portalActionService.openAppInsightsPerformanceBlade(this.appInsightsSettings.resouceUri);
+        this.portalActionService.openAppInsightsPerformanceBlade(this.appInsightsSettings.resouceUri);
     }
 
     public openAppInsightsExtensionBlade(detailBlade?: string) {
         return this.portalService.getAppInsightsResourceInfo().subscribe(
             (aiResource: string) => {
-            this.portalActionService.openAppInsightsExtensionBlade(detailBlade, aiResource);
+                this.portalActionService.openAppInsightsExtensionBlade(detailBlade, aiResource);
             });
     }
 
-
     private isNotNullOrEmpty(item: any): boolean {
-        return (item && item != '');
+        return (item != undefined && item != '');
     }
 }
