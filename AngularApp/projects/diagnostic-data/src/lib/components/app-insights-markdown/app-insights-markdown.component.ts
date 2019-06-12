@@ -41,7 +41,7 @@ export class AppInsightsMarkdownComponent extends DataRenderBaseComponent {
   loadingAppInsightsResource: boolean = true;
   loadingAppInsightsQueryData: boolean = true;
 
-  constructor(private _appInsightsService: AppInsightsQueryService, private _diagnosticService: DiagnosticService, private _router: Router,
+  constructor(public _appInsightsService: AppInsightsQueryService, private _diagnosticService: DiagnosticService, private _router: Router,
     private _activatedRoute: ActivatedRoute, protected telemetryService: TelemetryService, private _navigator: FeatureNavigationService, @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(telemetryService);
     this.isPublic = config && config.isPublic;

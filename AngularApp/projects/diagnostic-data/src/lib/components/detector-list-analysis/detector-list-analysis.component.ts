@@ -71,7 +71,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
 
   constructor(private _activatedRoute: ActivatedRoute, private _router: Router,
     private _diagnosticService: DiagnosticService, private _detectorControl: DetectorControlService,
-    protected telemetryService: TelemetryService, private _appInsightsService: AppInsightsQueryService,
+    protected telemetryService: TelemetryService, public _appInsightsService: AppInsightsQueryService,
     @Inject(DIAGNOSTIC_DATA_CONFIG) config: DiagnosticDataConfig) {
     super(telemetryService);
     this.isPublic = config && config.isPublic;

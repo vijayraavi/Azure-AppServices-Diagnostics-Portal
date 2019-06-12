@@ -85,8 +85,7 @@
                             <div class="success-msg">Application insights is not enabled for your resource.
                                 <div class="loading-status-container">
                                     <div class="app-insights-disabled">
-                                        Looks like there is no application insights resource associated with your app
-                                        <span class="app-insights-disabled-site">{{siteName}}</span>.
+                                        Looks like there is no application insights resource associated with your app.
                                         <br />Using application insights will help you detect and diagnose issues in your web application
                                         code very easily.
                                     </div>
@@ -105,7 +104,7 @@
                                 <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
                                 <span class="loading-status">Loading...</span>
                             </div>
-                            <div *ngIf="!loadingAppInsightsQueryData; else loadingAppInsightsData">
+                            <div *ngIf="!loadingAppInsightsQueryData">
                                 <div *ngFor="let data of appInsightDataList;let i = index" class="dynamic-data-container">
                                     <data-container [title]="data.title" [description]="data.description" class="app-insights-container" [applicationInsightContainerStyle]="2">
                                         <dynamic-data [diagnosticData]="data.diagnosticData" [startTime]="startTime" [endTime]="endTime"></dynamic-data>
