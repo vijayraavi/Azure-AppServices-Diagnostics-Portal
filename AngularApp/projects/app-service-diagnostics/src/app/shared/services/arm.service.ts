@@ -71,12 +71,7 @@ export class ArmService {
     }
 
     postResource<T, S>(resourceUri: string, body?: S, apiVersion?: string, invalidateCache: boolean = false, appendBodyToCacheKey: boolean = false): Observable<boolean | {} | ResponseMessageEnvelope<T>> {
-        console.log(`amrUrl: ${this.armUrl}`);
-        console.log(`resourceUri: ${resourceUri}`);
-        console.log(`body: `);
-        console.log(body);
-        console.log(`invalidate cache: ${invalidateCache}`);
-        const url: string = `${this.armUrl}${resourceUri}${resourceUri.indexOf('?') >= 0 ? '&' : '?'}api-version=${!!apiVersion ? apiVersion : this.websiteApiVersion}`;
+        const url =  this.createUrl(resourceUri, apiVersion);
         let bodyString: string = '';
         if (body) {
             bodyString = JSON.stringify(body);
@@ -84,11 +79,6 @@ export class ArmService {
 
         const request = this._http.post<S>(url, bodyString, { headers: this.getHeaders() }).pipe(
             retry(2),
-            // map((response: Response) => {
-            //     let body = response.text();
-
-            //     return body && body.length > 0 ? <ResponseMessageEnvelope<T>>(response.json()) : response.ok;
-            // }),
             catchError(this.handleError)
         );
 

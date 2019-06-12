@@ -1,6 +1,5 @@
 import { Moment } from 'moment';
 import { Component, OnInit, Input, Inject } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { DataRenderBaseComponent } from '../data-render-base/data-render-base.component';
 import { LoadingStatus } from '../../models/loading';
 import { StatusStyles } from '../../models/styles';
@@ -40,12 +39,6 @@ import { AppInsightQueryMetadata, AppInsightData, BladeInfo } from '../../models
   ]
 })
 export class DetectorListAnalysisComponent extends DataRenderBaseComponent implements OnInit {
-
-  private dataBehaviorSubject: BehaviorSubject<DiagnosticData> = new BehaviorSubject<DiagnosticData>(null);
-
-  @Input() set diagnosticData(data: DiagnosticData) {
-    this.dataBehaviorSubject.next(data);
-  }
 
   analysisId: string;
   detectorId: string;
@@ -283,10 +276,6 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
     this.allSolutions = [];
     this.loadingMessages = [];
     this.successfulViewModels = [];
-
-  }
-
-  getAppInsightData(viewModel: any): any {
 
   }
 

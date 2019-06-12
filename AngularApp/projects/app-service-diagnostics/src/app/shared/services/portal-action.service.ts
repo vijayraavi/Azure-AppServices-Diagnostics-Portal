@@ -84,9 +84,6 @@ export class PortalActionService {
             }
         };
 
-        console.log(`openAppInsightsExtensionBlade-portalAction: ${detailBlade}`);
-        console.log(bladeInfo);
-
         this._portalService.openBlade(bladeInfo, 'troubleshoot');
     }
 

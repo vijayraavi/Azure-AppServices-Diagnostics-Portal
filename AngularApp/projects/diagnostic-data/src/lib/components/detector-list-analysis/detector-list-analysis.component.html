@@ -6,7 +6,8 @@
         </span>
     </div>
 
-    <div *ngIf="detectors.length > 0  || (getPendingDetectorCount() === 0 && loadingChildDetectors)" class="list-wrapper">
+    <div *ngIf="detectors.length > 0 && (issueDetectedViewModels.length > 0 || successfulViewModels.length > 0) || (getPendingDetectorCount() === 0 && loadingChildDetectors)"
+        class="list-wrapper">
         <div class="red-line" [ngClass]="{'remove-padding':withinDiagnoseAndSolve}"></div>
         <div class="list-item-wrapper">
             <div class="stepper-circle">

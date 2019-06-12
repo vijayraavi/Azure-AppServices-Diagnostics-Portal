@@ -112,7 +112,7 @@ export class DynamicDataComponent implements OnInit {
         return ChangesetsViewComponent;
       case RenderingType.ChangeAnalysisOnboarding:
         return ChangeAnalysisOnboardingComponent;
-     case RenderingType.ApplicationInsightsView:
+      case RenderingType.ApplicationInsightsView:
         return AppInsightsMarkdownComponent;
       default:
         return null;

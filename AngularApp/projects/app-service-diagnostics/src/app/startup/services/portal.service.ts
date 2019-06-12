@@ -105,16 +105,12 @@ export class PortalService {
             this.startupInfoObservable.next(info);
         } else if (methodName === Verbs.sendAppInsightsResource) {
             const aiResource = data;
-            console.log("Here is the ai resource");
-            console.log(aiResource);
             this.appInsightsResourceObservable.next(aiResource);
         }
     }
 
     public postMessage(verb: string, data: string) {
         if (this.inIFrame()) {
-            console.log("Inside post message to get AI resource");
-            console.log(data);
             window.parent.postMessage(<Data>{
                 signature: this.portalSignature,
                 kind: verb,
