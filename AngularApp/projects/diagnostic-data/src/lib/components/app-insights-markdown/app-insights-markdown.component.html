@@ -3,7 +3,7 @@
 <ng-template #loadingAppInsight>
   <div>
     <i class="fa fa-circle-o-notch fa-2x fa-spin spin-icon" aria-hidden="true"></i>
-    <span [@loadingAnimation]="loadingAppInsightsResource ? 'shown' : 'hiden'" class="loading-message">Checking Application Insight</span>
+    <span [@loadingAnimation]="loadingAppInsightsResource ? 'shown' : 'hiden'" class="loading-message">Checking Application Insights</span>
   </div>
 </ng-template>
 
@@ -19,7 +19,7 @@
     <div class="panel-heading" class="app-insights-internal-markdown">
       <h5 class="panel-title">
         <span class="fa status-icon" [class.fa-info-circle]="true"></span>
-        This is the internal view of Applicaiton Insights Analyzation.
+        This is the internal view of Application Insights Analysis.
       </h5>
     </div>
     <div class="panel-body">
@@ -30,10 +30,9 @@
               <div class="app-insights-markdown">
                 <div>
                   In external portal, we will automatically check if customer has enabled Applictaion Insight.
-                  <br />If yes, the following queries and analyzation will be automatically run for customer.
+                  <br />If yes, the following queries and analysis will be automatically run for customer.
                   <br />
-                  <br />Using application insights will help customer detect and diagnose issues in the web application code very
-                  easily.
+                  <br />Using application insights will help customer detect and diagnose issues in the web application code easily.
                 </div>
               </div>
             </td>
@@ -54,7 +53,7 @@
     <div class="panel-heading" class="app-insights-header">
       <h5 class="panel-title">
         <span class="fa status-icon" [class.fa-info-circle]="true"></span>
-        Application Insights is enabled and we have running the following analyzations for you.
+        Application Insights is enabled and we have running the following analysis for you.
       </h5>
     </div>
     <div class="panel-body">
@@ -64,7 +63,7 @@
             <td class="table-value">
               <div class="app-insights-markdown">
                 <div>
-                  Using application insights will help you detect and diagnose issues in your web application code very easily.
+                  Using application insights will help you detect and diagnose issues in your web application code easily.
                 </div>
 
                 <button type="button" class="btn btn-info" class="app-insights-blade" (click)="this._appInsightsService.openAppInsightsBlade()">

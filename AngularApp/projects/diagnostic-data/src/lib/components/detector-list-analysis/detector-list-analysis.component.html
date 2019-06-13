@@ -77,17 +77,17 @@
                 <div class="list-title">Application Insights Analysis</div>
                 <div *ngIf="isPublic">
                     <div class="list-text">
-                        <div *ngIf="isAppInsightsEnabled == undefined" class="loading-status-container">
+                        <div *ngIf="loadingAppInsightsResource" class="loading-status-container">
                             <i class="fa fa-circle-o-notch fa-spin spin-icon" aria-hidden="true"></i>
                             <span class="loading-status">Checking Application Insights Status...</span>
                         </div>
-                        <div *ngIf="isAppInsightsEnabled === false">
+                        <div *ngIf="!loadingAppInsightsResource && isAppInsightsEnabled === false">
                             <div class="success-msg">Application insights is not enabled for your resource.
                                 <div class="loading-status-container">
                                     <div class="app-insights-disabled">
                                         Looks like there is no application insights resource associated with your app.
                                         <br />Using application insights will help you detect and diagnose issues in your web application
-                                        code very easily.
+                                        code easily.
                                     </div>
                                     <div class="app-insights-blade-link">
                                         <a (click)="this._appInsightsService.openAppInsightsBlade()">

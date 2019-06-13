@@ -62,7 +62,7 @@ export class DetectorListAnalysisComponent extends DataRenderBaseComponent imple
   endTime: Moment;
   renderingProperties: Rendering;
   isPublic: boolean;
-  isAppInsightsEnabled: boolean = undefined;
+  isAppInsightsEnabled: boolean = false;
   appInsightQueryMetaDataList: AppInsightQueryMetadata[] = [];
   appInsightDataList: AppInsightData[] = [];
   diagnosticDataSet: DiagnosticData[] = [];

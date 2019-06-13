@@ -19,7 +19,6 @@ export class CacheService {
 
         if (this.has(key)) {
             if (invalidateCache) {
-                console.log(`%cInvalidating ${key}`, 'color: orange');
                 this.log(`%cInvalidating ${key}`, 'color: orange');
                 this.cache.delete(key);
             } else {
