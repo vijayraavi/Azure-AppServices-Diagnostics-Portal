@@ -9,6 +9,7 @@ import { Router, ActivatedRoute, NavigationExtras, NavigationEnd, Params } from 
 import { NgxSmartModalService } from 'ngx-smart-modal';
 import { UserInfo } from '../user-profile/user-profile.component';
 import { StartupService } from '../../../shared/services/startup.service';
+import { SearchService } from '../services/search.service';
 
 @Component({
   selector: 'dashboard',
@@ -32,10 +33,9 @@ export class DashboardComponent implements OnDestroy {
   keys: string[];
   observerLink: string="";
 
-
   constructor(public resourceService: ResourceService, private _detectorControlService: DetectorControlService,
     private _router: Router, private _activatedRoute: ActivatedRoute, private _navigator: FeatureNavigationService,
-    private _diagnosticService: ApplensDiagnosticService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService, private startupService: StartupService) {
+    private _diagnosticService: ApplensDiagnosticService, private _adalService: AdalService, public ngxSmartModalService: NgxSmartModalService, private startupService: StartupService, private _searchService: SearchService) {
     this.contentHeight = (window.innerHeight - 50) + 'px';
 
     this.navigateSub = this._navigator.OnDetectorNavigate.subscribe((detector: string) => {
@@ -65,7 +65,11 @@ export class DashboardComponent implements OnDestroy {
       if (!this._activatedRoute.queryParams['detectorQueryParams']) {
         routeParams['detectorQueryParams'] = this._activatedRoute.snapshot.queryParams['detectorQueryParams'];
       }
-      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute, queryParamsHandling: 'merge' });
+      if (!this._activatedRoute.queryParams['searchTerm']){
+        this.searchTerm = this._activatedRoute.snapshot.queryParams['searchTerm'];
+        routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
+      }
+      this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
     }
 
     let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
@@ -105,12 +109,20 @@ export class DashboardComponent implements OnDestroy {
     window.location.href = '/';
   }
 
-  navigateTo(path: string) {
+  triggerSearch(){
+    if (this._searchService.searchTerm && this._searchService.searchTerm.length>3){
+        this.navigateTo(`search`, {searchTerm: this._searchService.searchTerm}, 'merge');
+    }
+  }
+
+  navigateTo(path: string, queryParams?: any, queryParamsHandling?: any) {
     let navigationExtras: NavigationExtras = {
-      queryParamsHandling: 'preserve',
-      preserveFragment: true,
-      relativeTo: this._activatedRoute
+        queryParamsHandling: queryParamsHandling || 'preserve',
+        preserveFragment: true,
+        relativeTo: this._activatedRoute,
+        queryParams: queryParams
     };
+
     this._router.navigate([path], navigationExtras);
   }
 

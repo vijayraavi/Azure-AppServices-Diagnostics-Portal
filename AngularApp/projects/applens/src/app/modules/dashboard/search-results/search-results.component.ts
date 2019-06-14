@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { DetectorItem } from '../category-page/category-page.component';
 import { Router, ActivatedRoute, NavigationExtras} from '@angular/router';
 import { DetectorMetaData } from 'diagnostic-data';
 import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
 import { ApplensSupportTopicService } from '../services/applens-support-topic.service';
+import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
+import { Location } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { v4 as uuid } from 'uuid';
+import { SearchService } from '../services/search.service';
 
 @Component({
   selector: 'search-results',
@@ -16,7 +20,10 @@ export class SearchResultsComponent implements OnInit {
   filteredDetectorsLoaded: boolean = false;
   filterdDetectorAuthors: string[] = [];
 
-  searchTerm: string = "";
+  searchResultsFetchError: string = "";
+  searchResultsFetchErrorDisplay: boolean = false;
+
+  searchId: string = "";
   searchTermErrorDisplay: boolean = false;
 
   userImages: { [name: string]: string };
@@ -24,7 +31,9 @@ export class SearchResultsComponent implements OnInit {
   authors: any[] = [];
   authorsList: string[] = [];
 
-  constructor(private _route: Router, private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService) {
+  searchTermDisplay: string = "";
+
+  constructor(private _telemetryService: TelemetryService, private _route: Router, private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _location: Location, private _searchService: SearchService) {
   }
 
   navigateTo(path: string, queryParams?: any, queryParamsHandling?: any) {
@@ -37,16 +46,21 @@ export class SearchResultsComponent implements OnInit {
     this._route.navigate([path], navigationExtras);
   }
 
+  navigateBack(){
+    this._location.back();
+  }
+
   triggerSearch(){
-    if (this.searchTerm && this.searchTerm.length>3){
-      console.log(this.searchTerm);
-      this.navigateTo(`../search`, {searchTerm: this.searchTerm}, 'merge');
+    if (this._searchService.searchTerm && this._searchService.searchTerm.length>3){
+      this.navigateTo(`../search`, {searchTerm: this._searchService.searchTerm}, 'merge');
     }
   }
 
   executeSearch(searchTerm){
     this.filteredDetectorsLoaded = false;
+    this.searchId = uuid();
     this._diagnosticService.getDetectors(true, searchTerm).subscribe((detectors: DetectorMetaData[]) => {
+      this._telemetryService.logEvent("SearchQueryResults", { searchId: this.searchId, query: searchTerm, results: JSON.stringify(detectors.map((det: DetectorMetaData) => new Object({ id: det.id, score: det.score}))), ts: Math.floor((new Date()).getTime() / 1000).toString() });
       // This is to get the full detectors authors list, and make graph API call
       let authorString = "";
       this.filterdDetectors = [];
@@ -57,7 +71,13 @@ export class SearchResultsComponent implements OnInit {
           }
           this.filterdDetectors.push(detector);
       });
-      this.filteredDetectorsLoaded = true;
+      this.searchTermDisplay = this._searchService.searchTerm.valueOf();
+      setTimeout(() => {
+        this.filteredDetectorsLoaded = true;
+        setTimeout(() => {
+          document.getElementById("search-result-0").focus();
+        }, 100);
+      }, 500);
       
       const separators = [' ', ',', ';', ':'];
       let authors = authorString.toLowerCase().split(new RegExp(separators.join('|'), 'g'));
@@ -93,22 +113,34 @@ export class SearchResultsComponent implements OnInit {
                 });
               }
 
-              let detectorItem = new DetectorItem(detector.name, detector.description, iconString, detector.author, [], detectorUsersImages, [], onClick);
+              let detectorItem = new DetectorItem(detector.id, detector.name, detector.description, iconString, detector.author, [], detectorUsersImages, [], onClick, detector.score);
               this.detectors.push(detectorItem);
 
             });
           });
         });
       }
+    },
+    (err: HttpErrorResponse)=> {
+      this.filteredDetectorsLoaded = true;
+      this.searchResultsFetchError = "I am sorry, some error occurred while processing.";
+      this.searchResultsFetchErrorDisplay = true;
     });
+  }
+
+  detectorClick(detector, index){
+    // Log detector click and navigate the respective detector
+    this._telemetryService.logEvent("ClickSearchResult", { searchId: this.searchId, detectorId: detector.id, rank: (index+1).toString(), ts: Math.floor((new Date()).getTime() / 1000).toString() });
+    detector.onClick();
   }
 
   ngOnInit() {
     this._activatedRoute.queryParams.subscribe(params => {
       var searchTerm = params['searchTerm'];
-      this.searchTerm = searchTerm;
-      if (this.searchTerm && this.searchTerm.length>3){
+      this._searchService.searchTerm = searchTerm;
+      if (this._searchService.searchTerm && this._searchService.searchTerm.length>3){
         this.searchTermErrorDisplay = false;
+        this.searchResultsFetchErrorDisplay = false;
         this.executeSearch(searchTerm);
       }
       else{
@@ -124,5 +156,35 @@ export class SearchResultsComponent implements OnInit {
 
   navigateToUserPage(userId: string) {
     this.navigateTo(`../../users/${userId}`);
+  }
+}
+
+class DetectorItem {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  authorString: string;
+  authors: any[] = [];
+  userImages: any;
+  supportTopics: any[] = [];
+  score: number;
+  onClick: Function;
+
+  constructor(id: string, name: string, description: string, icon: string, authorString: string, authors: any[], userImages: any, supportTopics: any[], onClick: Function, score: number) {
+      this.name = name;
+      this.id = id;
+
+      if (description == undefined || description === "") {
+          description = "This detector doesn't have any description."
+      }
+      this.description = description;
+      this.icon = icon;
+      this.authorString = authorString;
+      this.authors = authors;
+      this.userImages = userImages;
+      this.supportTopics = supportTopics;
+      this.onClick = onClick;
+      this.score = score;
   }
 }

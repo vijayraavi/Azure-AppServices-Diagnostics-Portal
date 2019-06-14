@@ -439,26 +439,28 @@ input[type='button'] {
 .search-input{
   background-color: #FCFCFC;
   border: 1px solid #D8DCE1;
-  line-height: 35px;
+  line-height: 70px;
   border-radius: 10px;
-  padding-left: 38px;
-  margin-left: 25%;
-  width: 50%;
-  font-size: 20px;
+  width: 100%;
+  padding-left: 56px;
+  font-size: 25px;
   color: #464646;
 }
 
 .search-icon{
-  font-size: 28px;
+  font-size: 40px;
   color: #848080;
   position: absolute;
-  margin-left: 21.8vw;
-  margin-top: 0.5vh;
+  padding-left: 11px;
+  margin-top: 18px;
 }
 
 .search-box{
   display: block;
-  width: 100%;
+  width: 50%;
+  margin-top: 0.5%;
+  margin-left: 25%;
+  margin-bottom: 0%;
 }
 
 ::placeholder {

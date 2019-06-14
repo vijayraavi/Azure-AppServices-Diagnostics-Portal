@@ -170,3 +170,34 @@ body{
       left: -20px;
       margin-top: 10px;
   }
+
+  .search-input{
+    background-color: #FCFCFC;
+    border: 1px solid #D8DCE1;
+    line-height: 28px;
+    border-radius: 10px;
+    width: 100%;
+    padding-left: 28px;
+    font-size: 19px;
+    color: #464646;
+  }
+  
+  .search-icon{
+    font-size: 23px;
+    color: #848080;
+    position: absolute;
+    padding-left: 6px;
+    margin-top: 4px;
+  }
+  
+  .search-box{
+    display: block;
+    width: 40%;
+    margin-top: 0.5%;
+    margin-right: 30px;
+    float: right;
+  }
+  
+  ::placeholder {
+    color: #848080;
+  }

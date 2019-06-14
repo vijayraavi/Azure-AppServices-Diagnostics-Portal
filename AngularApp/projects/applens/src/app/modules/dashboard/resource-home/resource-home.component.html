@@ -4,7 +4,7 @@
   </div>
   <div class="search-box">
     <i class="fa fa-search search-icon"></i>
-    <input placeholder="Describe your problem and hit enter" class="search-input" [(ngModel)]="searchTerm" (keyup.enter)="triggerSearch()">
+    <input placeholder="Describe your problem and hit enter" class="search-input" [(ngModel)]="_searchService.searchTerm" (keyup.enter)="triggerSearch()">
   </div>
   <div class="btn-group" role="group" aria-label="Button Group">
     <button type="button" class="btn btn-first-child" (click)="selectView('category')" [class.is-selected]="viewType === 'category'">By Category</button>

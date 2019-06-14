@@ -2,44 +2,27 @@
   <div class="alert-container">
     <comm-alert></comm-alert>
   </div>
-  <div class="search-box">
-    <i class="fa fa-search search-icon"></i>
-    <input placeholder="Describe your problem and hit enter" class="search-input" [(ngModel)]="searchTerm" (keyup.enter)="triggerSearch()">
+  <div>
+    <button class="btn back-button" (click)="navigateBack()">&lt; Back</button>
   </div>
   <div *ngIf="filteredDetectorsLoaded && filterdDetectors.length>0" class="detector-list">
-    <div class="flexed-detector card" *ngFor="let detector of detectors; let i=index" (click)="detector.onClick()">
-      <div class="detector-top row" (click)="detector.onClick()">
-        <div class="col-md-2 detector-icon">
+    <span class="span-h1">{{filterdDetectors.length}} search results for "{{searchTermDisplay}}"</span>
+    <div class="flexed-detector card" *ngFor="let detector of detectors | sort: 'score': true; let i=index" tabindex=0 id="search-result-{{i}}" (click)="detectorClick(detector, i)" (keyup.enter)="detectorClick(detector, i)">
+      <div class="detector-top row" (click)="detectorClick(detector, i)">
+        <div class="col-md-1 detector-icon">
           <img *ngIf="detector.icon != undefined && detector.icon != ''" class="support-topic-l3-icon" src={{detector.icon}} />
           <ngx-avatar *ngIf="detector.icon == undefined || detector.icon === ''" [name]="detector.name" [round]="true" initialsSize="2"></ngx-avatar>
         </div>
-        <div class="col-md-10 detector-name">
-          {{detector.name}}
-        </div>
-      </div>
-      <div class="detector-bottom">
-        <div class="detector-description" (click)="detector.onClick()">
-          {{detector.description}}
-        </div>
-        <div *ngIf="detector.authorString != undefined && detector.authorString !== ''" class="detector-authors">
-          <div class="author-image-container">
-            <div *ngFor="let image of detector.userImages | keyvalue" class="author-image" (click)="navigateToUserPage(image.key)">
-              <span>{{image.key}}</span>
-              <img *ngIf="image.value != undefined && image.value !== ''" class="author-image" src="{{image.value}}" (click)="navigateToUserPage(image.key)"
-              />
-              <ngx-avatar *ngIf="image.value == undefined || image.value === ''" class="author-initial" [name]=image.key size="35" initialsSize="2"
-                (click)="navigateToUserPage(image.key)"></ngx-avatar>
-            </div>
+        <div class="col-md-10">
+          <div class="detector-name">
+            {{detector.name}}
           </div>
-          <div class="author-String">
-            <span>{{detector.authorString}}</span>
+          <div class="detector-description" (click)="detectorClick(detector, i)">
+            {{detector.description}}
           </div>
         </div>
-        <div *ngIf="detector.authorString == undefined || detector.authorString == ''" class="detector-authors">
-          <ngx-avatar class="author-initial author-initial-unknown" name="?" size="35" initialsSize="2"></ngx-avatar>
-          <div class="author-String">
-            <span>Unknown</span>
-          </div>
+        <div class="col-md-1 detector-score">
+          {{detector.score | number : '1.2-2'}}
         </div>
       </div>
     </div>
@@ -49,6 +32,10 @@
   </div>
   <div *ngIf="searchTermErrorDisplay" class="search-term-error">
     <span>Please be more descriptive, search should contain more than 3 characters...</span>
+  </div>
+
+  <div *ngIf="searchResultsFetchErrorDisplay" class="search-term-error">
+    <span>{{searchResultsFetchError}}</span>
   </div>
 
   <div *ngIf="!filteredDetectorsLoaded" class="loading-page">
