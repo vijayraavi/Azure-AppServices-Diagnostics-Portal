@@ -1,7 +1,7 @@
 import { NgModule, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardComponent, FormatResourceNamePipe } from './dashboard/dashboard.component';
 import { SharedModule } from '../../shared/shared.module';
 import { ModuleWithProviders } from '@angular/compiler/src/core';
 import { RouterModule, Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
@@ -53,12 +53,12 @@ import { SearchService } from './services/search.service';
 
 @Injectable()
 export class InitResolver implements Resolve<Observable<boolean>>{
-  constructor(private _resourceService: ResourceService, private _detectorControlService: DetectorControlService) { }
+    constructor(private _resourceService: ResourceService, private _detectorControlService: DetectorControlService) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    this._detectorControlService.setCustomStartEnd(route.queryParams['startTime'], route.queryParams['endTime']);
-    return this._resourceService.waitForInitialization();
-  }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+        this._detectorControlService.setCustomStartEnd(route.queryParams['startTime'], route.queryParams['endTime']);
+        return this._resourceService.waitForInitialization();
+    }
 }
 
 export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild([
@@ -259,6 +259,7 @@ export const DashboardModuleRoutes: ModuleWithProviders = RouterModule.forChild(
   ],
   declarations: [DashboardComponent, SideNavComponent, ResourceMenuItemComponent, ResourceHomeComponent, OnboardingFlowComponent, SearchTermAdditionComponent,
     SearchMenuPipe, TabDataComponent, TabDevelopComponent, TabCommonComponent, TabDataSourcesComponent, TabMonitoringComponent,
-    TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent, SelfHelpContentComponent, UserProfileComponent, Sort, SearchResultsComponent]
+      TabMonitoringDevelopComponent, TabAnalyticsDevelopComponent, TabAnalyticsDashboardComponent, GistComponent, TabGistCommonComponent, TabGistDevelopComponent, TabChangelistComponent, GistChangelistComponent, TabAnalysisComponent, CategoryPageComponent, SupportTopicPageComponent,
+      SelfHelpContentComponent, UserProfileComponent, FormatResourceNamePipe, Sort, SearchResultsComponent]
 })
 export class DashboardModule { }

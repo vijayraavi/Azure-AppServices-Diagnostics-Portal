@@ -10,6 +10,7 @@ import { ApplensDiagnosticService } from '../services/applens-diagnostic.service
 import { HttpMethod } from '../../../shared/models/http';
 import { ApplensSupportTopicService } from '../services/applens-support-topic.service';
 import { Location } from '@angular/common';
+import { DetectorType } from '../../../../../../diagnostic-data/src/lib/models/detector';
 
 
 @Component({
@@ -87,7 +88,6 @@ export class CategoryPageComponent implements OnInit {
         }));
 
         forkJoin(supportTopicImage, allDetectorsList, publicDetectors).subscribe((res) => {
-            this.filteredDetectorsLoaded = true;
             this.detectorsWithSupportTopics.forEach((detector) => {
                 if (!this.filterdDetectors.find((d) => d.id === detector.id)) {
                     this.filterdDetectors.push(detector);
@@ -114,7 +114,12 @@ export class CategoryPageComponent implements OnInit {
                     this.filterdDetectors.forEach((detector) => {
                         this._supportTopicService.getCategoryImage(detector.name).subscribe((iconString) => {
                             let onClick = () => {
-                                this.navigateTo(`../../detectors/${detector.id}`);
+                                if (detector.type === DetectorType.Analysis) {
+                                    this.navigateTo(`../../analysis/${detector.id}`);
+                                  }
+                                  else {
+                                    this.navigateTo(`../../detectors/${detector.id}`);
+                                  }
                             };
 
                             let detectorUsersImages: { [name: string]: string } = {};
@@ -125,6 +130,7 @@ export class CategoryPageComponent implements OnInit {
                                 detectorAuthors.forEach(author => {
                                     if (!this.filterdDetectorAuthors.find(existingAuthor => existingAuthor === author)) {
                                         this.filterdDetectorAuthors.push(author);
+                                        this.authorsNumber++;
                                     }
                                     detectorUsersImages[author] = this.userImages.hasOwnProperty(author) ? this.userImages[author] : undefined;
                                 });
@@ -139,11 +145,11 @@ export class CategoryPageComponent implements OnInit {
 
                             let detectorItem = new DetectorItem(detector.name, detector.description, iconString, detector.author, [], detectorUsersImages, detectorSupportTopics, onClick);
                             this.detectors.push(detectorItem);
-
                         });
+
+                        this.filteredDetectorsLoaded = true;
                     });
-                    
-                    this.authorsNumber = this.filterdDetectorAuthors.length;
+
                     this.detectorsNumber = this.filterdDetectors.length;
                     this.supportTopicsNumber = this.supportTopicIdMapping.length;
                 });
