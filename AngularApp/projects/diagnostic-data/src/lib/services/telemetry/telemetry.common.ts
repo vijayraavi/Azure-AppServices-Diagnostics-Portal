@@ -13,6 +13,12 @@ export const TelemetryEventNames = {
     OndemandScanClicked: 'OndemandScanClicked',
     ChangeAnalysisEnableClicked: 'ChangeAnalysisEnableClicked',
     ChangeAnalysisChangeFeedbackClicked: 'ChangeAnalysisChangeFeedbackClicked',
+    SearchResultsLoaded: 'SearchResultsLoaded',
+    SearchQueryResults: 'SearchQueryResults',
+    SearchResultClicked: 'SearchResultClicked',
+    AuthorSelectSearchTerm: 'AuthorSelectSearchTerm',
+    AuthorCreateSearchTerm: 'AuthorCreateSearchTerm',
+    AuthorRemoveSearchTerm: 'AuthorRemoveSearchTerm'
 };
 
 export interface ITelemetryProvider {

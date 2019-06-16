@@ -4,6 +4,7 @@ import { DetectorMetaData } from 'diagnostic-data';
 import { ApplensDiagnosticService } from '../services/applens-diagnostic.service';
 import { ApplensSupportTopicService } from '../services/applens-support-topic.service';
 import { TelemetryService } from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.service';
+import {TelemetryEventNames} from '../../../../../../diagnostic-data/src/lib/services/telemetry/telemetry.common';
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { v4 as uuid } from 'uuid';
@@ -23,7 +24,6 @@ export class SearchResultsComponent implements OnInit {
   searchResultsFetchError: string = "";
   searchResultsFetchErrorDisplay: boolean = false;
 
-  searchId: string = "";
   searchTermErrorDisplay: boolean = false;
 
   userImages: { [name: string]: string };
@@ -58,9 +58,15 @@ export class SearchResultsComponent implements OnInit {
 
   executeSearch(searchTerm){
     this.filteredDetectorsLoaded = false;
-    this.searchId = uuid();
+    if (!this._searchService.searchId || this._searchService.searchId.length==0){
+      this._searchService.searchId = uuid();
+      this._searchService.newSearch = true;
+    }
     this._diagnosticService.getDetectors(true, searchTerm).subscribe((detectors: DetectorMetaData[]) => {
-      this._telemetryService.logEvent("SearchQueryResults", { searchId: this.searchId, query: searchTerm, results: JSON.stringify(detectors.map((det: DetectorMetaData) => new Object({ id: det.id, score: det.score}))), ts: Math.floor((new Date()).getTime() / 1000).toString() });
+      if (this._searchService.newSearch) {
+        this._telemetryService.logEvent(TelemetryEventNames.SearchQueryResults, { searchId: this._searchService.searchId, query: searchTerm, results: JSON.stringify(detectors.map((det: DetectorMetaData) => new Object({ id: det.id, score: det.score}))), ts: Math.floor((new Date()).getTime() / 1000).toString() });
+        this._searchService.newSearch = false;
+      }
       // This is to get the full detectors authors list, and make graph API call
       let authorString = "";
       this.filterdDetectors = [];
@@ -76,6 +82,7 @@ export class SearchResultsComponent implements OnInit {
         this.filteredDetectorsLoaded = true;
         setTimeout(() => {
           document.getElementById("search-result-0").focus();
+          this._telemetryService.logEvent(TelemetryEventNames.SearchResultsLoaded, {"searchId": this._searchService.searchId, "ts": Math.floor((new Date()).getTime() / 1000).toString()});
         }, 100);
       }, 500);
       
@@ -130,7 +137,7 @@ export class SearchResultsComponent implements OnInit {
 
   detectorClick(detector, index){
     // Log detector click and navigate the respective detector
-    this._telemetryService.logEvent("ClickSearchResult", { searchId: this.searchId, detectorId: detector.id, rank: (index+1).toString(), ts: Math.floor((new Date()).getTime() / 1000).toString() });
+    this._telemetryService.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this._searchService.searchId, detectorId: detector.id, rank: (index+1).toString(), ts: Math.floor((new Date()).getTime() / 1000).toString() });
     detector.onClick();
   }
 

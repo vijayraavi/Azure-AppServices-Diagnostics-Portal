@@ -10,6 +10,7 @@ import { NgxSmartModalService } from 'ngx-smart-modal';
 import { UserInfo } from '../user-profile/user-profile.component';
 import { StartupService } from '../../../shared/services/startup.service';
 import { SearchService } from '../services/search.service';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'dashboard',
@@ -66,7 +67,7 @@ export class DashboardComponent implements OnDestroy {
         routeParams['detectorQueryParams'] = this._activatedRoute.snapshot.queryParams['detectorQueryParams'];
       }
       if (!this._activatedRoute.queryParams['searchTerm']){
-        this.searchTerm = this._activatedRoute.snapshot.queryParams['searchTerm'];
+        this._searchService.searchTerm = this._activatedRoute.snapshot.queryParams['searchTerm'];
         routeParams['searchTerm'] = this._activatedRoute.snapshot.queryParams['searchTerm'];
       }
       this._router.navigate([], { queryParams: routeParams, relativeTo: this._activatedRoute });
@@ -111,7 +112,9 @@ export class DashboardComponent implements OnDestroy {
 
   triggerSearch(){
     if (this._searchService.searchTerm && this._searchService.searchTerm.length>3){
-        this.navigateTo(`search`, {searchTerm: this._searchService.searchTerm}, 'merge');
+      this._searchService.searchId = uuid();
+      this._searchService.newSearch = true;
+      this.navigateTo(`search`, {searchTerm: this._searchService.searchTerm}, 'merge');
     }
   }
 
