@@ -33,7 +33,7 @@ export class SearchResultsComponent implements OnInit {
 
   searchTermDisplay: string = "";
 
-  constructor(private _telemetryService: TelemetryService, private _route: Router, private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _location: Location, private _searchService: SearchService) {
+  constructor(private _telemetryService: TelemetryService, private _route: Router, private _activatedRoute: ActivatedRoute, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _location: Location, public _searchService: SearchService) {
   }
 
   navigateTo(path: string, queryParams?: any, queryParamsHandling?: any) {

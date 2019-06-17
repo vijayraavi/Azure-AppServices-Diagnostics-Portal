@@ -36,7 +36,7 @@ export class ResourceHomeComponent implements OnInit {
     supportTopicL2Images: { [name: string]: any } = {};
     viewType: string = 'category';
 
-    constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: HttpClient, private _resourceService: ResourceService, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _cacheService: CacheService, private _searchService: SearchService) { }
+    constructor(private _router: Router, private _activatedRoute: ActivatedRoute, private _http: HttpClient, private _resourceService: ResourceService, private _diagnosticService: ApplensDiagnosticService, private _supportTopicService: ApplensSupportTopicService, private _cacheService: CacheService, public _searchService: SearchService) { }
 
     ngOnInit() {
         this._searchService.resourceHomeOpen = true;
