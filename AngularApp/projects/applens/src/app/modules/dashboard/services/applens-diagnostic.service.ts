@@ -38,7 +38,7 @@ export class ApplensDiagnosticService {
   getDetectors(internalClient: boolean = true, query?: string): Observable<DetectorMetaData[]> {
     var queryParams: any[] = null;
     if (query != null)
-      queryParams = [{ "key": "text", "value": query }];
+      queryParams = [{ "key": "text", "value": encodeURIComponent(query) }];
       return this._diagnosticApi.getDetectors(
         this._resourceService.versionPrefix, 
         this._resourceService.getCurrentResourceId(true),
