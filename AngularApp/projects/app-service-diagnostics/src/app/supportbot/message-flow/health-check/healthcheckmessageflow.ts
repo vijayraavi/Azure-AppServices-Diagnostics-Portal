@@ -90,7 +90,12 @@ export class HealthCheckMessageFlow extends IMessageFlowProvider {
 
 export class HealthCheckMessage extends Message {
     constructor() {
-        //super(HealthCheckComponent, {});
-        super(HealthCheckV3Component, {});
+        super(HealthCheckComponent, {});
+
+        //
+        // Comment above line and uncomment the below line
+        // to enable the applensv3 HealthCheck component
+        //
+        //super(HealthCheckV3Component, {});
     }
 }
