@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { BotLoggingService } from 'projects/app-service-diagnostics/src/app/shared/services/logging/bot.logging.service';
 import { SiteService } from 'projects/app-service-diagnostics/src/app/shared/services/site.service';
-import { HealthStatus, LoadingStatus, DiagnosticService, DetectorControlService, DetectorResponse } from 'diagnostic-data';
+import { HealthStatus, LoadingStatus, DiagnosticService, DetectorControlService, DetectorResponse, Insight, InsightUtils } from 'diagnostic-data';
 import { IChatMessageComponent } from '../../interfaces/ichatmessagecomponent';
 
 @Component({
@@ -104,14 +104,19 @@ export class HealthCheckV3Component implements OnInit, AfterViewInit, IChatMessa
   updateDetectorStatus(index: number, res: DetectorResponse) {
     if (res != null) {
       this.healthCheckpoints[index].loadingStatus = LoadingStatus.Success;
-      this.healthCheckpoints[index].healthStatus = this.checkSuccessfulResponse(res);
+      this.healthCheckpoints[index].healthStatus = this.getDetectorStatus(res);
     } else {
       this.healthCheckpoints[index].loadingStatus = LoadingStatus.Failed;
     }
   }
 
-  checkSuccessfulResponse(response: DetectorResponse): HealthStatus {
-    return HealthStatus.Success;
+  getDetectorStatus(response: DetectorResponse): HealthStatus {
+    let status = HealthStatus.Success;
+    let allInsights: Insight[] = InsightUtils.parseAllInsightsFromResponse(response);
+    if (allInsights.length > 0) {
+      status = allInsights[0].status
+    }
+    return status;
   }
 
   setCategory(index: number) {
@@ -130,7 +135,7 @@ export class HealthCheckV3Component implements OnInit, AfterViewInit, IChatMessa
           this.detectorControlService.shouldRefresh, this.detectorControlService.isInternalView)
           .subscribe((response: DetectorResponse) => {
             item.loadingStatus = LoadingStatus.Success;
-            item.healthStatus = this.checkSuccessfulResponse(response);
+            item.healthStatus = this.getDetectorStatus(response);
           }, (error: any) => {
             item.loadingStatus = LoadingStatus.Failed;
           });
