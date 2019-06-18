@@ -120,7 +120,6 @@ export class HealthCheckV3Component implements OnInit, AfterViewInit, IChatMessa
   }
 
   setCategory(index: number) {
-    window.dispatchEvent(new Event('resize'));
     this.selectedCategoryIndex = index;
   }
 
