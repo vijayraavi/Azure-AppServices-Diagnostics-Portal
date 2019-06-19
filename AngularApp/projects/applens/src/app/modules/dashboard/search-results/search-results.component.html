@@ -2,11 +2,8 @@
   <div class="alert-container">
     <comm-alert></comm-alert>
   </div>
-  <div>
-    <button class="btn back-button" (click)="navigateBack()">&lt; Back</button>
-  </div>
-  <div class="search-term-error">
-    <span>Search Service is disabled</span>
+  <div class="search-disabled-message">
+    <span>Search feature is not enabled for you.</span>
   </div>
 </div>
 <div *ngIf="_searchService.searchIsEnabled" class="outer-container">
