@@ -1,32 +1,56 @@
-<div class="outer-container">
+<div *ngIf="!_searchService.searchIsEnabled" class="outer-container">
   <div class="alert-container">
     <comm-alert></comm-alert>
   </div>
   <div>
     <button class="btn back-button" (click)="navigateBack()">&lt; Back</button>
   </div>
+  <div class="search-term-error">
+    <span>Search Service is disabled</span>
+  </div>
+</div>
+<div *ngIf="_searchService.searchIsEnabled" class="outer-container">
+  <div class="alert-container">
+    <comm-alert></comm-alert>
+  </div>
   <div *ngIf="filteredDetectorsLoaded && filterdDetectors.length>0" class="detector-list">
-    <span class="span-h1">{{filterdDetectors.length}} search results for "{{searchTermDisplay}}"</span>
-    <div class="flexed-detector card" *ngFor="let detector of detectors | sort: 'score': true; let i=index" tabindex=0 id="search-result-{{i}}" (click)="detectorClick(detector, i)" (keyup.enter)="detectorClick(detector, i)">
-      <div class="detector-top row" (click)="detectorClick(detector, i)">
-        <div class="col-md-1 detector-icon">
+    <span class="span-h1">Search results for "{{searchTermDisplay}}"</span>
+    <div class="flexed-detector card" *ngFor="let detector of detectors | sort: 'score': true; let i=index" tabindex=0 id="search-result-{{i}}">
+      <div class="detector-top row">
+        <div class="col-md-1 detector-icon" (click)="detectorClick(detector, i)" (keyup.enter)="detectorClick(detector, i)">
           <img *ngIf="detector.icon != undefined && detector.icon != ''" class="support-topic-l3-icon" src={{detector.icon}} />
           <ngx-avatar *ngIf="detector.icon == undefined || detector.icon === ''" [name]="detector.name" [round]="true" initialsSize="2"></ngx-avatar>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10"  (click)="detectorClick(detector, i)" (keyup.enter)="detectorClick(detector, i)">
           <div class="detector-name">
             {{detector.name}}
           </div>
-          <div class="detector-description" (click)="detectorClick(detector, i)">
+          <div class="detector-description">
             {{detector.description}}
           </div>
         </div>
-        <!-- Commenting until this can be enabled for only a few people
-        <div class="col-md-1 detector-score">
-          {{detector.score | number : '1.2-2'}}
+        <div class="col-md-1">
+            <div class="pull-right">
+                <div class="insight-rating" (click)="searchResultFeedback(detector, 1)">
+                  <a role="button" tabindex="0">
+                    <i class="fa fa-thumbs-up fa-lg upvote" style="color: gray;">				
+                    </i>
+                  </a>
+                </div>
+                <div class="insight-rating" (click)="searchResultFeedback(detector, -1)">
+                  <a role="button" tabindex="0">
+                    <i class="fa fa-thumbs-down fa-lg downvote" style="color: gray;">				
+                    </i>
+                  </a>
+                </div>
+              </div>
         </div>
-        -->
       </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div *ngIf="filteredDetectorsLoaded" class="feedback-link">
+      <a class="btn btn-primary" role="button" href="mailto:khzayed@microsoft.com;ajsharm@microsoft.com?Subject=Applens%20Search%20Feedback&body=Search%20Query%3A%20{{searchTermDisplay}}%0AFeedback%3A%20" target="_top">Unexpected Results?</a>
     </div>
   </div>
   <div *ngIf="filteredDetectorsLoaded && !(filterdDetectors.length>0) && !searchTermErrorDisplay" class="no-search-results">

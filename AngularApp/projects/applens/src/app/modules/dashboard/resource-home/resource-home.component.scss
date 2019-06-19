@@ -439,29 +439,33 @@ input[type='button'] {
 
 .search-input{
   background-color: #FCFCFC;
-  border: 1px solid #D8DCE1;
-  line-height: 70px;
-  border-radius: 10px;
-  width: 100%;
-  padding-left: 56px;
-  font-size: 25px;
-  color: #464646;
+    border: 1px solid #D8DCE1;
+    line-height: 55px;
+    border-radius: 3px;
+    width: 100%;
+    padding-left: 40px;
+    font-size: 20px;
+    color: #464646;
 }
 
 .search-icon{
-  font-size: 40px;
-  color: #848080;
-  position: absolute;
-  padding-left: 11px;
-  margin-top: 18px;
+  font-size: 22px;
+    color: #3c8dbc;
+    position: absolute;
+    padding-left: 11px;
+    margin-top: 17px;
+}
+
+.search-box-container{
+  width: 100%; 
 }
 
 .search-box{
   display: block;
-  width: 50%;
-  margin-top: 0.5%;
-  margin-left: 25%;
-  margin-bottom: 0%;
+    width: 50%;
+    margin-top: 0.5%;
+    margin-left: 25%;
+    padding-bottom: 15px;
 }
 
 ::placeholder {

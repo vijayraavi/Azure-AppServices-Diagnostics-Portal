@@ -203,6 +203,7 @@
 .span-h1{
   font-size: 2.2rem;
   font-weight: 500;
+  display: block;
 }
 
 .back-button {
@@ -224,4 +225,29 @@
   &:active:focus, &:active:focus {
     outline: none;
   }
+}
+
+.pull-right{
+  margin-top: 21px;
+}
+
+.insight-rating{
+  padding-left: 5px;
+  padding-right: 5px;
+  display: inline;
+}
+
+.feedback-link{
+  display: block;
+  cursor: pointer;
+  float: right;
+  font-size: 1.4rem;
+}
+
+i.upvote:hover{
+  -webkit-text-fill-color: green;
+}
+
+i.downvote:hover{
+  -webkit-text-fill-color: red;
 }

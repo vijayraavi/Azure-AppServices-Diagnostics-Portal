@@ -157,6 +157,10 @@ export class SearchResultsComponent implements OnInit {
     });
   }
 
+  searchResultFeedback(detector, rating){
+    this._telemetryService.logEvent(TelemetryEventNames.SearchResultFeedback, {"detectorId": detector.id, "rating": rating});
+  }
+
   displaySearchTermError(){
     this.searchTermErrorDisplay = true;
   }
