@@ -20,6 +20,7 @@ export class SearchTermAdditionComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._telemetryService.logPageView(TelemetryEventNames.SearchTermAdditionLoaded, {});
   }
 
   ngAfterViewInit() {
