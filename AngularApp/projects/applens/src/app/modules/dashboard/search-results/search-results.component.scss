@@ -1,5 +1,6 @@
 .outer-container {
     padding: 20px;
+    position: relative;
 }
 
 .alert-container {
@@ -176,12 +177,13 @@
   .detector-icon {
     padding-left: 2%;
     padding-right: 2%;
+    padding-top: 5px;
 }
 
   .detector-name {
     padding: 3px 0 0 10px;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 500;
     max-height: 35%;
 }
 
@@ -233,11 +235,12 @@
 
 .pull-right{
   margin-top: 21px;
+  width: 60px;
 }
 
 .insight-rating{
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 6px;
+  padding-right: 6px;
   display: inline;
 }
 
@@ -246,6 +249,10 @@
   cursor: pointer;
   float: right;
   font-size: 1.4rem;
+}
+
+.feedback-link-container{
+  width: 75%;
 }
 
 i.upvote:hover{

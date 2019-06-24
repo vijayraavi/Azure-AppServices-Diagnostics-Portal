@@ -10,9 +10,9 @@
   <div class="alert-container">
     <comm-alert></comm-alert>
   </div>
-  <div *ngIf="filteredDetectorsLoaded && filterdDetectors.length>0" class="detector-list">
+  <div *ngIf="detectorsLoaded && _searchService.detectors.length>0" class="detector-list">
     <span class="span-h1">Search results for "{{searchTermDisplay}}"</span>
-    <div class="flexed-detector card" *ngFor="let detector of detectors | sort: 'score': true; let i=index" tabindex=0 id="search-result-{{i}}">
+    <div class="flexed-detector card" *ngFor="let detector of _searchService.detectors | sort: 'score': true; let i=index" tabindex=0 id="search-result-{{i}}">
       <div class="detector-top row">
         <div class="col-md-1 detector-icon" (click)="detectorClick(detector, i)" (keyup.enter)="detectorClick(detector, i)">
           <img *ngIf="detector.icon != undefined && detector.icon != ''" class="support-topic-l3-icon" src={{detector.icon}} />
@@ -28,15 +28,15 @@
         </div>
         <div class="col-md-1">
             <div class="pull-right">
-                <div class="insight-rating" (click)="searchResultFeedback(detector, 1)">
-                  <a role="button" tabindex="0">
-                    <i class="fa fa-thumbs-up fa-lg upvote" style="color: gray;">				
+                <div class="insight-rating" (click)="searchResultFeedback(detector, 1)" (keyup.enter)="searchResultFeedback(detector, 1)">
+                  <a role="button">
+                    <i class="fa fa-thumbs-up fa-lg upvote" [style.color]="detector.feedbackState==1? 'green': 'gray'">				
                     </i>
                   </a>
                 </div>
-                <div class="insight-rating" (click)="searchResultFeedback(detector, -1)">
-                  <a role="button" tabindex="0">
-                    <i class="fa fa-thumbs-down fa-lg downvote" style="color: gray;">				
+                <div class="insight-rating" (click)="searchResultFeedback(detector, -1)" (keyup.enter)="searchResultFeedback(detector, -1)">
+                  <a role="button">
+                    <i class="fa fa-thumbs-down fa-lg downvote" [style.color]="detector.feedbackState==-1? 'red': 'gray'">				
                     </i>
                   </a>
                 </div>
@@ -45,23 +45,23 @@
       </div>
     </div>
   </div>
-  <div class="col-md-9">
-    <div *ngIf="filteredDetectorsLoaded" class="feedback-link">
-      <a class="btn btn-primary" role="button" href="mailto:khzayed@microsoft.com;ajsharm@microsoft.com?Subject=Applens%20Search%20Feedback&body=Search%20Query%3A%20{{searchTermDisplay}}%0AFeedback%3A%20" target="_top">Unexpected Results?</a>
+  <div class="feedback-link-container">
+    <div *ngIf="detectorsLoaded" class="feedback-link">
+      <a tabindex=0 href="mailto:khzayed@microsoft.com;ajsharm@microsoft.com?Subject=Applens%20Search%20Feedback&body=Search%20Query%3A%20{{searchTermDisplay}}%0AFeedback%3A%20%0AScreenshots%20below%3A" target="_top">Unexpected Results?</a>
     </div>
   </div>
-  <div *ngIf="filteredDetectorsLoaded && !(filterdDetectors.length>0) && !searchTermErrorDisplay" class="no-search-results">
-    <span>I am sorry, I found no results matching your query!</span>
+  <div *ngIf="detectorsLoaded && !(_searchService.detectors.length>0) && !searchTermErrorDisplay && !searchResultsFetchErrorDisplay" class="no-search-results">
+    <span>I am sorry, I found no results matching your query! Please help us understand using different words.</span>
   </div>
   <div *ngIf="searchTermErrorDisplay" class="search-term-error">
     <span>Please be more descriptive, search should contain more than 3 characters...</span>
   </div>
 
   <div *ngIf="searchResultsFetchErrorDisplay" class="search-term-error">
-    <span>{{searchResultsFetchError}}</span>
+    <span>{{searchResultsFetchError}}.. Please try again.</span>
   </div>
 
-  <div *ngIf="!filteredDetectorsLoaded" class="loading-page">
+  <div *ngIf="!detectorsLoaded" class="loading-page">
     <i class="fa fa-spinner fa-spin fa-4x fa-fw"></i>
   </div>
 </div>

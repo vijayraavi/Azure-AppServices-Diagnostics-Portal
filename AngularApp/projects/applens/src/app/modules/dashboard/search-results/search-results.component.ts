@@ -16,20 +16,13 @@ import { SearchService } from '../services/search.service';
   styleUrls: ['./search-results.component.scss']
 })
 export class SearchResultsComponent implements OnInit {
-  detectors: DetectorItem[] = [];
-  filterdDetectors: DetectorMetaData[] = [];
-  filteredDetectorsLoaded: boolean = false;
-  filterdDetectorAuthors: string[] = [];
-
+  filteredDetectors: DetectorMetaData[] = [];
+  detectorsLoaded: boolean = false;
+  
   searchResultsFetchError: string = "";
   searchResultsFetchErrorDisplay: boolean = false;
 
   searchTermErrorDisplay: boolean = false;
-
-  userImages: { [name: string]: string };
-
-  authors: any[] = [];
-  authorsList: string[] = [];
 
   searchTermDisplay: string = "";
 
@@ -50,115 +43,89 @@ export class SearchResultsComponent implements OnInit {
     this._location.back();
   }
 
-  triggerSearch(){
-    if (this._searchService.searchTerm && this._searchService.searchTerm.length>3){
-      this.navigateTo(`../search`, {searchTerm: this._searchService.searchTerm}, 'merge');
-    }
-  }
-
   executeSearch(searchTerm){
-    this.filteredDetectorsLoaded = false;
+    this.detectorsLoaded = false;
     if (!this._searchService.searchId || this._searchService.searchId.length==0){
       this._searchService.searchId = uuid();
       this._searchService.newSearch = true;
     }
-    this._diagnosticService.getDetectors(true, searchTerm).subscribe((detectors: DetectorMetaData[]) => {
-      if (this._searchService.newSearch) {
+    if (this._searchService.newSearch){
+      this._diagnosticService.getDetectors(true, searchTerm).subscribe((detectors: DetectorMetaData[]) => {
+        //Logging for new search only
         this._telemetryService.logEvent(TelemetryEventNames.SearchQueryResults, { searchId: this._searchService.searchId, query: searchTerm, results: JSON.stringify(detectors.map((det: DetectorMetaData) => new Object({ id: det.id, score: det.score}))), ts: Math.floor((new Date()).getTime() / 1000).toString() });
         this._searchService.newSearch = false;
-      }
-      // This is to get the full detectors authors list, and make graph API call
-      let authorString = "";
-      this.filterdDetectors = [];
-      this.detectors = [];
-      detectors.forEach(detector => {
-          if (detector.author != undefined && detector.author !== '') {
-              authorString = authorString + "," + detector.author;
-          }
-          this.filterdDetectors.push(detector);
+        
+        this.filteredDetectors = detectors;
+        this._searchService.detectors = [];
+        this.searchTermDisplay = this._searchService.currentSearchTerm.valueOf();
+        setTimeout(() => {
+          this.detectorsLoaded = true;
+          setTimeout(() => {
+            document.getElementById("search-result-0").focus();
+            this._telemetryService.logEvent(TelemetryEventNames.SearchResultsLoaded, {"searchId": this._searchService.searchId, "ts": Math.floor((new Date()).getTime() / 1000).toString()});
+          }, 100);
+        }, 500);
+        
+        if (detectors !== null){
+          this.filteredDetectors.forEach((detector) => {
+              this._supportTopicService.getCategoryImage(detector.name).subscribe((iconString) => {
+                let detectorItem = new DetectorItem(detector.id, detector.name, detector.description, iconString, [], detector.score);
+                this._searchService.detectors.push(detectorItem);
+
+              });
+          });
+          this._searchService.detectors;
+        }
+      },
+      (err: HttpErrorResponse)=> {
+        this.detectorsLoaded = true;
+        this.searchResultsFetchError = "I am sorry, some error occurred while processing.";
+        this.searchResultsFetchErrorDisplay = true;
       });
-      this.searchTermDisplay = this._searchService.searchTerm.valueOf();
+    }
+    else{
+      this.searchTermDisplay = this._searchService.currentSearchTerm.valueOf();
       setTimeout(() => {
-        this.filteredDetectorsLoaded = true;
+        this.detectorsLoaded = true;
         setTimeout(() => {
           document.getElementById("search-result-0").focus();
           this._telemetryService.logEvent(TelemetryEventNames.SearchResultsLoaded, {"searchId": this._searchService.searchId, "ts": Math.floor((new Date()).getTime() / 1000).toString()});
         }, 100);
       }, 500);
-      
-      const separators = [' ', ',', ';', ':'];
-      let authors = authorString.toLowerCase().split(new RegExp(separators.join('|'), 'g'));
-      authors.forEach(author => {
-          if (author && author.length > 0 && !this.authorsList.find(existingAuthor => existingAuthor === author)) {
-              this.authorsList.push(author);
-          }
-      });
-      var body = {
-        authors: this.authorsList
-      };
-
-      if (detectors !== null){
-        this._diagnosticService.getUsers(body).subscribe((userImages) => {
-          this.userImages = userImages;
-
-          this.filterdDetectors.forEach((detector) => {
-            this._supportTopicService.getCategoryImage(detector.name).subscribe((iconString) => {
-              let onClick = () => {
-                this.navigateTo(`../detectors/${detector.id}`);
-              };
-
-              let detectorUsersImages: { [name: string]: string } = {};
-              if (detector.author != undefined) {
-                let authors = detector.author.toLowerCase();
-                const separators = [' ', ',', ';', ':'];
-                let detectorAuthors = authors.split(new RegExp(separators.join('|'), 'g')).filter(author=> author != '');
-                detectorAuthors.forEach(author => {
-                  if (!this.filterdDetectorAuthors.find(existingAuthor => existingAuthor === author)) {
-                      this.filterdDetectorAuthors.push(author);
-                  }
-                  detectorUsersImages[author] = this.userImages.hasOwnProperty(author) ? this.userImages[author] : undefined;
-                });
-              }
-
-              let detectorItem = new DetectorItem(detector.id, detector.name, detector.description, iconString, detector.author, [], detectorUsersImages, [], onClick, detector.score);
-              this.detectors.push(detectorItem);
-
-            });
-          });
-        });
-      }
-    },
-    (err: HttpErrorResponse)=> {
-      this.filteredDetectorsLoaded = true;
-      this.searchResultsFetchError = "I am sorry, some error occurred while processing.";
-      this.searchResultsFetchErrorDisplay = true;
-    });
+    }
   }
 
   detectorClick(detector, index){
     // Log detector click and navigate the respective detector
     this._telemetryService.logEvent(TelemetryEventNames.SearchResultClicked, { searchId: this._searchService.searchId, detectorId: detector.id, rank: (index+1).toString(), ts: Math.floor((new Date()).getTime() / 1000).toString() });
-    detector.onClick();
+    this.navigateTo(`../detectors/${detector.id}`);
   }
 
   ngOnInit() {
     this._activatedRoute.queryParams.subscribe(params => {
       var searchTerm = params['searchTerm'];
-      this._searchService.searchTerm = searchTerm;
-      if (this._searchService.searchTerm && this._searchService.searchTerm.length>3){
+      if (searchTerm != this._searchService.currentSearchTerm){
+        this._searchService.newSearch = true;
+        this._searchService.currentSearchTerm = searchTerm;
+        this._searchService.searchTerm = searchTerm;
+      }
+      if (this._searchService.currentSearchTerm && this._searchService.currentSearchTerm.length>3){
         this.searchTermErrorDisplay = false;
         this.searchResultsFetchErrorDisplay = false;
-        this.executeSearch(searchTerm);
+        this.executeSearch(this._searchService.currentSearchTerm);
       }
       else{
-        this.filteredDetectorsLoaded = true;
+        this.detectorsLoaded = true;
         this.displaySearchTermError();
       }
     });
   }
 
   searchResultFeedback(detector, rating){
-    this._telemetryService.logEvent(TelemetryEventNames.SearchResultFeedback, {"detectorId": detector.id, "rating": rating});
+    if (rating != detector.feedbackState){
+      detector.feedbackState = rating;
+      this._telemetryService.logEvent(TelemetryEventNames.SearchResultFeedback, {"detectorId": detector.id, "searchId": this._searchService.searchId, "rating": rating});
+    }
   }
 
   displaySearchTermError(){
@@ -170,32 +137,27 @@ export class SearchResultsComponent implements OnInit {
   }
 }
 
-class DetectorItem {
+export class DetectorItem {
   id: string;
   name: string;
   description: string;
   icon: string;
-  authorString: string;
-  authors: any[] = [];
-  userImages: any;
   supportTopics: any[] = [];
   score: number;
   onClick: Function;
+  feedbackState: number;
 
-  constructor(id: string, name: string, description: string, icon: string, authorString: string, authors: any[], userImages: any, supportTopics: any[], onClick: Function, score: number) {
+  constructor(id: string, name: string, description: string, icon: string, supportTopics: any[], score: number) {
       this.name = name;
       this.id = id;
+      this.feedbackState = 0;
 
       if (description == undefined || description === "") {
           description = "This detector doesn't have any description."
       }
       this.description = description;
       this.icon = icon;
-      this.authorString = authorString;
-      this.authors = authors;
-      this.userImages = userImages;
       this.supportTopics = supportTopics;
-      this.onClick = onClick;
       this.score = score;
   }
 }
