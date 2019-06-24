@@ -51,7 +51,10 @@ namespace AppLensV3.Services
         {
             _cache = cache;
             _graphTokenService = graphTokenService;
-            TestSecurityGroup = configuration["TestSecurityGroup"].Split(",").ToList();
+            TestSecurityGroup = configuration["TestSecurityGroup"]?.Split(",").ToList();
+            if (TestSecurityGroup == null){
+                TestSecurityGroup = new List<string>();
+            }
         }
 
         public async Task<string> GetOrCreateUserImageAsync(string userId)
