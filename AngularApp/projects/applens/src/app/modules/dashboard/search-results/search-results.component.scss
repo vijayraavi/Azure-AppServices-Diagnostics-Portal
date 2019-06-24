@@ -23,7 +23,8 @@
 
 .search-term-error{
     margin:1%;
-    color:red;
+    font-size: 18px;
+    display: block;
 }
 
 .search-disabled-message{
@@ -261,4 +262,15 @@ i.upvote:hover{
 
 i.downvote:hover{
   -webkit-text-fill-color: red;
+}
+
+.no-results-header{
+  display: block;
+  font-weight: 600;
+  font-size: 21px;
+}
+
+.no-results-content{
+  display:block;
+  font-size: 18px;
 }

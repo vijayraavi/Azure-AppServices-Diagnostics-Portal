@@ -51,7 +51,13 @@
     </div>
   </div>
   <div *ngIf="detectorsLoaded && !(_searchService.detectors.length>0) && !searchTermErrorDisplay && !searchResultsFetchErrorDisplay" class="no-search-results">
-    <span>I am sorry, I found no results matching your query! Please help us understand using different words.</span>
+    <span class="no-results-header">Your search "{{searchTermDisplay}}" did not yield any results.</span>
+    <span class="no-results-content">Suggestions:</span>
+    <ul class="no-results-content">
+      <li>Make sure all words are spelled correctly.</li>
+      <li>Try different keywords.</li>
+      <li>Try more general keywords.</li>
+    </ul>
   </div>
   <div *ngIf="searchTermErrorDisplay" class="search-term-error">
     <span>Please be more descriptive, search should contain more than 3 characters...</span>
