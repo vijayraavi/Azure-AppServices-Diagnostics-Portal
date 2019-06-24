@@ -5,7 +5,6 @@ import {AdalService} from 'adal-angular4';
 
 @Injectable()
 export class SearchService {
-    public appSettings: any = null;
     public searchIsEnabled: boolean = false;
     public searchTerm: string = "";
     public currentSearchTerm: string = "";
