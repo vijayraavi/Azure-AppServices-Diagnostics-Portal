@@ -19,7 +19,7 @@ export class FeatureService {
   protected _featureDisplayOrder = [];
 
   constructor(protected _diagnosticApiService: DiagnosticService, protected _contentService: ContentService, protected _router: Router, protected _authService: AuthService,
-    protected _logger: LoggingV2Service, private _resourceService: WebSitesService) {
+    protected _logger: LoggingV2Service, protected _resourceService: WebSitesService) {
 
     this._featureDisplayOrder = [{
       category: "Availability and Performance",
