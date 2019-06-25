@@ -25,7 +25,7 @@ export class FeatureService {
       category: "Availability and Performance",
       platform: OperatingSystem.windows,
       appType: AppType.WebApp,
-      order: ['Web App Down', 'Web App Slow', 'High CPU Analysis', 'Memory Analysis', 'Web App Restarted'].reverse()
+      order: ['appdownanalysis', 'perfanalysis', 'webappcpu', 'memoryusage', 'webapprestart'].reverse()
     }];
 
     this._authService.getStartupInfo().subscribe(startupInfo => {
@@ -81,42 +81,42 @@ export class FeatureService {
 
     featureDisplayOrder.forEach(feature => {
 
-      // Add all the features for this category to a temporary array
-      let categoryFeatures: Feature[] = [];
-      this._features.forEach(x => {
-        if (x.category != null && x.category.indexOf(feature.category) > -1 && feature.platform === this._resourceService.platform && this._resourceService.appType === feature.appType) {
-          categoryFeatures.push(x);
-        }
-      });
-
-      // Remove all the features for the sorted category
       if (feature.platform === this._resourceService.platform && this._resourceService.appType === feature.appType) {
+        // Add all the features for this category to a temporary array
+        let categoryFeatures: Feature[] = [];
+        this._features.forEach(x => {
+          if (x.category != null && x.category.indexOf(feature.category) > -1) {
+            categoryFeatures.push(x);
+          }
+        });
+
+        // Remove all the features for the sorted category
         this._features = this._features.filter(x => {
           return x.category !== feature.category;
         });
-      }
 
-      // Sort all the features for this category
-      categoryFeatures.sort(
-        function (a, b) {
-          let categoryOrder = featureDisplayOrder.find(x => x.category.toLowerCase().startsWith(feature.category.toLowerCase()));
-          if (categoryOrder != null) {
-            if (categoryOrder.order.indexOf(a.name) < categoryOrder.order.indexOf(b.name)) {
-              return 1;
-            } else if (categoryOrder.order.indexOf(b.name) === categoryOrder.order.indexOf(a.name)) {
-              return 0;
-            }
-            else {
-              return -1;
+        // Sort all the features for this category
+        categoryFeatures.sort(
+          function (a, b) {
+            let categoryOrder = featureDisplayOrder.find(x => x.category.toLowerCase().startsWith(feature.category.toLowerCase()));
+            if (categoryOrder != null) {
+              if (categoryOrder.order.indexOf(a.id.toLowerCase()) < categoryOrder.order.indexOf(b.id.toLowerCase())) {
+                return 1;
+              } else if (categoryOrder.order.indexOf(b.id.toLowerCase()) === categoryOrder.order.indexOf(a.id.toLowerCase())) {
+                return 0;
+              }
+              else {
+                return -1;
+              }
             }
           }
-        }
-      );
+        );
 
-      // add the sorted features for this category back to the array
-      this._features = this._features.concat(categoryFeatures);
-
+        // add the sorted features for this category back to the array
+        this._features = this._features.concat(categoryFeatures);
+      }
     });
+
   }
 
   protected _createFeatureAction(name: string, category: string, func: Function): FeatureAction {
