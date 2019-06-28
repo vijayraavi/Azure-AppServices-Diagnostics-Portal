@@ -65,8 +65,8 @@ namespace AppLensV3.Controllers
                     return Ok(false);
                 }
             }
-            catch {
-                return Ok(false);
+            catch (Exception ex) {
+                throw new Exception("Exception while reading resource config from github: " + ex.ToString());
             }
         }
 
