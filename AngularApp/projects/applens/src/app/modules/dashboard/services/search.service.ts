@@ -21,12 +21,7 @@ export class SearchService {
         let hasTestersAccess = this._applensDiagnosticService.getHasTestersAccess(userId).pipe(map((res) => res), catchError(e => of(false)));
         let isEnabledForProductId = this._applensDiagnosticService.getSearchEnabledForProductId().pipe(map((res) => res), catchError(e => of(false)));
         forkJoin([hasTestersAccess, isEnabledForProductId]).subscribe(enabledFlags => {
-            if (enabledFlags[0] && enabledFlags[1]){
-                this.searchIsEnabled = true;
-            }
-            else {
-                this.searchIsEnabled = false;
-            }
+            this.searchIsEnabled = enabledFlags[0] && enabledFlags[1];
         });
     }
 
