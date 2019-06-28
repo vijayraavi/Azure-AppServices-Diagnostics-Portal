@@ -16,8 +16,17 @@ export class SearchService {
     constructor(private _applensDiagnosticService: ApplensDiagnosticService, private _adalService: AdalService){
         let alias = this._adalService.userInfo.profile ? this._adalService.userInfo.profile.upn : '';
         let userId = alias.replace('@microsoft.com', '').toLowerCase();
-        this._applensDiagnosticService.getHasTestersAccess(userId).subscribe(res => {
-            this.searchIsEnabled = res;
+        this._applensDiagnosticService.getHasTestersAccess(userId).subscribe((hasTestersAccess: Boolean) => {
+            if (hasTestersAccess){
+                this._applensDiagnosticService.getSearchEnabledForProductId().subscribe((isEnabledForProductId: Boolean) => {
+                    if (isEnabledForProductId){
+                        this.searchIsEnabled = true;
+                    }
+                },
+                (err) => {
+                    this.searchIsEnabled = false;
+                });
+            }
         },
         (err) => {
             this.searchIsEnabled = false;
