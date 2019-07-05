@@ -9,6 +9,7 @@ import { ResourceService } from './resource.service';
 import { ArmResource } from '../models/arm';
 import { StartupInfo } from '../../shared/models/portal';
 import { BackendCtrlService } from '../../shared/services/backend-ctrl.service';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable()
 export class LiveChatService {
@@ -27,9 +28,10 @@ export class LiveChatService {
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             this._resourceService.warmUpCallFinished.subscribe((resourceLoaded: boolean) => {
                 if (resourceLoaded) {
-                    this._backendApi.get<ChatStatus>(`api/chat/${this._resourceService.azureServiceName}/status`).subscribe((status: ChatStatus) => {
+                    const additionalHeaders = new HttpHeaders({ 'supportTopic': startupInfo.supportTopicId });
+                    this._backendApi.get<ChatStatus>(`api/chat/${this._resourceService.azureServiceName}/status`, additionalHeaders).subscribe((status: ChatStatus) => {
                         this.chatStatus = status;
-                        if (this.isChatApplicableForSupportTopic(startupInfo, this._resourceService.azureServiceName)) {
+                        if (this.isChatApplicable(startupInfo, this._resourceService.azureServiceName)) {
 
                             setTimeout(() => {
 
@@ -189,17 +191,13 @@ export class LiveChatService {
             && (!demoMode || (DemoSubscriptions.betaSubscriptions.indexOf(this._resourceService.subscriptionId) >= 0));
     }
 
-    // This method indicate whether chat is applicable for support toic or not
-    private isChatApplicableForSupportTopic(startupInfo: StartupInfo, azureServiceName: string): boolean {
+    // This method indicate whether chat is applicable or not
+    private isChatApplicable(startupInfo: StartupInfo, azureServiceName: string): boolean {
 
-        let enabledSupportTopicList = LiveChatSettings.enabledSupportTopicsPerAzureService[azureServiceName];
-        if (enabledSupportTopicList == null) {
-            return false;
-        }
 
         let isApplicable: boolean = startupInfo
             && startupInfo.workflowId && startupInfo.workflowId !== ''
-            && startupInfo.supportTopicId && startupInfo.supportTopicId !== '' && (enabledSupportTopicList.indexOf(startupInfo.supportTopicId) >= 0);
+            && startupInfo.supportTopicId && startupInfo.supportTopicId !== '';
 
         isApplicable = isApplicable && this.chatStatus.isEnabled && this.chatStatus.isValidTime;
 

@@ -21,14 +21,14 @@ namespace Backend.Controllers
         }
 
         [HttpGet("status")]
-        public IActionResult GetChatStatus(string product)
+        public IActionResult GetChatStatus(string product, [FromHeader(Name = "supportTopic")] string supportTopic = "")
         {
             if (string.IsNullOrWhiteSpace(product))
             {
                 return BadRequest("product cannot be empty");
             }
 
-            return Ok(ChatService.GetChatStatus(product));
+            return Ok(ChatService.GetChatStatus(product, supportTopic));
         }
     }
 }
