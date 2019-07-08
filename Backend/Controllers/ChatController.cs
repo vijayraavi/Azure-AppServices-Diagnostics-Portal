@@ -23,7 +23,7 @@ namespace Backend.Controllers
         [HttpGet("status")]
         public IActionResult GetChatStatus(string product, string supportTopic)
         {
-            if (string.IsNullOrWhiteSpace(product) || string.IsNullOrWhiteSpace(product))
+            if (string.IsNullOrWhiteSpace(product) || string.IsNullOrWhiteSpace(supportTopic))
             {
                 return BadRequest("product and supportTopic cannot be empty");
             }
