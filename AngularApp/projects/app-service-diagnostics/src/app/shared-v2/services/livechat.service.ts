@@ -28,33 +28,34 @@ export class LiveChatService {
         this.authService.getStartupInfo().subscribe((startupInfo: StartupInfo) => {
             this._resourceService.warmUpCallFinished.subscribe((resourceLoaded: boolean) => {
                 if (resourceLoaded) {
-                    const additionalHeaders = new HttpHeaders({ 'supportTopic': startupInfo.supportTopicId });
-                    this._backendApi.get<ChatStatus>(`api/chat/${this._resourceService.azureServiceName}/status`, additionalHeaders).subscribe((status: ChatStatus) => {
-                        this.chatStatus = status;
-                        if (this.isChatApplicable(startupInfo, this._resourceService.azureServiceName)) {
+                    if (startupInfo.supportTopicId && startupInfo.supportTopicId != '') {
+                        this._backendApi.get<ChatStatus>(`api/chat/${this._resourceService.azureServiceName}/${startupInfo.supportTopicId}/status`).subscribe((status: ChatStatus) => {
+                            this.chatStatus = status;
+                            if (this.isChatApplicable(startupInfo, this._resourceService.azureServiceName)) {
 
-                            setTimeout(() => {
+                                setTimeout(() => {
 
-                                this.startChat(status.freshToken, false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
+                                    this.startChat(status.freshToken, false, '', LiveChatSettings.DemoModeForCaseSubmission, 'ltr');
 
-                            }, LiveChatSettings.InactivityTimeoutInMs);
+                                }, LiveChatSettings.InactivityTimeoutInMs);
 
-                            window.fcWidget.on('widget:loaded', ((resp) => {
+                                window.fcWidget.on('widget:loaded', ((resp) => {
 
-                                if (window.fcWidget.isOpen() != true) {
-                                    setTimeout(() => {
-                                        // Raise an event for trigger message campaign
-                                        window.fcWidget.track('supportCaseSubmission', {
-                                            supportTopicId: startupInfo.supportTopicId,
-                                            product: this._resourceService.azureServiceName
-                                        });
+                                    if (window.fcWidget.isOpen() != true) {
+                                        setTimeout(() => {
+                                            // Raise an event for trigger message campaign
+                                            window.fcWidget.track('supportCaseSubmission', {
+                                                supportTopicId: startupInfo.supportTopicId,
+                                                product: this._resourceService.azureServiceName
+                                            });
 
-                                    }, 1000);
-                                }
+                                        }, 1000);
+                                    }
 
-                            }));
-                        }
-                    });
+                                }));
+                            }
+                        });
+                    }
                 }
 
             });
