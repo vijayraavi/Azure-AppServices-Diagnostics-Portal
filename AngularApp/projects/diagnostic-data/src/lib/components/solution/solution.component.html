@@ -28,6 +28,10 @@
     </div>
   </ng-container>
 
+  <ng-container *ngIf="!showActionButton && solution.IsInternal">
+    <ng-container *ngTemplateOutlet="internal_solution"></ng-container>
+  </ng-container>
+
 </div>
 
 <ng-template #internal_solution>
