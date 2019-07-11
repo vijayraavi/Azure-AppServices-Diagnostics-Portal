@@ -24,7 +24,7 @@ namespace AppLensV3.Controllers
     /// Diagnostic controller.
     /// </summary>
     [Route("api")]
-    [Authorize]
+    [Authorize(Policy = "ApplensAccess")]
     public class DiagnosticController : Controller
     {
         /// <summary>

@@ -19,7 +19,7 @@ namespace AppLensV3.Controllers
     /// Local development controller.
     /// </summary>
     [Route("api")]
-    [Authorize]
+    [Authorize(Policy = "ApplensAccess")]
     public class LocalDevelopmentController : Controller
     {
         /// <summary>

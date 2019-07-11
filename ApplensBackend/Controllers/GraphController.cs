@@ -15,7 +15,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace AppLensV3.Controllers
 {
     [Route("api/graph/")]
-    [Authorize]
+    [Authorize(Policy = "ApplensAccess")]
     public class GraphController : Controller
     {
         private readonly IGraphClientService _graphClientService;

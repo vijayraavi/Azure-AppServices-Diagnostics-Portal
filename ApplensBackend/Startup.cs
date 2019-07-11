@@ -17,6 +17,8 @@ using Microsoft.IdentityModel.Tokens.Saml;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.WsFederation;
 using Microsoft.IdentityModel.Tokens.Saml2;
+using Microsoft.AspNetCore.Authorization;
+using AppLensV3.Authorization;
 
 namespace AppLensV3
 {
@@ -63,6 +65,7 @@ namespace AppLensV3
 
             services.AddMemoryCache();
             services.AddMvc();
+            services.AddHttpContextAccessor();
 
             if (Configuration.GetValue<bool>("DatacenterFederationEnabled", false))
             {
@@ -91,6 +94,17 @@ namespace AppLensV3
                 {
                     Configuration.Bind("AzureAd", options);
                 });
+                services.AddAuthorization(options => {
+                    var securityGroups = new List<SecurityGroupConfig>();
+                    Configuration.Bind("SecurityGroups", securityGroups);
+
+                    foreach (var securityGroup in securityGroups)
+                        options.AddPolicy(securityGroup.GroupName, policy => {
+                            policy.Requirements.Add(new SecurityGroupRequirement(securityGroup.GroupId));
+                        });
+                });
+
+                services.AddSingleton<IAuthorizationHandler, SecurityGroupHandler>();
             }
 
             if (Configuration["ServerMode"] == "internal")
