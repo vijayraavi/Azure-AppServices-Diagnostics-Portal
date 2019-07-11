@@ -46,6 +46,11 @@ namespace AppLensV3.Controllers
 
         private IHostingEnvironment Env { get; }
 
+        [HttpGet("ping")]
+        public IActionResult Ping(){
+            return new OkResult();
+        }
+        
         /// <summary>
         /// Action for invoke request.
         /// </summary>
