@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { AdalService } from "adal-angular4";
 import {DiagnosticApiService} from '../services/diagnostic-api.service';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 
 const loginRedirectKey = 'login_redirect';
 
@@ -42,6 +43,7 @@ export class AadAuthGuard implements CanActivate {
                     if (err.status == 401)
                     {
                         this.isAuthorized = false;
+                        this._router.navigate(['unauthorized']);
                         return Observable.throw(false);
                     }
                     else {
