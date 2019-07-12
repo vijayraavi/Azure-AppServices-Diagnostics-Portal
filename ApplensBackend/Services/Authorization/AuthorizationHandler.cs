@@ -195,7 +195,7 @@ namespace AppLensV3.Authorization
             return false;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SecurityGroupRequirement requirement) {
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, SecurityGroupRequirement requirement) {
             HttpContext httpContext = _httpContextAccessor.HttpContext;
             Boolean isMember = false;
             string userId = null;
@@ -212,7 +212,7 @@ namespace AppLensV3.Authorization
                             isMember = true;
                         }
                         else{
-                            isMember = CheckSecurityGroupMembership(userId, requirement.SecurityGroupObjectId).GetAwaiter().GetResult();
+                            isMember = await CheckSecurityGroupMembership(userId, requirement.SecurityGroupObjectId);
                             if (isMember){
                                 AddUserToCache(requirement.SecurityGroupObjectId, userId);
                             }
@@ -228,11 +228,11 @@ namespace AppLensV3.Authorization
             if (isMember)
             {
                 context.Succeed(requirement);
-                return Task.FromResult(0);
+                return;
             }
 
             context.Fail();
-            return Task.FromResult(0);
+            return;
         }
 
     }
