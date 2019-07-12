@@ -15,8 +15,8 @@ namespace AppLensV3.Controllers
         /// Method to check testers access.
         /// </summary>
         /// <returns>True result.</returns>
-        [HttpGet("")]
-        [HttpOptions("")]
+        [HttpGet]
+        [HttpOptions]
         public IActionResult CheckTestersAccess(){
             return new ObjectResult(true);
         }
