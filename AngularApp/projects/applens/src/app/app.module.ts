@@ -18,6 +18,8 @@ import { CustomUrlSerializerService } from './shared/services/custom-url-seriali
 import { DiagnosticDataModule } from 'diagnostic-data';
 import { UnhandledExceptionHandlerService } from 'diagnostic-data';
 import {CustomMaterialModule} from './material-module';
+import {UnauthorizedComponent} from './shared/components/unauthorized/unauthorized.component';
+import {AuthInterceptor} from './shared/auth/auth-interceptor.service';
 
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
@@ -85,6 +87,10 @@ export const Routes = RouterModule.forRoot([
     ]
   },
   {
+    path: 'unauthorized',
+    component: UnauthorizedComponent
+  },
+  {
     path: 'login',
     component: LoginComponent
   }
@@ -92,7 +98,8 @@ export const Routes = RouterModule.forRoot([
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule,
@@ -106,6 +113,11 @@ export const Routes = RouterModule.forRoot([
   providers: [
     ValidResourceResolver,
     AdalService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
     {
       provide: UrlSerializer,
       useClass: CustomUrlSerializerService

@@ -2,13 +2,16 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { AdalService } from "adal-angular4";
+import {DiagnosticApiService} from '../services/diagnostic-api.service';
+import 'rxjs/add/operator/map';
 
 const loginRedirectKey = 'login_redirect';
 
 @Injectable()
 export class AadAuthGuard implements CanActivate {
+    isAuthorized: Boolean = false;
 
-    constructor(private _router: Router, private _adalService: AdalService) { }
+    constructor(private _router: Router, private _adalService: AdalService, private _diagnosticApiService: DiagnosticApiService) { }
 
     canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | Observable<boolean> {
         this._adalService.handleWindowCallback();
@@ -26,7 +29,26 @@ export class AadAuthGuard implements CanActivate {
                 this._router.navigateByUrl(returnUrl);
                 localStorage.removeItem(loginRedirectKey);
             }
-            return true;
+            if (this.isAuthorized){
+                return true;
+            }
+            return this._diagnosticApiService.get("api/ping", true).map(res => 
+                {
+                    this.isAuthorized = true;
+                    return true;
+                })
+                .catch(err => 
+                {
+                    if (err.status == 401)
+                    {
+                        this.isAuthorized = false;
+                        return Observable.throw(false);
+                    }
+                    else {
+                        this.isAuthorized = false;
+                        return Observable.throw(true);
+                    }
+                });
         }
     }
 
