@@ -19,6 +19,7 @@ import { DiagnosticDataModule } from 'diagnostic-data';
 import { UnhandledExceptionHandlerService } from 'diagnostic-data';
 import {CustomMaterialModule} from './material-module';
 import {UnauthorizedComponent} from './shared/components/unauthorized/unauthorized.component';
+import {AuthRequestFailedComponent} from './shared/components/auth-request-failed/auth-request-failed.component';
 
 @Injectable()
 export class ValidResourceResolver implements Resolve<void>{
@@ -90,6 +91,10 @@ export const Routes = RouterModule.forRoot([
     component: UnauthorizedComponent
   },
   {
+    path: 'authRequestFailed',
+    component: AuthRequestFailedComponent
+  },
+  {
     path: 'login',
     component: LoginComponent
   }
@@ -98,7 +103,8 @@ export const Routes = RouterModule.forRoot([
 @NgModule({
   declarations: [
     AppComponent,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    AuthRequestFailedComponent
   ],
   imports: [
     BrowserModule,

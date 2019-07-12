@@ -48,7 +48,8 @@ export class AadAuthGuard implements CanActivate {
                     }
                     else {
                         this.isAuthorized = false;
-                        return Observable.throw(true);
+                        this._router.navigate(['authRequestFailed']);
+                        return Observable.throw(false);
                     }
                 });
         }
